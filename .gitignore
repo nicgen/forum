@@ -1,3 +1,4 @@
+# ---> Go
 # If you prefer the allow list template instead of the deny list, see community template:
 # https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
 #
@@ -18,11 +19,27 @@
 # vendor/
 
 # Go workspace file
-go.work
-go.work.sum
+#go.work
 
-# env file
+# AIR
+# .air.toml
+tmp
+
+# src
+static/fonts/src
+static/export/*.*
+
+# backup
+*_bak
+
+# env var (private)
 .env
 
-# Personal files
-*.pdf
+# build
+/build
+
+# copies
+*.BAK
+
+# test files (not handled yet)
+*_test.go
