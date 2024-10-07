@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>Groupify</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel='stylesheet' type='text/css' media='screen' href='/static/CSS/profile.css' crossorigin="anonymous">
+</head>
+<body>
+  {{ range .Profile }}
+    <h2>{{ .Username }}</h2>
+    <p>{{ .Role }}</p>
+  {{ end }}
+</body>
+</html>
