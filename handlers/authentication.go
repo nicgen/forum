@@ -36,22 +36,17 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "POST" {
+		//Parsing forms values
 		err1 := r.ParseForm()
 		if err1 != nil {
 			http.Error(w, "Error parsing form data", http.StatusBadRequest)
 			return
 		}
 
-		// Récupérer les données du formulaire
+		// Getting form values
 		username := r.FormValue("UsernameForm")
 		password := r.FormValue("PasswordForm")
 		email := r.FormValue("EmailForm")
-
-		// Valider les données
-		if username == "" || password == "" || email == "" {
-			http.Error(w, "Les champs nom d'utilisateur, mot de passe et email sont obligatoires", http.StatusBadRequest)
-			return
-		}
 
 		// Generate UUID
 		userUUID := uuid.New().String()
@@ -62,31 +57,44 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		// Set default role
 		defaultRole := "user"
 
-		// Vérifier si l'utilisateur existe déjà
-		var exists bool
-		err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM User WHERE Username=?)", username).Scan(&exists)
-		if err != nil {
-			log.Printf("Erreur lors de la vérification de l'utilisateur: %v", err)
-			http.Error(w, "Erreur lors de la vérification de l'utilisateur", http.StatusInternalServerError)
+		var usernameExists bool
+		var emailExists bool
+
+		err_user := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE username=?)", username).Scan(&usernameExists)
+		err_email := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE email=?)", email).Scan(&emailExists)
+
+		// Hash password
+		hashedPassword, err_password := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+		// Checking for errors
+		if err_user != nil {
+			http.Error(w, "Error checking username", http.StatusInternalServerError)
 			return
 		}
-		if exists {
-			http.Error(w, "Nom d'utilisateur déjà pris", http.StatusConflict)
+		if err_email != nil {
+			http.Error(w, "Error checking email", http.StatusInternalServerError)
+			return
+		}
+		if err_password != nil {
+			http.Error(w, "Error hashing the password", http.StatusInternalServerError)
 			return
 		}
 
-		// Hash du mot de passe
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-		if err != nil {
-			log.Printf("Erreur lors du hash du mot de passe: %v", err)
-			http.Error(w, "Erreur lors du hash du mot de passe", http.StatusInternalServerError)
+		// Check if the user already exists
+		if usernameExists {
+			http.Error(w, "Username already taken", http.StatusConflict)
+			return
+		}
+		// Check if the email is already taken
+		if emailExists {
+			http.Error(w, "Email already used", http.StatusConflict)
 			return
 		}
 
 		// Insérer le nouvel utilisateur dans la base de données
-		_, err = db.Exec("INSERT INTO User (UUID, Username, Password, CreatedAt, Role, Email) VALUES (?, ?, ?, ?, ?, ?)", userUUID, username, hashedPassword, createdAt, defaultRole, email)
-		if err != nil {
-			log.Printf("Erreur lors de l'ajout de l'utilisateur à la base de données: %v", err)
+		_, err_db := db.Exec("INSERT INTO User (UUID, Username, Password, CreatedAt, Role, Email) VALUES (?, ?, ?, ?, ?, ?)", userUUID, username, hashedPassword, createdAt, defaultRole, email)
+		if err_db != nil {
+			log.Printf("Erreur lors de l'ajout de l'utilisateur à la base de données: %v", err_db)
 			http.Error(w, "Erreur lors de l'ajout de l'utilisateur à la base de données", http.StatusInternalServerError)
 			return
 		}
