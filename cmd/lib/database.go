@@ -2,31 +2,25 @@ package lib
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
+
+	_ "github.com/mattn/go-sqlite3" // or your database driver
 )
 
 var db *sql.DB
 
-// InitDB initialise la connexion à la base de données
-func InitDB(dataSourceName string) (*sql.DB, error) {
+func Init() {
 	var err error
 	db, err = sql.Open("sqlite3", "./forum.db")
 	if err != nil {
-		return nil, fmt.Errorf("erreur lors de l'ouverture de la base de données : %v", err)
+		log.Fatal(err)
 	}
-
-	// Vérifiez la connexion
-	err = db.Ping()
-	if err != nil {
-		return nil, fmt.Errorf("erreur lors de la connexion à la base de données : %v", err)
-	}
-
-	log.Println("Connexion à la base de données établie avec succès")
-	return db, nil
 }
 
-// GetDB retourne le pointeur vers la connexion à la base de données
-func GetDB() *sql.DB {
-	return db
+func TestDBConnection() {
+	err := db.Ping()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Database connection established successfully!")
 }
