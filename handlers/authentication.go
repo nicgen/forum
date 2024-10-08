@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"time"
+	"web-starter/cmd/lib"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -12,6 +13,7 @@ import (
 
 var db *sql.DB
 
+// ? Function to establish connection with the database
 func Init() {
 	var err error
 	db, err = sql.Open("sqlite3", "./forum.db")
@@ -20,6 +22,7 @@ func Init() {
 	}
 }
 
+// ? Function to check if we successfully connected to database
 func TestDBConnection() {
 	err := db.Ping()
 	if err != nil {
@@ -28,6 +31,7 @@ func TestDBConnection() {
 	log.Println("Database connection established successfully!")
 }
 
+// ? Handler to get form values, store them into database after checking them
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		// Afficher le formulaire d'inscription
@@ -62,6 +66,18 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 		err_user := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE username=?)", username).Scan(&usernameExists)
 		err_email := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE email=?)", email).Scan(&emailExists)
+		is_valid_username := lib.IsValidUsername(username)
+		is_valid_email := lib.IsValidEmail(email)
+
+		//Checking if the email and username are valid
+		if !is_valid_username {
+			http.Error(w, "Username not valid", http.StatusInternalServerError)
+			return
+		}
+		if !is_valid_email {
+			http.Error(w, "Email not valid", http.StatusInternalServerError)
+			return
+		}
 
 		// Hash password
 		hashedPassword, err_password := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
