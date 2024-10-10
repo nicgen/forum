@@ -1,13 +1,206 @@
+// package lib
+
+// import (
+// 	"database/sql"
+// 	"fmt"
+// 	"log"
+
+// 	_ "github.com/mattn/go-sqlite3"
+// )
+
+// var db *sql.DB
+
+// func Init() {
+// 	var err error
+// 	db, err = sql.Open("sqlite3", "./forum.db")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// }
+
+// func TestDBConnection() {
+// 	err := db.Ping()
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	log.Println("Database connection established successfully!")
+// }
+
+// func CreateTables() {
+// 	tables := []string{
+
+// 		`CREATE TABLE IF NOT EXISTS User(
+//   ID INTEGER PRIMARY KEY AUTOINCREMENT,
+//   UUID VARCHAR(255) NOT NULL UNIQUE,
+//   Email VARCHAR(50) NOT NULL UNIQUE,
+//   Username VARCHAR(25) NOT NULL UNIQUE,
+//   Password VARCHAR(100),
+//   IsSuperUser    BOOL,
+//   IsModerator BOOL,
+//   IsDeleted BOOL,
+//   Role VARCHAR(20) NOT NULL,
+//   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+// );`,
+
+// 		`CREATE TABLE IF NOT EXISTS Admin (
+//   ID INTEGER PRIMARY KEY AUTOINCREMENT,
+//   User_ID INTEGER NOT NULL,
+//   Mod_ID INTEGER NOT NULL,
+//   FOREIGN KEY (User_ID) REFERENCES User(ID),
+//   FOREIGN KEY (Mod_ID) REFERENCES Moderateur(ID)
+// );`,
+
+// 		`Create TABLE IF NOT EXISTS Moderateur (
+//   ID INTEGER PRIMARY KEY AUTOINCREMENT,
+//   User_ID INT NOT NULL,
+//   IsAdmin BOOL,
+//   ACCESS_GIVEN DATETIME DEFAULT CURRENT_TIMESTAMP,
+//   ACCESS_REVOKED DATETIME DEFAULT CURRENT_TIMESTAMP,
+//   FOREIGN KEY (User_ID) REFERENCES User(ID)
+// );`,
+
+// 		`CREATE TABLE IF NOT EXISTS Categories (
+//   ID INTEGER PRIMARY KEY AUTOINCREMENT,
+//   Name VARCHAR(50)
+// );`,
+
+// 		`CREATE TABLE IF NOT EXISTS Posts (
+//   ID INTEGER PRIMARY KEY AUTOINCREMENT,
+//   User_ID INTEGER NOT NULL,
+//   Title TEXT NOT NULL,
+//   Category_ID INTEGER NOT NULL,
+//   Texte TEXT,
+//   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+//   UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+//   FOREIGN KEY (User_ID) REFERENCES User(ID),
+//   FOREIGN KEY (Category_ID) REFERENCES Categories(ID)
+// );`,
+
+// 		`CREATE TABLE IF NOT EXISTS Post_Categories (
+//   ID INTEGER PRIMARY KEY AUTOINCREMENT,
+//   Post_ID INTEGER NOT NULL,
+//   Categories_ID INTEGER NOT NULL,
+//   FOREIGN KEY(Post_ID) REFERENCES Posts(ID),
+//   FOREIGN KEY(Categories_ID) REFERENCES Categories(ID)
+// );`,
+
+// 		`CREATE TABLE IF NOT EXISTS Comments (
+//   ID INTEGER PRIMARY KEY AUTOINCREMENT,
+//   User_ID INTEGER NOT NULL,
+//   Post_ID INTEGER NOT NULL,
+//   Texte TEXT NOT NULL,
+//   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+//   UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+//   FOREIGN KEY (Post_ID) REFERENCES Posts(ID) ON DELETE CASCADE,
+//   FOREIGN KEY (User_ID) REFERENCES User(ID)
+// );`,
+
+// 		`CREATE TABLE IF NOT EXISTS Report (
+//   ID INTEGER PRIMARY KEY AUTOINCREMENT ,
+//   Reported_ID INTEGER NOT NULL,
+//   User_ID INTEGER NOT NULL,
+//   Reported_Reason INTEGER NOT NULL,
+//   Reported_Texte TEXT,
+//   FOREIGN KEY (User_ID) REFERENCES User(ID)
+// );`,
+
+// 		`CREATE TABLE IF NOT EXISTS RequestMod (
+//   ID INTEGER PRIMARY KEY AUTOINCREMENT,
+//   User_ID INTEGER NOT NULL,
+//   Reason TEXT NOT NULL,
+//   FOREIGN KEY (User_ID) REFERENCES User(ID)
+// );`,
+
+// 		`CREATE TABLE IF NOT EXISTS Reaction (
+//   ID INTEGER PRIMARY KEY AUTOINCREMENT,
+//   Post_ID INTEGER,
+//   Comment_ID INTEGER,
+//   User_ID INTEGER,
+//   IsLike BOOL,
+//   FOREIGN KEY (Post_ID) REFERENCES Posts(ID) ON DELETE CASCADE,
+//   FOREIGN KEY (Comment_ID) REFERENCES Comments(ID) ON DELETE CASCADE,
+//   FOREIGN KEY (User_ID) REFERENCES User(ID)
+//   CHECK ((Post_ID is NULL AND Comment_ID IS NOT NULL)OR(Post_ID IS NOT NULL AND Comment_ID IS NULL))
+// );`,
+
+// 		`CREATE TABLE IF NOT EXISTS Notification (
+//   ID INTEGER PRIMARY KEY AUTOINCREMENT,
+//   User_ID INTEGER NOT NULL,
+//   Reaction_ID INTEGER,
+//   Post_ID INTEGER,
+//   Comment_ID INTEGER,
+//   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+//   IsRead Bool,
+//   FOREIGN KEY(Comment_ID) REFERENCES Comments(ID)
+//   FOREIGN KEY(User_ID) REFERENCES User(ID),
+//   FOREIGN KEY(Reaction_ID) REFERENCES Reaction(ID)
+//   FOREIGN KEY(Post_ID) REFERENCES Posts(ID)
+// );`,
+
+// 		`CREATE TABLE IF NOT EXISTS Image (
+//   ID INTEGER PRIMARY KEY AUTOINCREMENT,
+//   FilePath TEXT,
+//   Post_ID INTEGER,
+//   FOREIGN KEY (Post_ID) REFERENCES Posts(ID) ON DELETE CASCADE
+
+//     );`,
+// 	}
+// 	for _, table := range tables {
+// 		_, err := db.Exec(table)
+// 		if err != nil {
+// 			log.Fatal(err)
+// 		}
+// 	}
+// 	fmt.Println("Tables créées avec succès.")
+// }
+
 package lib
 
 import (
 	"database/sql"
+	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
+	"strings"
 
-	_ "github.com/mattn/go-sqlite3" // or your database driver
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var db *sql.DB
+var table []string
+
+func CompileSQL(table []string) {
+
+	// Open the file
+	file, err := os.Open("./Forum.sql")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer file.Close()
+
+	// Read the file contents
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// Convert the data to a string
+	sqlQueries := string(data)
+
+	// Split the string into individual queries using a separator (e.g., ";")
+	queries := strings.Split(sqlQueries, "; ")
+
+	// Iterate over the queries and add them to the table
+	for _, query := range queries {
+		query = strings.TrimSpace(query) // Remove leading and trailing whitespaces
+		if query != "" {                 // Ignore empty queries
+			table = append(table, query)
+		}
+	}
+}
 
 func Init() {
 	var err error
@@ -23,4 +216,15 @@ func TestDBConnection() {
 		log.Fatal(err)
 	}
 	log.Println("Database connection established successfully!")
+}
+
+func CreateTables() {
+	CompileSQL(table)
+	for _, elem := range table {
+		_, err := db.Exec(elem)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	fmt.Println("Tables créées avec succès.")
 }

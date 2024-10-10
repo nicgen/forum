@@ -1,6 +1,7 @@
 package main
 
 import (
+	"web-starter/cmd/lib"
 	"web-starter/handlers"
 
 	// "handlers"
@@ -10,8 +11,9 @@ import (
 )
 
 func main() {
-	handlers.Init()
-	handlers.TestDBConnection()
+	lib.Init()
+	lib.CreateTables()
+	lib.TestDBConnection()
 	mux := setupMux()
 
 	server := setupServer(mux)
@@ -41,7 +43,7 @@ func setupMux() *http.ServeMux {
 
 func setupServer(handler http.Handler) *http.Server {
 	return &http.Server{
-		Addr:              "localhost:8081",
+		Addr:              "localhost:8080",
 		Handler:           handlers.WithErrorHandling(handler),
 		ReadHeaderTimeout: 10 * time.Second,
 		WriteTimeout:      10 * time.Second,
