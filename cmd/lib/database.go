@@ -38,7 +38,6 @@ func CreateTables() {
   IsSuperUser    BOOL, 
   IsModerator BOOL, 
   IsDeleted BOOL, 
-  Role VARCHAR(20) NOT NULL,
   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );`,
 
