@@ -26,6 +26,10 @@ func TestDBConnection() {
 	log.Println("Database connection established successfully!")
 }
 
+func GetDB() *sql.DB {
+	return db
+}
+
 func CreateTables() {
 	tables := []string{
 
@@ -38,7 +42,6 @@ func CreateTables() {
   IsSuperUser    BOOL, 
   IsModerator BOOL, 
   IsDeleted BOOL, 
-  Role VARCHAR(20) NOT NULL,
   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );`,
 
@@ -46,7 +49,9 @@ func CreateTables() {
   ID INTEGER PRIMARY KEY AUTOINCREMENT,
   User_ID INTEGER NOT NULL,
   Mod_ID INTEGER NOT NULL,
+  RequestMod_ID INTEGER NOT NULL,
   FOREIGN KEY (User_ID) REFERENCES User(ID),
+  FOREIGN KEY (RequestMod_ID) REFERENCES RequestMod(ID),
   FOREIGN KEY (Mod_ID) REFERENCES Moderateur(ID)
 );`,
 
@@ -131,9 +136,9 @@ func CreateTables() {
   Comment_ID INTEGER,
   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   IsRead Bool,
-  FOREIGN KEY(Comment_ID) REFERENCES Comments(ID)
+  FOREIGN KEY(Comment_ID) REFERENCES Comments(ID),
   FOREIGN KEY(User_ID) REFERENCES User(ID),
-  FOREIGN KEY(Reaction_ID) REFERENCES Reaction(ID)
+  FOREIGN KEY(Reaction_ID) REFERENCES Reaction(ID),
   FOREIGN KEY(Post_ID) REFERENCES Posts(ID)
 );`,
 
