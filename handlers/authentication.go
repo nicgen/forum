@@ -1,38 +1,18 @@
 package handlers
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
-	"time"
 	"web-starter/cmd/lib"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var db *sql.DB
-
-// ? Function to establish connection with the database
-func Init() {
-	var err error
-	db, err = sql.Open("sqlite3", "./forum.db")
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-// ? Function to check if we successfully connected to database
-func TestDBConnection() {
-	err := db.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("Database connection established successfully!")
-}
-
 // ? Handler to get form values, store them into database after checking them
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	db := lib.GetDB()
+
 	if r.Method == "GET" {
 		// Afficher le formulaire d'inscription
 		http.ServeFile(w, r, "./templates/index.html")
@@ -55,12 +35,6 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		// Generate UUID
 		userUUID := uuid.New().String()
 
-		// Get current time
-		createdAt := time.Now()
-
-		// Set default role
-		defaultRole := "user"
-
 		var usernameExists bool
 		var emailExists bool
 
@@ -71,11 +45,11 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 		//Checking if the email and username are valid
 		if !is_valid_username {
-			http.Error(w, "Username not valid", http.StatusInternalServerError)
+			http.Error(w, "Username not valid", http.StatusBadRequest)
 			return
 		}
 		if !is_valid_email {
-			http.Error(w, "Email not valid", http.StatusInternalServerError)
+			http.Error(w, "Email not valid", http.StatusBadRequest)
 			return
 		}
 
@@ -108,7 +82,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Insérer le nouvel utilisateur dans la base de données
-		_, err_db := db.Exec("INSERT INTO User (UUID, Username, Password, CreatedAt, Role, Email) VALUES (?, ?, ?, ?, ?, ?)", userUUID, username, hashedPassword, createdAt, defaultRole, email)
+		_, err_db := db.Exec("INSERT INTO User (UUID, Username, Password, Email) VALUES (?, ?, ?, ?)", userUUID, username, hashedPassword, email)
 		if err_db != nil {
 			log.Printf("Erreur lors de l'ajout de l'utilisateur à la base de données: %v", err_db)
 			http.Error(w, "Erreur lors de l'ajout de l'utilisateur à la base de données", http.StatusInternalServerError)

@@ -26,6 +26,10 @@ func TestDBConnection() {
 	log.Println("Database connection established successfully!")
 }
 
+func GetDB() *sql.DB {
+	return db
+}
+
 func CreateTables() {
 	tables := []string{
 
@@ -132,9 +136,9 @@ func CreateTables() {
   Comment_ID INTEGER,
   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   IsRead Bool,
-  FOREIGN KEY(Comment_ID) REFERENCES Comments(ID)
+  FOREIGN KEY(Comment_ID) REFERENCES Comments(ID),
   FOREIGN KEY(User_ID) REFERENCES User(ID),
-  FOREIGN KEY(Reaction_ID) REFERENCES Reaction(ID)
+  FOREIGN KEY(Reaction_ID) REFERENCES Reaction(ID),
   FOREIGN KEY(Post_ID) REFERENCES Posts(ID)
 );`,
 
