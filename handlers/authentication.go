@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"web-starter/cmd/lib"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -32,7 +32,11 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		email := r.FormValue("EmailForm")
 
 		// Generate UUID
-		userUUID := uuid.New().String()
+		userUUID, errUUID := uuid.NewV4()
+		if errUUID != nil {
+			http.Error(w, "Error generating user UUID", http.StatusInternalServerError)
+			return
+		}
 
 		var usernameExists bool
 		var emailExists bool
@@ -42,7 +46,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		is_valid_password := lib.IsValidPassword(password)
 		is_valid_email := lib.IsValidEmail(email)
 
-		//Checking if the email and username are valid
+		//Checking if the email and password are valid
 		if !is_valid_password {
 			http.Error(w, "Password not valid", http.StatusBadRequest)
 			return
