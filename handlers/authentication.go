@@ -14,7 +14,6 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 
 	if r.Method == "GET" {
-		// Afficher le formulaire d'inscription
 		http.ServeFile(w, r, "./templates/index.html")
 		return
 	}
@@ -40,12 +39,12 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 		err_user := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE username=?)", username).Scan(&usernameExists)
 		err_email := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE email=?)", email).Scan(&emailExists)
-		is_valid_username := lib.IsValidUsername(username)
+		is_valid_password := lib.IsValidPassword(password)
 		is_valid_email := lib.IsValidEmail(email)
 
 		//Checking if the email and username are valid
-		if !is_valid_username {
-			http.Error(w, "Username not valid", http.StatusBadRequest)
+		if !is_valid_password {
+			http.Error(w, "Password not valid", http.StatusBadRequest)
 			return
 		}
 		if !is_valid_email {

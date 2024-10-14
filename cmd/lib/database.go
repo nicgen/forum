@@ -138,7 +138,7 @@ func CreateTables() {
   IsRead Bool,
   FOREIGN KEY(Comment_ID) REFERENCES Comments(ID),
   FOREIGN KEY(User_ID) REFERENCES User(ID),
-  FOREIGN KEY(Reaction_ID) REFERENCES Reaction(ID),
+  FOREIGN KEY(Reaction_ID) REFERENCES Reaction(ID)
   FOREIGN KEY(Post_ID) REFERENCES Posts(ID)
 );`,
 
@@ -157,4 +157,19 @@ func CreateTables() {
 		}
 	}
 	fmt.Println("Tables créées avec succès.")
+
+	InsertCategories()
+}
+
+func InsertCategories() {
+	categories := []string{"Test 1", "Test 2", "Test 3"}
+
+	for _, category := range categories {
+		_, err := db.Exec(`INSERT OR IGNORE INTO Categories (Name) VALUES (?)`, category)
+		if err != nil {
+			log.Fatalf("Error inserting category %s: %v", category, err)
+		} else {
+			fmt.Printf("Catégorie '%s' insérée avec succès ou déjà existante.\n", category)
+		}
+	}
 }
