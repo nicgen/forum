@@ -1,0 +1,102 @@
+       /* Basic styles for the page */
+ body {
+     font-family: Arial, sans-serif;
+     background-color: #f4f4f4;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     height: 100vh;
+     margin: 0;
+}
+
+.login-container {
+    background: white;
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 300px;
+}
+
+    /* Hide the checkbox */
+    #registerToggle {
+        display: none; 
+    }
+
+    /* Styles for the modal */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: hidden; /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    }
+
+    /* Show modal when checkbox is checked */
+    #registerToggle:checked + .modal {
+        display: block; /* Show modal */
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; /* 15% from the top and centered */
+        padding: 30px;
+        border: 1px solid #888;
+        width: 300px; /* Could be more or less, depending on screen size */
+        position: relative;
+        border-radius: 5px;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+    }
+
+    /* Input and button styles */
+    input[type="text"],
+    input[type="password"]
+     {
+        width: 100%;
+        padding: 10px;
+        margin: 15px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    button {
+        padding: 10px;
+        margin: 50px 0;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .forgot-password,
+    .register-link {
+        margin-top: 15px;
+    }
+
+    .open-modal {
+        color: #007BFF;
+        cursor: pointer;
+    }
+    h2{
+        font-size: 35px;
+        text-align: center;
+    }
