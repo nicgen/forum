@@ -66,7 +66,7 @@ func CreateTables() {
 
 		`CREATE TABLE IF NOT EXISTS Categories (
   ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  Name VARCHAR(50)
+  Name VARCHAR(50) UNIQUE
 );`,
 
 		`CREATE TABLE IF NOT EXISTS Posts (
@@ -165,7 +165,7 @@ func InsertCategories() {
 	categories := []string{"Test 1", "Test 2", "Test 3"}
 
 	for _, category := range categories {
-		_, err := db.Exec(`INSERT OR IGNORE INTO Categories (Name) VALUES (?)`, category)
+		_, err := db.Exec(`INSERT OR IGNORE INTO Categories (Name) VALUES (?)`, category) //créer les catégories ou ignore si elles existent déjà
 		if err != nil {
 			log.Fatalf("Error inserting category %s: %v", category, err)
 		} else {
