@@ -41,5 +41,8 @@ static/export/*.*
 # copies
 *.BAK
 
+# no DB
+forum.db
+
 # test files (not handled yet)
 *_test.go
