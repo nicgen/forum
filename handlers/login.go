@@ -6,7 +6,7 @@ import (
 	"time"
 	"web-starter/cmd/lib"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -53,7 +53,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Successful login, create a session token
-		sessionToken := uuid.New().String()
+		sessionUUID, err := uuid.NewV4()
+		if err != nil {
+			http.Error(w, "Error generating session token", http.StatusInternalServerError)
+			return
+		}
+
+		sessionToken := sessionUUID.String()
+
 		http.SetCookie(w, &http.Cookie{
 			Name:     "session_token",
 			Value:    sessionToken,
