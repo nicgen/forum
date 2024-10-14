@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/css/login_css/login.css" rel="stylesheet" />
+    <title>Login Page</title>
+</head>
+<body>
+
+    <div class="login-container">
+        <h2>Login</h2>
+        <form action="login.html"> <!-- Redirects to login.html when submitted -->
+            <input type="text" placeholder="Username" required>
+            <input type="password" placeholder="Password" required>
+            <div>
+                <input type="checkbox" id="RememberMe" name="RememberMe" checked />
+                <label for="RememberMe">Remember rme</label>
+              </div>
+            <button type="submit">Login</button>
+        </form>
+       <!-- <div class="forgot-password">
+            <p><a href="forgot-password.html">Forgot Password?</a></p>
+        </div> -->
+        <div class="register-link">
+            <p>Don't have an account? <label class="open-modal" for="registerToggle">Register</label></p> <!-- Label to open the modal -->
+        </div>
+    </div>
+
+    <!-- Hidden checkbox for modal control -->
+    <input type="checkbox" id="registerToggle" />
+
+    <!-- Modal for registration -->
+    <div class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('registerToggle').checked = false;">&times;</span>
+            <h2>Register</h2>
+            <form action="#">
+                <input type="text" placeholder="Username" required>
+                <input type="text" placeholder="Email" required>
+                <input type="password" placeholder="Password" required>
+                <input type="password" placeholder="Confirm Password" required>
+                <button type="submit">Register</button>
+            </form>
+            <div class="login-link">
+                <p>Already have an account? <a href="login.html">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

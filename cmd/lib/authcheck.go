@@ -6,20 +6,20 @@ import (
 )
 
 // ? Function to check is the username is in the correct format
-func IsValidPassword(password string) bool {
+func IsValidUsername(username string) bool {
 	// Check if the username is at least 8 characters long
-	if len(password) < 8 {
+	if len(username) < 8 {
 		return false
 	}
 
 	// Regular expression pattern for special characters
 	specialChars := regexp.MustCompile(`[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]`)
 
-	hasSpecialChar := specialChars.MatchString(password)
+	hasSpecialChar := specialChars.MatchString(username)
 	hasNumber := false
 
 	// Check for at least one number
-	for _, char := range password {
+	for _, char := range username {
 		if unicode.IsDigit(char) {
 			hasNumber = true
 			break

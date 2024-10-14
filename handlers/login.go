@@ -3,73 +3,48 @@ package handlers
 import (
 	"database/sql"
 	"net/http"
-	"time"
-	"web-starter/cmd/lib"
 
-	"github.com/gofrs/uuid/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	db := lib.GetDB()
-
 	if r.Method == "GET" {
-		http.ServeFile(w, r, "./templates/login.html")
+		// Display the login form
+		http.ServeFile(w, r, "./templates/login.html") // Path to your login form
 		return
 	}
 
 	if r.Method == "POST" {
-		email := r.FormValue("EmailForm")
+		// Retrieve form data
+		username := r.FormValue("UsernameForm")
 		password := r.FormValue("PasswordForm")
 
-		if email == "" || password == "" {
-			http.Error(w, "Email and password fields are mandatory", http.StatusBadRequest)
+		// Validate input
+		if username == "" || password == "" {
+			http.Error(w, "Username and password fields are mandatory", http.StatusBadRequest)
 			return
 		}
 
-		// Prepared request to avoid SQL injection
-		stmt, err := db.Prepare("SELECT password FROM users WHERE email = ?")
-		if err != nil {
-			http.Error(w, "Error preparing query", http.StatusInternalServerError)
-			return
-		}
-		defer stmt.Close()
-
+		// Retrieve the hashed password from the database
 		var hashedPassword string
-		err = stmt.QueryRow(email).Scan(&hashedPassword) //récupère la ligne plus haut pour emailet le résultat de password
+		err := db.QueryRow("SELECT password FROM users WHERE username = ?", username).Scan(&hashedPassword)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+				http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 			} else {
 				http.Error(w, "Error retrieving user data", http.StatusInternalServerError)
 			}
 			return
 		}
 
-		// Verify password
+		// Check if the provided password matches the stored hashed password
 		if !CheckPassword(hashedPassword, password) {
-			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+			http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 			return
 		}
 
-		// Successful login, create a session token
-		sessionUUID, err := uuid.NewV4()
-		if err != nil {
-			http.Error(w, "Error generating session token", http.StatusInternalServerError)
-			return
-		}
-
-		sessionToken := sessionUUID.String()
-
-		http.SetCookie(w, &http.Cookie{
-			Name:     "session_token",
-			Value:    sessionToken,
-			Expires:  time.Now().Add(24 * time.Hour), //durée session
-			HttpOnly: true,                           //Bloquage JS accès cookie (à voir)
-			Secure:   true,                           //Activer pour HTTPS uniquement
-		})
-
-		http.Redirect(w, r, "/index", http.StatusSeeOther)
+		// Successful login
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	} else {
 		http.Error(w, "Method not supported", http.StatusMethodNotAllowed)
 	}

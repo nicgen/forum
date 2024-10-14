@@ -26,10 +26,6 @@ func TestDBConnection() {
 	log.Println("Database connection established successfully!")
 }
 
-func GetDB() *sql.DB {
-	return db
-}
-
 func CreateTables() {
 	tables := []string{
 
@@ -42,6 +38,7 @@ func CreateTables() {
   IsSuperUser    BOOL, 
   IsModerator BOOL, 
   IsDeleted BOOL, 
+  Role VARCHAR(20) NOT NULL,
   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );`,
 
@@ -49,9 +46,7 @@ func CreateTables() {
   ID INTEGER PRIMARY KEY AUTOINCREMENT,
   User_ID INTEGER NOT NULL,
   Mod_ID INTEGER NOT NULL,
-  RequestMod_ID INTEGER NOT NULL,
   FOREIGN KEY (User_ID) REFERENCES User(ID),
-  FOREIGN KEY (RequestMod_ID) REFERENCES RequestMod(ID),
   FOREIGN KEY (Mod_ID) REFERENCES Moderateur(ID)
 );`,
 
@@ -66,7 +61,7 @@ func CreateTables() {
 
 		`CREATE TABLE IF NOT EXISTS Categories (
   ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  Name VARCHAR(50) UNIQUE
+  Name VARCHAR(50)
 );`,
 
 		`CREATE TABLE IF NOT EXISTS Posts (
@@ -136,7 +131,7 @@ func CreateTables() {
   Comment_ID INTEGER,
   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   IsRead Bool,
-  FOREIGN KEY(Comment_ID) REFERENCES Comments(ID),
+  FOREIGN KEY(Comment_ID) REFERENCES Comments(ID)
   FOREIGN KEY(User_ID) REFERENCES User(ID),
   FOREIGN KEY(Reaction_ID) REFERENCES Reaction(ID)
   FOREIGN KEY(Post_ID) REFERENCES Posts(ID)
@@ -157,19 +152,4 @@ func CreateTables() {
 		}
 	}
 	fmt.Println("Tables créées avec succès.")
-
-	InsertCategories()
-}
-
-func InsertCategories() {
-	categories := []string{"Test 1", "Test 2", "Test 3"}
-
-	for _, category := range categories {
-		_, err := db.Exec(`INSERT OR IGNORE INTO Categories (Name) VALUES (?)`, category) //créer les catégories ou ignore si elles existent déjà
-		if err != nil {
-			log.Fatalf("Error inserting category %s: %v", category, err)
-		} else {
-			fmt.Printf("Catégorie '%s' insérée avec succès ou déjà existante.\n", category)
-		}
-	}
 }
