@@ -32,9 +32,24 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		// Getting form values
 		username := r.FormValue("UsernameForm")
 		password := r.FormValue("PasswordForm")
+		confirmPassword := r.FormValue("ConfirmPasswordForm")
 		email := r.FormValue("EmailForm")
 
 		log.Printf("Received registration request: Username=%s, Email=%s", username, email)
+
+		if !lib.IsValidPassword(password) {
+			http.Error(w, "Invalid Password Format, Your password must be at least 8 characters long and include at least one number and one special character.", http.StatusBadRequest)
+			return
+		}
+		if !lib.IsValidEmail(email) {
+			http.Error(w, "Invalid Email Format, ", http.StatusBadRequest)
+			return
+		}
+		// Check if passwords match
+		if password != confirmPassword {
+			http.Error(w, "Passwords do not match, Example of a valid email address: example@domain.com", http.StatusBadRequest)
+			return
+		}
 
 		// Generate UUID
 		userUUID, errUUID := uuid.NewV4()
