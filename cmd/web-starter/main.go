@@ -33,7 +33,7 @@ func setupMux() *http.ServeMux {
 
 	// Set up routes
 	mux.HandleFunc("/", handlers.IndexHandler)
-	mux.HandleFunc("/auth", handlers.RegisterHandler)
+	mux.HandleFunc("/register", handlers.RegisterHandler)
 	mux.HandleFunc("/about", handlers.AboutHandler)
 	mux.HandleFunc("/error", handlers.ForceDirectError) // !for testing purpose only (not for production)
 	mux.HandleFunc("/500", handlers.Force500Handler)    // !for testing purpose only (not for production)
