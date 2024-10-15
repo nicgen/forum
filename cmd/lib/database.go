@@ -149,6 +149,11 @@ func CreateTables() {
   FOREIGN KEY (Post_ID) REFERENCES Posts(ID) ON DELETE CASCADE
 
     );`,
+
+		`CREATE TABLE IF NOT EXISTS oauth_states (
+      state TEXT PRIMARY KEY,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );`,
 	}
 	for _, table := range tables {
 		_, err := db.Exec(table)
