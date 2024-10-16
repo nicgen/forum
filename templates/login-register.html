@@ -26,11 +26,11 @@
     <div class="modal-content">
         <span class="close" onclick="document.getElementById('registerToggle').checked = false;">&times;</span>
         <h2>Register</h2>
-        <form action="#">
-            <input type="text" placeholder="Username" required>
-            <input type="text" placeholder="Email" required>
-            <input type="password" placeholder="Password" required>
-            <input type="password" placeholder="Confirm Password" required>
+        <form action="/register" method="POST">
+            <input type="text" name="UsernameForm" placeholder="Username" required>
+            <input type="text" name="EmailForm" placeholder="Email" required>
+            <input type="password" name="PasswordForm" placeholder="Password" required>
+            <input type="password" name="ConfirmPasswordForm" placeholder="Confirm Password" required>
             <button type="submit">Register</button>
         </form>
         <div class="login-link">

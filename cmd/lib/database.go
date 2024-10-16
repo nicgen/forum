@@ -26,6 +26,10 @@ func TestDBConnection() {
 	log.Println("Database connection established successfully!")
 }
 
+func GetDB() *sql.DB {
+	return db
+}
+
 func CreateTables() {
 	tables := []string{
 
@@ -35,10 +39,9 @@ func CreateTables() {
   Email VARCHAR(50) NOT NULL UNIQUE,
   Username VARCHAR(25) NOT NULL UNIQUE,
   Password VARCHAR(100),
-  IsSuperUser    BOOL, 
-  IsModerator BOOL, 
-  IsDeleted BOOL, 
-  Role VARCHAR(20) NOT NULL,
+  IsSuperUser    BOOL DEFAULT FALSE, 
+  IsModerator BOOL DEFAULT FALSE, 
+  IsDeleted BOOL DEFAULT FALSE, 
   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );`,
 
@@ -46,14 +49,16 @@ func CreateTables() {
   ID INTEGER PRIMARY KEY AUTOINCREMENT,
   User_ID INTEGER NOT NULL,
   Mod_ID INTEGER NOT NULL,
+  RequestMod_ID INTEGER NOT NULL,
   FOREIGN KEY (User_ID) REFERENCES User(ID),
+  FOREIGN KEY (RequestMod_ID) REFERENCES RequestMod(ID),
   FOREIGN KEY (Mod_ID) REFERENCES Moderateur(ID)
 );`,
 
 		`Create TABLE IF NOT EXISTS Moderateur (
   ID INTEGER PRIMARY KEY AUTOINCREMENT,
   User_ID INT NOT NULL,
-  IsAdmin BOOL,
+  IsAdmin BOOL DEFAULT FALSE,
   ACCESS_GIVEN DATETIME DEFAULT CURRENT_TIMESTAMP,
   ACCESS_REVOKED DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (User_ID) REFERENCES User(ID)
@@ -61,7 +66,7 @@ func CreateTables() {
 
 		`CREATE TABLE IF NOT EXISTS Categories (
   ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  Name VARCHAR(50)
+  Name VARCHAR(50) UNIQUE
 );`,
 
 		`CREATE TABLE IF NOT EXISTS Posts (
@@ -131,7 +136,7 @@ func CreateTables() {
   Comment_ID INTEGER,
   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   IsRead Bool,
-  FOREIGN KEY(Comment_ID) REFERENCES Comments(ID)
+  FOREIGN KEY(Comment_ID) REFERENCES Comments(ID),
   FOREIGN KEY(User_ID) REFERENCES User(ID),
   FOREIGN KEY(Reaction_ID) REFERENCES Reaction(ID)
   FOREIGN KEY(Post_ID) REFERENCES Posts(ID)
@@ -144,6 +149,11 @@ func CreateTables() {
   FOREIGN KEY (Post_ID) REFERENCES Posts(ID) ON DELETE CASCADE
 
     );`,
+
+		`CREATE TABLE IF NOT EXISTS oauth_states (
+      state TEXT PRIMARY KEY,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );`,
 	}
 	for _, table := range tables {
 		_, err := db.Exec(table)
@@ -152,4 +162,20 @@ func CreateTables() {
 		}
 	}
 	fmt.Println("Tables créées avec succès.")
+
+	InsertCategories() // a supprimer
+}
+
+// A modifier : admin doit les créer
+func InsertCategories() {
+	categories := []string{"Test 1", "Test 2", "Test 3"}
+
+	for _, category := range categories {
+		_, err := db.Exec(`INSERT OR IGNORE INTO Categories (Name) VALUES (?)`, category) //créer les catégories ou ignore si elles existent déjà
+		if err != nil {
+			log.Fatalf("Error inserting category %s: %v", category, err)
+		} else {
+			fmt.Printf("Catégorie '%s' insérée avec succès ou déjà existante.\n", category)
+		}
+	}
 }
