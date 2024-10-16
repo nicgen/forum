@@ -42,18 +42,18 @@
                 <!-- Left side: registration form -->
                 <div class="form-container">
                     <h2 id="register-heading">Register</h2>
-                    <form action="#" aria-label="Register form">
+                    <form action="/register" aria-label="Register form" method="POST">
                         <label for="register-username">Username</label>
-                        <input type="text" id="register-username" placeholder="Username" required aria-required="true">
+                        <input type="text" name="UsernameForm" id="register-username" placeholder="Username" required aria-required="true">
     
                         <label for="register-email">Email</label>
-                        <input type="text" id="register-email" placeholder="Email" required aria-required="true">
+                        <input type="text" name="EmailForm" id="register-email" placeholder="Email" required aria-required="true">
     
                         <label for="register-password">Password</label>
-                        <input type="password" id="register-password" placeholder="Password" required aria-required="true">
+                        <input type="password" name="PasswordForm" id="register-password" placeholder="Password" required aria-required="true">
     
                         <label for="confirm-password">Confirm Password</label>
-                        <input type="password" id="confirm-password" placeholder="Confirm Password" required aria-required="true">
+                        <input type="password" name="ConfirmPasswordForm" id="confirm-password" placeholder="Confirm Password" required aria-required="true">
     
                         <div class="form-buttons">
                             <button type="submit" aria-label="Register button">Register</button>
