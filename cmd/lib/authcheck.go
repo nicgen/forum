@@ -8,7 +8,7 @@ import (
 // ? Function to check is the username is in the correct format
 func IsValidPassword(password string) bool {
 	// Check if the username is at least 8 characters long
-	if len(password) < 8 {
+	if len(password) <= 8 {
 		return false
 	}
 

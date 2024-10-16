@@ -42,12 +42,12 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if !lib.IsValidEmail(email) {
-			http.Error(w, "Invalid Email Format, ", http.StatusBadRequest)
+			http.Error(w, "Invalid Email Format, Example of a valid email address: example@domain.com", http.StatusBadRequest)
 			return
 		}
 		// Check if passwords match
 		if password != confirmPassword {
-			http.Error(w, "Passwords do not match, Example of a valid email address: example@domain.com", http.StatusBadRequest)
+			http.Error(w, "Password doesn't match", http.StatusBadRequest)
 			return
 		}
 

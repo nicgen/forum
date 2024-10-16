@@ -163,9 +163,10 @@ func CreateTables() {
 	}
 	fmt.Println("Tables créées avec succès.")
 
-	InsertCategories()
+	InsertCategories() // a supprimer
 }
 
+// A modifier : admin doit les créer
 func InsertCategories() {
 	categories := []string{"Test 1", "Test 2", "Test 3"}
 
