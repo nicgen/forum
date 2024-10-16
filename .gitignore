@@ -42,7 +42,7 @@ static/export/*.*
 *.BAK
 
 # no DB
-forum.db
+forum.db*
 
 # test files (not handled yet)
 *_test.go
