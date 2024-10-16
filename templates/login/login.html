@@ -7,46 +7,83 @@
     <title>Login Page</title>
 </head>
 <body>
-
-    <div class="login-container">
-        <h2>Login</h2>
-        <form action="login.html"> <!-- Redirects to login.html when submitted -->
-            <input type="text" placeholder="Username" required>
-            <input type="password" placeholder="Password" required>
+    <!-- Login container with role and aria-labelledby -->
+    <div class="login-container" role="form" aria-labelledby="login-heading">
+        <h2 id="login-heading">Login</h2>
+        <form action="login.html" aria-label="Login form"> <!-- Adds aria-label for the form -->
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Username" required aria-required="true">
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Password" required aria-required="true">
+            
             <div>
-                <input type="checkbox" id="RememberMe" name="RememberMe" checked />
-                <label for="RememberMe">Remember rme</label>
-              </div>
-            <button type="submit">Login</button>
+                <input type="checkbox" id="RememberMe" name="RememberMe" checked aria-checked="true" />
+                <label for="RememberMe">Remember me</label>
+            </div>
+            
+            <button type="submit" aria-label="Login button">Login</button>
         </form>
-       <!-- <div class="forgot-password">
-            <p><a href="forgot-password.html">Forgot Password?</a></p>
-        </div> -->
+
+        <!-- Register link -->
         <div class="register-link">
-            <p>Don't have an account? <label class="open-modal" for="registerToggle">Register</label></p> <!-- Label to open the modal -->
+            <p>Don't have an account? 
+                <label class="open-modal" for="registerToggle" role="button" aria-controls="registerModal" aria-expanded="false">Register</label>
+            </p> 
         </div>
     </div>
 
     <!-- Hidden checkbox for modal control -->
-    <input type="checkbox" id="registerToggle" />
-
-    <!-- Modal for registration -->
-    <div class="modal">
+    <input type="checkbox" id="registerToggle" aria-hidden="true" />
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="register-heading" id="registerModal">
         <div class="modal-content">
-            <span class="close" onclick="document.getElementById('registerToggle').checked = false;">&times;</span>
-            <h2>Register</h2>
-            <form action="#">
-                <input type="text" placeholder="Username" required>
-                <input type="text" placeholder="Email" required>
-                <input type="password" placeholder="Password" required>
-                <input type="password" placeholder="Confirm Password" required>
-                <button type="submit">Register</button>
-            </form>
-            <div class="login-link">
-                <p>Already have an account? <a href="login.html">Login</a></p>
+            <div class="modal-body">
+                <!-- Left side: registration form -->
+                <div class="form-container">
+                    <h2 id="register-heading">Register</h2>
+                    <form action="#" aria-label="Register form">
+                        <label for="register-username">Username</label>
+                        <input type="text" id="register-username" placeholder="Username" required aria-required="true">
+    
+                        <label for="register-email">Email</label>
+                        <input type="text" id="register-email" placeholder="Email" required aria-required="true">
+    
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" placeholder="Password" required aria-required="true">
+    
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" placeholder="Confirm Password" required aria-required="true">
+    
+                        <div class="form-buttons">
+                            <button type="submit" aria-label="Register button">Register</button>
+                        </div>
+    
+                        <!-- "Already have an account?" link below the Register button -->
+                        <div class="login-link">
+                            <p>Already have an account? <a href="login.html">Login</a></p>
+                        </div>
+                    </form>
+                </div>
+    
+                <!-- Right side: social login buttons -->
+                <div class="social-buttons" role="complementary" aria-label="Social login options">
+                    <h3>Or register with:</h3>
+                    <button class="Google" aria-label="Register with Google">Google</button>
+                    <button class="Github" aria-label="Register with GitHub">Github</button>
+                    <button class="Discord" aria-label="Register with Discord">Discord</button>
+                </div>
             </div>
+        </div>
+    </div>
+    <!-- Social login section with roles and aria-labels -->
+    <div class="socials" role="complementary" aria-label="Social login options">
+        <div>
+            <h3>Sign in with :</h3>
+            <button class="Google" aria-label="Sign in with Google">Google</button>
+            <button class="Github" aria-label="Sign in with Github">Github</button>
+            <button class="Discord" aria-label="Sign in with Discord">Discord</button>
         </div>
     </div>
 
 </body>
-</html>
+</html> 
