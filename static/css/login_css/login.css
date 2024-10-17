@@ -1,163 +1,149 @@
-       /* Basic styles for the page */
-       body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-   }
-   
-   .login-container {
-       background: white;
-       padding: 35px;
-       border-radius: 10px;
-       box-shadow: 0 0 20px rgba(0,0,0,0.1);
-       text-align: center;
-       width: 300px;
-       border: 2px dotted black;
-   }
-   .login-link{
-       text-align: center;
-   }
-   
-       /* Hide the checkbox */
-       #registerToggle {
-           display: none; 
-       }
-   
-       /* Show modal when checkbox is checked */
-       #registerToggle:checked + .modal {
-           display: block; /* Show modal */
-       }
-       /* Styles for the modal */
-       .modal {
-           display: none; /* Hidden by default */
-           position: fixed; /* Stay in place */
-           z-index: 1000; /* Sit on top of other content */
-           left: 0;
-           top: 0;
-           width: 100%; /* Full width */
-           height: 100%; /* Full height */
-           background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
-       }
-       .modal-content {
-           display: flex;
-           flex-direction: column;
-           background-color: #fefefe;
-           padding: 35px;
-           border: 2px dotted black;
-           width: 500px; /* Adjusted width to fit form and social buttons */
-           position: fixed;
-           top: 50%;
-           left: 50%;
-           transform: translate(-50%, -50%);
-           border-radius: 20px;
-           box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-       }
-       
-       .modal-body {
-           display: flex;
-           justify-content: space-between; /* Separate form and social buttons */
-       }
-       
-       .form-container {
-           flex: 1; /* Take up most space on the left */
-       }
-       .socials{
-           border: 2px dotted black;
-           background: white;
-           padding: 50px;
-           border-radius: 10px;
-           box-shadow: 0 0 20px rgba(0,0,0,0.1);
-           text-align: center;
-           width: 230px;
-       }
-       
-       
-       .social-buttons {
-           display: flex;
-           flex-direction: column;
-           justify-content: flex-start;
-           align-items: flex-start;
-           margin-left: 80px; /* Space between form and social buttons */
-       }
-       
-       .social-buttons button {
-           display: block;
-           margin: 70px 0;
-           padding: 10px 20px;
-           border-radius: 5px;
-           cursor: pointer;
-           transition: transform 0.2s ease, box-shadow 0.2s ease;
-           width: 175px; /* Width of buttons */
-       }
-       button {
-           padding: 10px;
-           margin: 45px 0;
-           background-color: #007BFF;
-           color: white;
-           border: none;
-           border-radius: 5px;
-           cursor: pointer;
-           width: 100%;
-           padding: 10px 20px;
-           border-radius: 5px;
-           cursor: pointer;
-           transition: transform 0.2s ease, box-shadow 0.2s ease;
-       }
-       /* Click effect */
-   button:active {
-       transform: scale(0.95); /* Slightly shrink the button */
-       box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a deeper shadow */
-   }
-   
-       
-       button.Google {
-           background-color: #4285F4;
-           color: white;
-           border: none;
-       }
-       
-       button.Github {
-           background-color: #333;
-           color: white;
-           border: none;
-       }
-       
-       button.Discord {
-           background-color: #7289DA;
-           color: white;
-           border: none;
-       }
-       /* Input and button styles */
-       input[type="text"],
-       input[type="password"]
-        {
-           width: 100%;
-           padding: 10px;
-           margin: 15px 0;
-           border: 1px solid #ccc;
-           border-radius: 5px;
-           box-sizing: border-box;
-       }
-       .forgot-password,
-       .register-link {
-           margin-top: 15px;
-       }
-   
-       .open-modal {
-           color: #007BFF;
-           cursor: pointer;
-       }
-       h2 {
-           font-size: 35px;
-           text-align: center;
-           transform: skew(-15deg, 0deg);
-       }
-       h3{
-           font-size: 19px;
-           text-align: center;
-           transform: skew(-15deg, 0deg);
-       }
+.login-container {
+  background: white;
+  padding: 35px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 300px;
+  border: 2px dotted black;
+}
+.login-link {
+  text-align: center;
+}
+
+/* Hide the checkbox */
+#registerToggle {
+  display: none;
+}
+
+/* Show modal when checkbox is checked */
+#registerToggle:checked + .modal {
+  display: block; /* Show modal */
+}
+/* Styles for the modal */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1000; /* Sit on top of other content */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+}
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  background-color: #fefefe;
+  padding: 35px;
+  border: 2px dotted black;
+  width: 500px; /* Adjusted width to fit form and social buttons */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-body {
+  display: flex;
+  justify-content: space-between; /* Separate form and social buttons */
+}
+
+.form-container {
+  flex: 1; /* Take up most space on the left */
+}
+.socials {
+  border: 2px dotted black;
+  background: white;
+  padding: 50px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 230px;
+}
+
+.social-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-left: 80px; /* Space between form and social buttons */
+}
+
+.social-buttons button {
+  display: block;
+  margin: 70px 0;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: 175px; /* Width of buttons */
+}
+button {
+  padding: 10px;
+  margin: 45px 0;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+/* Click effect */
+button:active {
+  transform: scale(0.95); /* Slightly shrink the button */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a deeper shadow */
+}
+
+button.Google {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+}
+
+button.Github {
+  background-color: #333;
+  color: white;
+  border: none;
+}
+
+button.Discord {
+  background-color: #7289da;
+  color: white;
+  border: none;
+}
+/* Input and button styles */
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin: 15px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+.forgot-password,
+.register-link {
+  margin-top: 15px;
+}
+
+.open-modal {
+  color: #007bff;
+  cursor: pointer;
+}
+h2 {
+  font-size: 35px;
+  text-align: center;
+  transform: skew(-15deg, 0deg);
+}
+h3 {
+  font-size: 19px;
+  text-align: center;
+  transform: skew(-15deg, 0deg);
+}
