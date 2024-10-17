@@ -18,25 +18,35 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
+# Makefile
+# Makefile
+
+# build
+/build
+
 # Go workspace file
 #go.work
-
-# AIR
-# .air.toml
-tmp
-
-# src
-static/fonts/src
-static/export/*.*
-
-# backup
-*_bak
 
 # env var (private)
 .env
 
-# build
-/build
+# no db
+forum.db*
+
+# TXT
+README.md
+LICENSE
+
+# Assets sources
+static/fonts/src
+static/export/*.*
+
+# AIR
+# .air.toml
+tmp/
+
+# backup
+*_bak
 
 # copies
 *.BAK
