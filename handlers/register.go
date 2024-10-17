@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"fmt"
+	"forum/cmd/lib"
 	"log"
 	"net/http"
-	"web-starter/cmd/lib"
 
 	"github.com/gofrs/uuid/v5"
 	"golang.org/x/crypto/bcrypt"

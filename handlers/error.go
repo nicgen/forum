@@ -2,12 +2,12 @@ package handlers
 
 import (
 	"fmt"
+	"forum/cmd/lib"
+	"forum/models"
 	"log"
 	"net"
 	"net/http"
 	"runtime/debug"
-	"web-starter/cmd/lib"
-	"web-starter/models"
 )
 
 // HandleError handles error requests and send an error response with the given status code and message

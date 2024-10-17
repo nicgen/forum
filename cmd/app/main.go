@@ -1,8 +1,8 @@
 package main
 
 import (
-	"web-starter/cmd/lib"
-	"web-starter/handlers"
+	"forum/cmd/lib"
+	"forum/handlers"
 
 	// "handlers"
 	"log"

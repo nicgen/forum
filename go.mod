@@ -1,4 +1,4 @@
-module web-starter
+module forum
 
 go 1.22.4
 

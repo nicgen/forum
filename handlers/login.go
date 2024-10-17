@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"database/sql"
+	"forum/cmd/lib"
 	"net/http"
 	"time"
-	"web-starter/cmd/lib"
 
 	"github.com/gofrs/uuid/v5"
 	"golang.org/x/crypto/bcrypt"
