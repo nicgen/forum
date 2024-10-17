@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"forum/models"
 	"net/http"
-	"web-starter/models"
 )
 
 // IndexHandler handles requests to the root URL
