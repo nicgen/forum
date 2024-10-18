@@ -46,3 +46,6 @@ forum.db*
 
 # test files (not handled yet)
 *_test.go
+
+# no more wsl crap
+Zone.Identifier
