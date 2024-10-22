@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -18,9 +17,12 @@ func init() {
 	ntfy_token = os.Getenv("NTFY_token")
 }
 
-func PostItOnNfty(msg string) {
+func PostItOnNfty(title, msg string) {
 	url := "https://ntfy.sh/" + ntfy_token
-	fmt.Println(url)
-	http.Post(url, "text/plain",
-		strings.NewReader(msg))
+	// fmt.Println(url)
+	req, _ := http.NewRequest("POST", url, strings.NewReader(msg))
+	req.Header.Set("Title", title)
+	// http.Post(url, "text/plain",
+	// 	strings.NewReader(msg))
+	http.DefaultClient.Do(req)
 }

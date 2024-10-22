@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"forum/cmd/lib"
 	"forum/models"
+	"html/template"
 	"log"
 	"net"
 	"net/http"
 	"runtime/debug"
+	"strconv"
 )
 
 // HandleError handles error requests and send an error response with the given status code and message
@@ -17,14 +19,14 @@ func HandleError(w http.ResponseWriter, statusCode int, message string) {
 		Title:  "Error",
 		Header: fmt.Sprintf("Error %d", statusCode),
 		// Content:   message,
-		Content: map[string]interface{}{
-			"Message":   message,
-			"Paragraph": "This is a new paragraph",
+		Content: map[string]template.HTML{
+			"Msg_raw":    template.HTML("<h1>" + message + "</>"),
+			"Msg_styled": template.HTML("<h1 style=\"text=color: blue;\">" + strconv.Itoa(statusCode) + "</h1><p>paragraph with</br>style</>"),
 		},
 		IsError:   true,
 		ErrorCode: statusCode,
 	}
-	renderTemplate(w, "error", data)
+	renderTemplate(w, "layout/error", "page/error", data)
 }
 
 // WithErrorHandling middleware that handles all errors and panics
@@ -60,7 +62,7 @@ func WithErrorHandling(next http.Handler) http.Handler {
 					default:
 						// fmt.Println(">>>>>>>>>>STRING:Internal<<<<<<<<<<")
 						statusCode = http.StatusInternalServerError
-						message = "Internal Server Error"
+						message = "Internal Server Error 💀"
 					}
 				default: // handle other types of panics
 					// fmt.Println(">>>>>>>>>>PANIC<<<<<<<<<<")
@@ -68,9 +70,10 @@ func WithErrorHandling(next http.Handler) http.Handler {
 					message = "Internal Server Error"
 				}
 
-				// Post an alert on NTFY
-				ntfy_msg := "[FORUM server] " + message
-				lib.PostItOnNfty(ntfy_msg)
+				// ? Optional: Post an alert on [NTFY](https://ntfy.sh/)
+				ntfy_title := "[FORUM server]"
+				ntfy_msg := message
+				lib.PostItOnNfty(ntfy_title, ntfy_msg)
 				// render the error page
 				HandleError(w, statusCode, message)
 			}
@@ -92,7 +95,7 @@ func Force500Handler(w http.ResponseWriter, r *http.Request) {
 	OutOfRange() // Panic: runtime error: index out of range
 }
 
-// Oh snap!
+// Oh SNAP!
 func OutOfRange() {
 	t := []int{1, 2, 3}
 	for i := 0; i < 4; i++ {

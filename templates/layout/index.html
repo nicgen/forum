@@ -1,0 +1,33 @@
+{{define "layout/index"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{{if .Data.IsError}}Error {{.Data.ErrorCode}} - {{end}}{{if .Data.Title}}{{.Data.Title}}{{end}}</title>
+    {{template "share/meta" .}}
+</head>
+
+<body>
+    <div>
+        <p>LAYOUT[index]</p>
+    </div>
+    <div class="wrapper">
+        {{template "block/banner" .}}
+        {{template "block/nav" .}}
+        <main role="main">
+            <div class="container">
+                {{if .Data.IsError}}
+                <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
+                {{else}}
+                <h1 role="heading" aria-level="1">{{.Data.Header}}</h1>
+                {{end}}
+                {{.Content}}
+            </div>
+        </main>
+        {{template "block/footer" .}}
+        <script src="/static/js/theme.js"></script>
+    </div>
+</body>
+
+</html>
+{{end}}
