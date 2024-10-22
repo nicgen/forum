@@ -1,0 +1,30 @@
+{{define "block/nav"}}
+<header role="banner">
+
+  <div class="container header">
+
+    <div class="logo">
+      <span>Hello-There</span>
+    </div>
+
+    <nav class="nav" role="navigation">
+      <div id="nav-guest" class="nav nav-guest">
+        <a href="">Sign Up</a>
+        <a href="">Login</a>
+      </div>
+      <div id="nav-user" class="nav nav-user">
+        <div class="notification">
+          <img class="icon icon-notification" src="/static/icon/bell-ringing-2.svg" alt="Notification icon">
+          <div class="notification-number">+9</div>
+        </div>
+        <div class="profil">
+          <span>N</span>
+        </div>
+      </div>
+      <button id="theme-toggle" class="theme-toggle auto" aria-label="Toggle theme"></button>
+    </nav>
+
+  </div>
+
+</header>
+{{end}}
