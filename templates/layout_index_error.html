@@ -1,15 +1,13 @@
-{{define "layout"}}
+{{define "layout_error"}}
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>{{if .Data.IsError}}Error {{.Data.ErrorCode}} - {{end}}{{if .Data.Title}}{{.Data.Title}}{{end}}</title>
     {{template "meta" .}}
-    <title>
-      {{if .Data.IsError}}Error {{.Data.ErrorCode}} - {{end}}{{.Data.Title}}
-    </title>
   </head>
   <body>
     <div class="wrapper">
-      {{template "banner" .}}
+      <!-- {{template "banner" .}} -->
       {{template "nav" .}}
       <main role="main">
         <div class="container">
@@ -17,7 +15,8 @@
           <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
           {{else}}
           <h1 role="heading" aria-level="1">{{.Data.Header}}</h1>
-          {{end}} {{.Content}}
+          {{end}}
+          {{if .Content}}{{.Content}}{{else}}<p>no content</p>{{end}}
         </div>
       </main>
       {{template "footer" .}}
