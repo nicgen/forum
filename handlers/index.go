@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"forum/models"
+	"html/template"
 	"net/http"
 )
 
@@ -22,14 +23,15 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.PageData{
-		Title:  "Home",
+		Title:  "Title (Home)",
 		Header: "Welcome to My Web App",
-		Content: map[string]interface{}{
-			"Message":   "This is the home page.",
-			"Paragraph": "This is a new paragraph",
+		Content: map[string]template.HTML{
+			"Msg_raw":    "<h2>Sub-Title 02.</h1><p>paragraph</>",
+			"Msg_styled": "<h1 style=\"text=color: blue;\">Title 01.</h1><p>paragraph with</br>style</>",
 		},
+
 		IsError: false,
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	renderTemplate(w, "index", data)
+	renderTemplate(w, "layout/index", "page/index", data)
 }

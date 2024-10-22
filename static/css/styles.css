@@ -4,15 +4,23 @@
   /* common */
   --font-family-main: Arial, Helvetica, sans-serif;
   --font-size-default: 16px;
-  --line-height: 1.6;
+  --font-size-h1: 24px;
+  --font-size-h2: 20px;
+  --font-size-h3: 18px;
+  --font-size-small: 14px;
+  --font-size-button: 16px;
+  --line-height: 1.5em;
+  --word-spacing: 0.2em;
+  --letter-spacing-default: 0.03em;
+  --letter-spacing-title: 0.05em;
 
   /* light */
-  --text-color-light: #435c68;
-  --bkg-color-light: #F1F0E8;
-  --nav-bg-color-light: #96B6C5;
-  --foot-bg-color-light: #96B6C5;
-  --hover-text-light:#F1F0E8;
-  --hover-bg-light: #435c68;
+  --text-color-light: #F9B872;
+  --bkg-color-light: #EFEFFF;
+  --nav-bg-color-light: #5960CB;
+  --foot-bg-color-light: #5960CB;
+  --hover-text-light:#FAE7A5;
+  --hover-bg-light: #5960CB;
 
   /* dark */
   --text-color-dark: #a58c71;
@@ -99,6 +107,7 @@ body {
   font-family: var(--font-family-main);
   line-height: var(--line-height);
   font-size: var(--font-size-default);
+  word-spacing: var(--word-spacing);
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -126,7 +135,8 @@ main .container{
 
 .container {
   width: 80%;
-  max-width: 1024px;
+  max-width: 1014px;
+  height: auto;
   margin: 0 auto;
   padding: 1rem;
 }
@@ -139,6 +149,19 @@ main .container{
   border: 2px dashed green;
 }
 
+/* Components */
+
+.icon{
+  width: 24px;
+  height: 24px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  align-content: stretch;
+  justify-content: center;
+}
+
 /* NAV BAR ------------------------------------------*/
 
 header {
@@ -146,13 +169,81 @@ header {
   /* padding: 10px 20px; */
 }
 
-header nav {
+.container.header {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  align-content: stretch;
   justify-content: space-between;
-  align-items: center;
+  /* gap: 20px; */
+  padding: 4px 20px;
 }
 
-header nav ul {
+.container>.logo{
+  flex: 1;
+  align-items: center;
+  align-content: stretch;
+  display: flex;
+}
+
+.profil{
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+  background-color: red;
+  overflow: hidden;
+  align-items: center;
+  display: flex;
+  align-content: stretch;
+  justify-content: center;
+}
+
+.profil>span{
+  font-size: 72px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  align-content: stretch;
+  justify-content: end;
+  gap: 10px;
+  /* padding: 10px 10px 10px 0px; */
+  min-height: 68px;
+  /* min-width: 273px; */
+}
+
+.nav>.notification{
+  width: auto;
+  height: 48px;
+  left: 0px;
+  top: 0px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  align-content: stretch;
+  justify-content: center;
+}
+
+.notification-number{
+  width: auto;
+  height: auto;
+  border-radius: 6px;
+  background: #2B9756;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: start;
+  align-content: stretch;
+  justify-content: start;
+  padding: 1px 3px 0px 3px;
+}
+
+/* header nav ul {
   list-style-type: none;
   display: flex;
   justify-content: center;
@@ -176,7 +267,7 @@ nav ul li a {
 nav ul li a:hover {
   color: var(--hover-text);
   background-color: var(--hover-bg);
-}
+} */
 
 /* THEME button ------------------------------------------*/
 
@@ -214,3 +305,19 @@ footer {
   margin-top: auto; /* Pushes the footer to the bottom */
 }
 
+/* UNSET CSS classless system */
+
+body {
+  width: 100%;
+  grid-template-columns: unset !important;
+  margin: auto 0;
+}
+
+body>* {
+  grid-column: unset !important;
+}
+
+.wrapper {
+  width: 100%;
+  grid-column: unset;
+}

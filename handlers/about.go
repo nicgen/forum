@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"forum/models"
+	"html/template"
 	"net/http"
 )
 
@@ -10,11 +11,12 @@ func AboutHandler(w http.ResponseWriter, r *http.Request) {
 	data := models.PageData{
 		Title:  "About",
 		Header: "About Us",
-		Content: map[string]interface{}{
-			"Message": "Learn more about our company and mission.",
+		Content: map[string]template.HTML{
+			"Msg_raw":    "<h1>Title 01.</h1><p>paragraph</>",
+			"Msg_styled": "<h1 style=\"text=color: blue;\">Title 01.</h1><p>paragraph with</br>style</>",
 		},
 		IsError: false,
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	renderTemplate(w, "about", data)
+	renderTemplate(w, "layout/alt", "page/about", data)
 }

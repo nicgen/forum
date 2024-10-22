@@ -5,35 +5,59 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
+	"strings"
 )
 
-// load all templates
-var templates = template.Must(template.ParseGlob(filepath.Join("templates", "*.html")))
+var tmpl *template.Template
 
-// ensures all templates are parsed only once when the application starts
 func init() {
+	rootDir := "./templates"
+	funcMap := template.FuncMap{}
 	var err error
-	// Parse all templates in the templates directory
-	templates, err = template.ParseGlob("templates/*.html")
+	tmpl, err = findAndParseTemplates(rootDir, funcMap)
 	if err != nil {
-		log.Fatalf("Error parsing templates: %v", err)
+		log.Fatal(err)
 	}
 }
 
+func findAndParseTemplates(rootDir string, funcMap template.FuncMap) (*template.Template, error) {
+	cleanRoot := filepath.Clean(rootDir)
+	pfx := len(cleanRoot) + 1
+	root := template.New("")
+
+	err := filepath.Walk(cleanRoot, func(path string, info os.FileInfo, e1 error) error {
+		if !info.IsDir() && strings.HasSuffix(path, ".html") {
+			if e1 != nil {
+				return e1
+			}
+
+			b, e2 := os.ReadFile(path)
+			if e2 != nil {
+				return e2
+			}
+
+			name := path[pfx:]
+			t := root.New(name).Funcs(funcMap)
+			_, e2 = t.Parse(string(b))
+			if e2 != nil {
+				return e2
+			}
+		}
+
+		return nil
+	})
+
+	return root, err
+}
+
 // renderer function (handles different layouts)
-func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
-	layout := "layout"
-
-	// ? ALT. if you want to use another layout for a page (here: the error page)
-	// if tmpl == "error" {
-	// 	// Use a different layout
-	// 	layout = "layout_alt"
-	// }
-
+func renderTemplate(w http.ResponseWriter, layoutName, tmplName string, data interface{}) {
+	// layout := "layout/default"
 	// execute the specific template first
 	var buf bytes.Buffer
-	err := templates.ExecuteTemplate(&buf, tmpl, data)
+	err := tmpl.ExecuteTemplate(&buf, tmplName, data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -48,7 +72,8 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 		Data:    data,
 	}
 
-	err = templates.ExecuteTemplate(w, layout, layoutData)
+	// err = tmpl.ExecuteTemplate(w, layout, layoutData)
+	err = tmpl.ExecuteTemplate(w, layoutName, layoutData)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
