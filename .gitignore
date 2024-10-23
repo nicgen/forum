@@ -50,3 +50,5 @@ forum.db*
 # no more wsl crap
 Zone.Identifier
 *:Zone.Identifier
+
+/doc
