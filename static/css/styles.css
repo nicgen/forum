@@ -317,6 +317,10 @@ body>* {
   grid-column: unset !important;
 }
 
+main {
+  padding-top: 0px !important;
+}
+
 .wrapper {
   width: 100%;
   grid-column: unset;

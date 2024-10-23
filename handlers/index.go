@@ -23,8 +23,8 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.PageData{
-		Title:  "Title (Home)",
-		Header: "Welcome to My Web App",
+		Title:  "Forum",
+		Header: "Welcome to our Forum project.",
 		Content: map[string]template.HTML{
 			"Msg_raw":    "<h2>Sub-Title 02.</h1><p>paragraph</>",
 			"Msg_styled": "<h1 style=\"text=color: blue;\">Title 01.</h1><p>paragraph with</br>style</>",

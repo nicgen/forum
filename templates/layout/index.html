@@ -9,13 +9,13 @@
 
 <body>
     <div>
-        <p>LAYOUT[index]</p>
     </div>
     <div class="wrapper">
         {{template "block/banner" .}}
         {{template "block/nav" .}}
         <main role="main">
             <div class="container">
+                <p>LAYOUT[index]</p>
                 {{if .Data.IsError}}
                 <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
                 {{else}}

@@ -9,7 +9,6 @@
 
 <body>
   <div>
-    <p>LAYOUT[error]</p>
   </div>
   <div class="wrapper">
     {{template "block/banner" .}}
@@ -17,6 +16,7 @@
     <main role="main">
       <div class="container">
         {{if .Data.IsError}}
+        <p>LAYOUT[error]</p>
         <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
         {{else}}
         <h1 role="heading" aria-level="1">{{.Data.Header}}</h1>

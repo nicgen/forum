@@ -9,7 +9,6 @@
 
 <body>
   <div>
-    <p>LAYOUT[default]</p>
   </div>
   <div class="wrapper">
     {{template "block/banner" .}}
@@ -19,6 +18,7 @@
         {{if .Data.IsError}}
         <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
         {{else}}
+        <p>LAYOUT[default]</p>
         <h1 role="heading" aria-level="1">{{.Data.Header}}</h1>
         {{end}}
         {{if .Content}}{{.Content}}{{else}}<p>no content</p>{{end}}
