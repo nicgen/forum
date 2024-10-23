@@ -18,5 +18,5 @@ func AboutHandler(w http.ResponseWriter, r *http.Request) {
 		IsError: false,
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	renderTemplate(w, "layout/alt", "page/about", data)
+	renderTemplate(w, "layout/index", "page/about", data)
 }
