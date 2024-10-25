@@ -39,6 +39,7 @@ func CreateTables() {
   Email VARCHAR(50) NOT NULL UNIQUE,
   Username VARCHAR(25) NOT NULL UNIQUE,
   Password VARCHAR(100),
+  OAuthID VARCHAR(255) UNIQUE,
   IsSuperUser    BOOL DEFAULT FALSE, 
   IsModerator BOOL DEFAULT FALSE, 
   IsDeleted BOOL DEFAULT FALSE, 

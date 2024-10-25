@@ -1,10 +1,10 @@
 package main
 
 import (
-	"forum/cmd/lib"
-	"forum/handlers"
 
 	// "handlers"
+	"forum/cmd/lib"
+	"forum/handlers"
 	"log"
 	"net/http"
 	"time"
@@ -12,8 +12,8 @@ import (
 
 func main() {
 	lib.Init()
-	lib.CreateTables()
 	lib.TestDBConnection()
+	lib.CreateTables()
 	mux := setupMux()
 
 	server := setupServer(mux)
@@ -34,6 +34,13 @@ func setupMux() *http.ServeMux {
 	// Set up routes
 	mux.HandleFunc("/", handlers.IndexHandler)
 	mux.HandleFunc("/register", handlers.RegisterHandler)
+	mux.HandleFunc("/auth/login", handlers.LoginHandler)
+	mux.HandleFunc("/google", handlers.GoogleOAuthHandler)
+	mux.HandleFunc("/github", handlers.GitHubOAuthHandler)
+	mux.HandleFunc("/discord", handlers.DiscordOAuthHandler)
+	mux.HandleFunc("/callback", handlers.GoogleCallbackHandler)
+	mux.HandleFunc("/github/callback", handlers.GitHubCallbackHandler)
+	mux.HandleFunc("/discord/callback", handlers.DiscordCallbackHandler)
 	mux.HandleFunc("/about", handlers.AboutHandler)
 	mux.HandleFunc("/error", handlers.ForceDirectError) // !for testing purpose only (not for production)
 	mux.HandleFunc("/500", handlers.Force500Handler)    // !for testing purpose only (not for production)
