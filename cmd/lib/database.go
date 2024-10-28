@@ -4,18 +4,36 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 var db *sql.DB
 
-func Init() {
+// Initialisation de la DB
+func Init() error {
 	var err error
+
+	//Ouvertur de la connexion DB
 	db, err = sql.Open("sqlite3", "./forum.db")
 	if err != nil {
 		log.Fatal(err)
+		return fmt.Errorf("Failed to open database: %w", err)
 	}
+
+	//MDP DB défini
+	dbPassword := os.Getenv("DB_PASSWORD")
+	if dbPassword == "" {
+		return fmt.Errorf("DB_PASSWORD is not set")
+	}
+
+	//Défini le mdp de la DB
+	_, err = db.Exec(fmt.Sprintf("PRAGMA key = '%s'", dbPassword))
+	if err != nil {
+		return fmt.Errorf("Failed to set database password: %w", err)
+	}
+	return nil
 }
 
 func TestDBConnection() {
@@ -34,17 +52,17 @@ func CreateTables() {
 	tables := []string{
 
 		`CREATE TABLE IF NOT EXISTS User(
-  ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  UUID VARCHAR(255) NOT NULL UNIQUE,
-  Email VARCHAR(50) NOT NULL UNIQUE,
-  Username VARCHAR(25) NOT NULL UNIQUE,
-  Password VARCHAR(100),
-  OAuthID VARCHAR(255) UNIQUE,
-  IsSuperUser    BOOL DEFAULT FALSE, 
-  IsModerator BOOL DEFAULT FALSE, 
-  IsDeleted BOOL DEFAULT FALSE, 
-  CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-);`,
+      ID INTEGER PRIMARY KEY AUTOINCREMENT,
+      UUID VARCHAR(255) NOT NULL UNIQUE,
+      Email VARCHAR(50) NOT NULL UNIQUE,
+      Username VARCHAR(25) NOT NULL UNIQUE,
+      Password VARCHAR(100),
+      OAuthID VARCHAR(255) UNIQUE,
+      IsSuperUser    BOOL DEFAULT FALSE, 
+      IsModerator BOOL DEFAULT FALSE, 
+      IsDeleted BOOL DEFAULT FALSE, 
+      CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    );`,
 
 		`CREATE TABLE IF NOT EXISTS Admin (
   ID INTEGER PRIMARY KEY AUTOINCREMENT,
