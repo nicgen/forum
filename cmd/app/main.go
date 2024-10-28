@@ -1,34 +1,69 @@
 package main
 
 import (
-
-	// "handlers"
+	"fmt"
 	"forum/cmd/lib"
 	"forum/handlers"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
 func main() {
-	lib.Init()
-	lib.TestDBConnection()
+	// Chargement des variables d'environnement
+	lib.LoadEnv(".env") // variable env
+
+	// Demande de mot de passe
+	if !askForPassword() {
+		log.Println("MDP incorrect")
+		return
+	}
+
+	// Initialisation de la base de données
+	if err := lib.Init(); err != nil {
+		log.Fatalf("Erreur d'initialisation de DB: %v", err)
+	}
+
+	// Création des tables et test de la connexion
 	lib.CreateTables()
+	lib.TestDBConnection()
+
+	// Configuration du routeur
 	mux := setupMux()
+	rateLimiter := lib.NewRateLimiter()
+	server := setupServer(rateLimiter.Limit(mux))
 
-	server := setupServer(mux)
-	log.Printf("Server starting on http://%s...\n", server.Addr)
+	// Configuration HTTPS
+	lib.SetupHTTPS(server) // Configure HTTPS
 
-	if err := server.ListenAndServe(); err != nil {
+	log.Printf("Server starting on https://%s...\n", server.Addr)
+
+	lib.OpenBrowser("https://localhost:3131")
+
+	// Démarrage du serveur HTTPS
+	if err := server.ListenAndServeTLS("server.crt", "server.key"); err != nil { // Utilisation de ListenAndServeTLS pour HTTPS
 		log.Fatalf("Error starting server: %v", err)
 	}
 }
 
+// Demande de mot de passe via bool
+func askForPassword() bool {
+	var password string
+	fmt.Print("Entrez le MDP: ")
+	fmt.Scanln(&password)
+
+	storedPassword := os.Getenv("DB_PASSWORD")
+
+	return password == storedPassword
+}
+
+// Configuration du routeur
 func setupMux() *http.ServeMux {
-	// Create a new ServeMux
+	// Création d'un nouveau ServeMux
 	mux := http.NewServeMux()
 
-	// Serve static files
+	// Servir des fichiers statiques
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	// Set up routes
@@ -48,14 +83,14 @@ func setupMux() *http.ServeMux {
 	return mux
 }
 
+// Configuration du serveur
 func setupServer(handler http.Handler) *http.Server {
 	return &http.Server{
-		Addr:              "localhost:8080",
-		Handler:           handlers.WithErrorHandling(handler),
+		Addr:              "localhost:3131", // Écoute sur le port HTTPS
+		Handler:           handler,
 		ReadHeaderTimeout: 10 * time.Second,
 		WriteTimeout:      10 * time.Second,
 		IdleTimeout:       120 * time.Second,
 		MaxHeaderBytes:    1 << 20,
-		// ErrorLog: *log.Logger,
 	}
 }

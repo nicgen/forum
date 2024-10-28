@@ -66,6 +66,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			Expires:  time.Now().Add(24 * time.Hour),
 			HttpOnly: true,
 			Secure:   true,
+			SameSite: http.SameSiteNoneMode,
 		})
 
 		http.Redirect(w, r, "/index", http.StatusSeeOther)
