@@ -23,7 +23,7 @@ func SetupHTTPS(server *http.Server) {
 	}
 
 	// Redirection de HTTP vers HTTPS
-	go http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	go http.ListenAndServe(":81", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
 	}))
 }
