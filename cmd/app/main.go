@@ -39,7 +39,7 @@ func main() {
 
 	log.Printf("Server starting on https://%s...\n", server.Addr)
 
-	lib.OpenBrowser("https://localhost:3131")
+	// lib.OpenBrowser("https://localhost:3131")
 
 	// Démarrage du serveur HTTPS
 	if err := server.ListenAndServeTLS("server.crt", "server.key"); err != nil { // Utilisation de ListenAndServeTLS pour HTTPS
@@ -86,7 +86,7 @@ func setupMux() *http.ServeMux {
 // Configuration du serveur
 func setupServer(handler http.Handler) *http.Server {
 	return &http.Server{
-		Addr:              "localhost:3131", // Écoute sur le port HTTPS
+		Addr:              "localhost:8080", // Écoute sur le port HTTPS
 		Handler:           handler,
 		ReadHeaderTimeout: 10 * time.Second,
 		WriteTimeout:      10 * time.Second,

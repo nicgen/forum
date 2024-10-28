@@ -8,9 +8,9 @@ import (
 )
 
 const (
-	GoogleRedirectURI  = "http://localhost:8080/callback"
-	githubRedirectURI  = "http://localhost:8080/github/callback"
-	DiscordRedirectURI = "http://localhost:8080/discord/callback"
+	GoogleRedirectURI  = "https://localhost:8080/callback"
+	githubRedirectURI  = "https://localhost:8080/github/callback"
+	DiscordRedirectURI = "https://localhost:8080/discord/callback"
 )
 
 func GoogleOAuthHandler(w http.ResponseWriter, r *http.Request) {
