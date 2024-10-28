@@ -2,18 +2,17 @@
 <!-- Login container with role and aria-labelledby -->
 <div class="login-container" role="form" aria-labelledby="login-heading">
   <h2 id="login-heading">Login</h2>
-  <form action="login.html" aria-label="Login form">
+  <form action="/profile">
+    <button>Profile</button>
+  </form> 
+
+  <form action="/login" aria-label="Login form">
     <!-- Adds aria-label for the form -->
     <label for="username">Username</label>
-    <input type="text" id="username" placeholder="Username" required aria-required="true" />
+    <input type="text" name="EmailForm" placeholder="Username" required aria-required="true" />
 
     <label for="password">Password</label>
-    <input type="password" id="password" placeholder="Password" required aria-required="true" />
-
-    <div>
-      <input type="checkbox" id="RememberMe" name="RememberMe" checked aria-checked="true" />
-      <label for="RememberMe">Remember me</label>
-    </div>
+    <input type="password" name="PasswordForm" placeholder="Password" required aria-required="true" />
 
     <button type="submit" aria-label="Login button">Login</button>
   </form>
