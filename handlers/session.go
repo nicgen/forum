@@ -5,22 +5,23 @@ import (
 	"time"
 )
 
-func AttributeSession(user_uuid string, w http.ResponseWriter, r *http.Request) {
-	http.SetCookie(w, &http.Cookie{
-		Name:     "session_token",
-		Value:    user_uuid,
-		Expires:  time.Now().Add(24 * time.Hour),
-		HttpOnly: true,
-		Secure:   true,
-		SameSite: http.SameSiteNoneMode,
-	})
+func CookieSession(user_uuid string, w http.ResponseWriter, r *http.Request) {
+	cookie := &http.Cookie{
+		Name:     "session_id", // Name of the cookie
+		Value:    user_uuid,    // Using UUID as session token
+		Path:     "/",          // Cookie is valid for all paths
+		HttpOnly: true,         // Cannot be accessed by JavaScript
+		Secure:   true,         // Only sent over HTTPS
+		SameSite: http.SameSiteStrictMode,
+		// Expires in 24 hours
+		Expires: time.Now().Add(24 * time.Hour),
+	}
+	session_id := r.Cookies()
 
-	// print("cookie in login: ", &http.Cookie{
-	// 	Name:     "session_token",
-	// 	Value:    sessionToken,
-	// 	Expires:  time.Now().Add(24 * time.Hour),
-	// 	HttpOnly: true,
-	// 	Secure:   true,
-	// 	SameSite: http.SameSiteNoneMode,
-	// }, "\n")
+	// Set the cookie in the response header
+	http.SetCookie(w, cookie)
+
+	println("-----------------------------")
+	println("Session ID: ", session_id[0].Value)
+	println("-----------------------------")
 }

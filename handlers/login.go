@@ -51,12 +51,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error accessing User UUID", http.StatusUnauthorized)
 		return
 	}
-	print(user_uuid)
+
+	println("User UUID: ", user_uuid)
 
 	// Attribute a session to an User
-	AttributeSession(user_uuid, w, r)
+	CookieSession(user_uuid, w, r)
 
-	http.Redirect(w, r, "/profile", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // Function to check if the password matches the stored hash
