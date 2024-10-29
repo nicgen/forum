@@ -1,6 +1,27 @@
 package models
 
-import "time"
+import (
+	"sync"
+	"time"
+)
+
+type TabUser struct {
+	Users []User
+	mutex sync.Mutex
+}
+
+type User struct {
+	Id           int
+	UUID         string
+	Username     string
+	Email        string
+	Password     string
+	CreatedAt    time.Time
+	StrCreatedAt string
+	Role         string
+	// IsMod        bool
+	// IsAdmin      bool
+}
 
 type TemplateSetting struct {
 	IsLogged bool
@@ -52,19 +73,6 @@ type Request struct {
 	User_id  int
 	Username string
 	Reason   string
-}
-
-type User struct {
-	Id           int
-	UUID         string
-	Username     string
-	Email        string
-	Password     string
-	CreatedAt    time.Time
-	StrCreatedAt string
-	Role         string
-	IsMod        bool
-	IsAdmin      bool
 }
 
 type UserInfo struct {
