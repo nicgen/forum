@@ -4,15 +4,12 @@ import (
 	"database/sql"
 	"forum/cmd/lib"
 	"net/http"
-	"time"
 
-	"github.com/gofrs/uuid/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
-	print("test")
 
 	email := r.FormValue("EmailForm")
 	password := r.FormValue("PasswordForm")
@@ -47,24 +44,19 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Successful login, create a session token
-	sessionUUID, err := uuid.NewV4()
-	if err != nil {
-		http.Error(w, "Error generating session token", http.StatusInternalServerError)
+	var user_uuid string
+	state := `SELECT UUID FROM User`
+	err_user := db.QueryRow(state).Scan(&user_uuid)
+	if err_user != nil {
+		http.Error(w, "Error accessing User UUID", http.StatusUnauthorized)
 		return
 	}
-	sessionToken := sessionUUID.String()
+	print(user_uuid)
 
-	http.SetCookie(w, &http.Cookie{
-		Name:     "session_token",
-		Value:    sessionToken,
-		Expires:  time.Now().Add(24 * time.Hour),
-		HttpOnly: true,
-		Secure:   true,
-		SameSite: http.SameSiteNoneMode,
-	})
+	// Attribute a session to an User
+	AttributeSession(user_uuid, w, r)
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
 
 // Function to check if the password matches the stored hash
