@@ -29,7 +29,7 @@ func (rl *RateLimiter) Limit(next http.Handler) http.Handler {
 		ip := r.RemoteAddr
 		rl.visitors[ip]++
 
-		if rl.visitors[ip] > 10 { // Limite à 10 requêtes
+		if rl.visitors[ip] > 50 { // Limite à 10 requêtes
 			http.Error(w, "Too many requests", http.StatusTooManyRequests) // a mettre avec le error.go HandleError
 			return
 		}
