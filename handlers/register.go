@@ -108,6 +108,18 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// Getting the UUID from the database
+		var user_uuid string
+		state := `SELECT UUID FROM User WHERE Email = ?`
+		err_user = db.QueryRow(state, email).Scan(&user_uuid)
+		if err_user != nil {
+			http.Error(w, "Error accessing User UUID", http.StatusUnauthorized)
+			return
+		}
+
+		// Attribute a session to an User
+		CookieSession(user_uuid, w, r)
+
 		log.Printf("User %s added successfully", username)
 
 		// Redirect to a success page
