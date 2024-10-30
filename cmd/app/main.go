@@ -68,16 +68,25 @@ func setupMux() *http.ServeMux {
 
 	// Set up routes
 	mux.HandleFunc("/", handlers.IndexHandler)
+
+	// Authentication
 	mux.HandleFunc("/register", handlers.RegisterHandler)
 	mux.HandleFunc("/login", handlers.LoginHandler)
 	mux.HandleFunc("/logout", handlers.LogoutHandler)
+
+	// Tier Authentication
 	mux.HandleFunc("/google", handlers.GoogleOAuthHandler)
 	mux.HandleFunc("/github", handlers.GitHubOAuthHandler)
 	mux.HandleFunc("/discord", handlers.DiscordOAuthHandler)
 	mux.HandleFunc("/callback", handlers.GoogleCallbackHandler)
 	mux.HandleFunc("/github/callback", handlers.GitHubCallbackHandler)
 	mux.HandleFunc("/discord/callback", handlers.DiscordCallbackHandler)
+
+	// DB Requests
 	mux.HandleFunc("/profile", handlers.ProfileHandler)
+	mux.HandleFunc("/post", handlers.PostHandler)
+
+	// Basic Web handlers
 	mux.HandleFunc("/about", handlers.AboutHandler)
 	mux.HandleFunc("/error", handlers.ForceDirectError) // !for testing purpose only (not for production)
 	mux.HandleFunc("/500", handlers.Force500Handler)    // !for testing purpose only (not for production)

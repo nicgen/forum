@@ -11,6 +11,17 @@
     <button>Log out</button>
   </form> 
 
+  <form action="/post">
+    <select name="post_category">
+      <option value="">--Please choose an option--</option>
+      <option value="cat">cat</option>
+      <option value="dog">dog</option>
+    </select>
+    <a>Title</a><textarea name="post_title"></textarea>
+    <a>Text</a><textarea name="post_text"></textarea>
+    <button>Post</button>
+  </form>
+
   <form action="/login" aria-label="Login form">
     <!-- Adds aria-label for the form -->
     <label for="username">Username</label>

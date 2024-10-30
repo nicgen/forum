@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"forum/cmd/lib"
+	"forum/models"
 	"net/http"
 	"strings"
 )
@@ -22,6 +23,30 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	state_email := `SELECT Email FROM User WHERE UUID = ?`
 	state_creation := `SELECT CreatedAt FROM User WHERE UUID = ?`
 	state_role := `SELECT IsModerator FROM User WHERE UUID = ?`
+
+	// Users posts Request
+	state_posts := `SELECT ID, Title, Text, CreatedAt FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
+	var posts []*models.Post
+	rows, err := db.Query(state_posts, session_id[0].Value)
+	if err != nil {
+		http.Error(w, "Error accessing user posts: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var post models.Post
+		if err := rows.Scan(&post.ID, &post.Title, &post.Text, &post.CreatedAt); err != nil {
+			http.Error(w, "Error scanning user posts: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		posts = append(posts, &post)
+	}
+
+	if err := rows.Err(); err != nil {
+		http.Error(w, "Error iterating over user posts: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	// Making requests to the database
 	err_uuid := db.QueryRow(state_uuid, session_id[0].Value).Scan(&user_username)
@@ -56,13 +81,6 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	creation_Date := creation[0]
 	creation_Hour := creation[1][:len(creation[1])-1]
 
-	// Printing the User informations
-	println("Username: ", user_username)
-	println("Email: ", user_email)
-	println("Creation date: ", creation_Date)
-	println("Creation hour: ", creation_Hour)
-	println("Role: ", user_role)
-
 	// Storing the data into a map that can be sent into the html
 	data := map[string]interface{}{
 		"Username":     user_username,
@@ -70,6 +88,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		"CreationDate": creation_Date,
 		"CreationHour": creation_Hour,
 		"Role":         user_role,
+		"Posts":        posts,
 	}
 
 	renderTemplate(w, "layout/index", "page/profile", data)

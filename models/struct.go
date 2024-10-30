@@ -1,13 +1,14 @@
 package models
 
 import (
-	"sync"
 	"time"
 )
 
-type TabUser struct {
-	Users []User
-	mutex sync.Mutex
+type Post struct {
+	ID        string
+	Title     string
+	Text      string
+	CreatedAt time.Time
 }
 
 type User struct {
@@ -84,7 +85,7 @@ type UserInfo struct {
 	NbrDislike    int
 }
 
-type Post struct {
+type Post2 struct {
 	Id           int
 	User_id      int
 	Title        string
