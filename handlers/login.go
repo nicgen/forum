@@ -14,11 +14,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("EmailForm")
 	password := r.FormValue("PasswordForm")
 
-	// if email == "" || password == "" {
-	// 	http.Error(w, "Email and password fields are mandatory", http.StatusBadRequest)
-	// 	return
-	// }
-
 	// Prepared request to avoid SQL injection
 	stmt, err := db.Prepare("SELECT password FROM User WHERE email = ?")
 	if err != nil {
@@ -44,9 +39,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Getting the UUID from the database
 	var user_uuid string
-	state := `SELECT UUID FROM User`
-	err_user := db.QueryRow(state).Scan(&user_uuid)
+	state := `SELECT UUID FROM User WHERE Email = ?`
+	err_user := db.QueryRow(state, email).Scan(&user_uuid)
 	if err_user != nil {
 		http.Error(w, "Error accessing User UUID", http.StatusUnauthorized)
 		return
@@ -57,6 +53,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Attribute a session to an User
 	CookieSession(user_uuid, w, r)
 
+	// Redirecting to the home page after successful login
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
