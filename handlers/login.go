@@ -8,9 +8,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// ? Function that will verify the form values for the login
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	// Storing database into a variable
 	db := lib.GetDB()
 
+	// Storing form values into variables
 	email := r.FormValue("EmailForm")
 	password := r.FormValue("PasswordForm")
 
@@ -47,8 +50,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error accessing User UUID", http.StatusUnauthorized)
 		return
 	}
-
-	println("User UUID: ", user_uuid)
 
 	// Attribute a session to an User
 	CookieSession(user_uuid, w, r)

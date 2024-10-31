@@ -10,7 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Handler to get form values, store them into database after checking them
+// ? Handler to get form values, store them into database after checking them
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("BOB")
 	db := lib.GetDB()

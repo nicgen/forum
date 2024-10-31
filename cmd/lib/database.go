@@ -9,9 +9,10 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// Variable that will store the database
 var db *sql.DB
 
-// Initialisation de la DB
+// ? Initiate the database
 func Init() error {
 	var err error
 
@@ -36,6 +37,7 @@ func Init() error {
 	return nil
 }
 
+// ? Function to test database connection
 func TestDBConnection() {
 	err := db.Ping()
 	if err != nil {
@@ -44,10 +46,12 @@ func TestDBConnection() {
 	log.Println("Database connection established successfully!")
 }
 
+// ? Function to send database into handlers
 func GetDB() *sql.DB {
 	return db
 }
 
+// ? Function to create the database
 func CreateTables() {
 	tables := []string{
 
