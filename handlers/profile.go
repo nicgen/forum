@@ -17,13 +17,12 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Setting up the variables of the User informations
 	var user_username, user_email, user_creation, user_role string
-	var role bool
 
 	// Setting up the states for the database requests
 	state_uuid := `SELECT Username FROM User WHERE UUID = ?`
 	state_email := `SELECT Email FROM User WHERE UUID = ?`
 	state_creation := `SELECT CreatedAt FROM User WHERE UUID = ?`
-	state_role := `SELECT IsModerator FROM User WHERE UUID = ?`
+	state_role := `SELECT Role FROM User WHERE UUID = ?`
 
 	// Users posts Request
 	state_posts := `SELECT ID, Title, Text, CreatedAt FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
@@ -53,7 +52,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	err_uuid := db.QueryRow(state_uuid, session_id[0].Value).Scan(&user_username)
 	err_email := db.QueryRow(state_email, session_id[0].Value).Scan(&user_email)
 	err_creation := db.QueryRow(state_creation, session_id[0].Value).Scan(&user_creation)
-	err_role := db.QueryRow(state_role, session_id[0].Value).Scan(&role)
+	err_role := db.QueryRow(state_role, session_id[0].Value).Scan(&user_role)
 
 	// Checking for database requests errors
 	if err_uuid != nil {
@@ -68,13 +67,6 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	} else if err_role != nil {
 		http.Error(w, "Error accessing User ROLE", http.StatusUnauthorized)
 		return
-	}
-
-	// Checking if the User is a moderator or not
-	if !role {
-		user_role = "Member"
-	} else {
-		user_role = "Moderator"
 	}
 
 	// Spliting the creation date into 2 different values

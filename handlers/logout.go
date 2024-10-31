@@ -1,12 +1,27 @@
 package handlers
 
 import (
+	"forum/cmd/lib"
 	"net/http"
 	"time"
 )
 
 // ? Handler that will delete the cookie of the User logged
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	// Storing Db data into a variable
+	db := lib.GetDB()
+
+	// Checking the cookie values
+	session_id := r.Cookies()
+
+	// Unlogging the User in the database
+	state := `UPDATE User SET IsLogged = ? WHERE UUID = ?`
+	_, err_db := db.Exec(state, false, session_id[0].Value)
+	if err_db != nil {
+		http.Error(w, "Error logging out", http.StatusInternalServerError)
+		return
+	}
+
 	// Overwrite the cookie with one that expire instantly
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_id",

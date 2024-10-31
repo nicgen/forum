@@ -83,8 +83,8 @@ func setupMux() *http.ServeMux {
 	mux.HandleFunc("/discord/callback", handlers.DiscordCallbackHandler)
 
 	// DB Requests
-	mux.HandleFunc("/profile", handlers.ProfileHandler)
-	mux.HandleFunc("/post", handlers.PostHandler)
+	mux.HandleFunc("/profile", handlers.AuthMiddleware(handlers.ProfileHandler))
+	mux.HandleFunc("/post", handlers.AuthMiddleware(handlers.PostHandler))
 
 	// Basic Web handlers
 	mux.HandleFunc("/about", handlers.AboutHandler)
