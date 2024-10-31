@@ -5,20 +5,9 @@ import (
 	"time"
 )
 
-// LogoutHandler handles user logout
+// ? Handler that will delete the cookie of the User logged
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	// // Get session cookie
-	// cookie, err := r.Cookie("session_id")
-	// if err == nil {
-	// 	// Delete session from database
-	// 	_, err = db.Exec("DELETE FROM sessions WHERE id = $1", cookie.Value)
-	// 	if err != nil {
-	// 		http.Error(w, "Error logging out", http.StatusInternalServerError)
-	// 		return
-	// 	}
-	// }
-
-	// Delete cookie from client
+	// Overwrite the cookie with one that expire instantly
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_id",
 		Value:    "",
@@ -29,5 +18,6 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		Expires:  time.Now().Add(-1 * time.Hour), // Expire immediately
 	})
 
+	// Redirect User to the home page
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

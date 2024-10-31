@@ -5,7 +5,9 @@ import (
 	"time"
 )
 
+// ? Function to attribute a temporary cookie that will store User UUID in header
 func CookieSession(user_uuid string, w http.ResponseWriter, r *http.Request) {
+	// Setting the User UUID into the cookie
 	cookie := &http.Cookie{
 		Name:     "session_id", // Name of the cookie
 		Value:    user_uuid,    // Using UUID as session token
@@ -16,14 +18,7 @@ func CookieSession(user_uuid string, w http.ResponseWriter, r *http.Request) {
 		// Expires in 24 hours
 		Expires: time.Now().Add(24 * time.Hour),
 	}
-	// session_id := r.Cookies()
 
 	// Set the cookie in the response header
 	http.SetCookie(w, cookie)
-
-	// println("-----------------------------")
-	// for i := 0; i < len(session_id); i++ {
-	// 	println("Session ID: ", session_id[i].Value)
-	// }
-	// println("-----------------------------")
 }

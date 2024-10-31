@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// ? Function to retrieve User data and redirect to his profile page
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	// Storing Db data into a variable
 	db := lib.GetDB()
@@ -18,7 +19,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	var user_username, user_email, user_creation, user_role string
 	var role bool
 
-	// Setting up the states before for the database requests
+	// Setting up the states for the database requests
 	state_uuid := `SELECT Username FROM User WHERE UUID = ?`
 	state_email := `SELECT Email FROM User WHERE UUID = ?`
 	state_creation := `SELECT CreatedAt FROM User WHERE UUID = ?`
@@ -91,5 +92,6 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		"Posts":        posts,
 	}
 
+	// Redirect User to the profile html page and sending the data to it
 	renderTemplate(w, "layout/index", "page/profile", data)
 }
