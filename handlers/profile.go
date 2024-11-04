@@ -25,7 +25,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	state_role := `SELECT Role FROM User WHERE UUID = ?`
 
 	// Users posts Request
-	state_posts := `SELECT ID, Title, Text, CreatedAt FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
+	state_posts := `SELECT ID, Category_ID, Title, Text, CreatedAt FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
 	var posts []*models.Post
 	rows, err := db.Query(state_posts, session_id[0].Value)
 	if err != nil {
@@ -36,7 +36,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	for rows.Next() {
 		var post models.Post
-		if err := rows.Scan(&post.ID, &post.Title, &post.Text, &post.CreatedAt); err != nil {
+		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.CreatedAt); err != nil {
 			http.Error(w, "Error scanning user posts: "+err.Error(), http.StatusInternalServerError)
 			return
 		}

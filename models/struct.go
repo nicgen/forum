@@ -5,10 +5,11 @@ import (
 )
 
 type Post struct {
-	ID        string
-	Title     string
-	Text      string
-	CreatedAt time.Time
+	ID          string
+	Category_ID string
+	Title       string
+	Text        string
+	CreatedAt   time.Time
 }
 
 type User struct {
