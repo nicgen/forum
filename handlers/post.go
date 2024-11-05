@@ -19,9 +19,10 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	text := r.FormValue("post_text")
 	category := r.FormValue("post_category")
 
+	var like_count int = 0
 	// Storing those values into the database with a database request
-	state_post := `INSERT INTO Posts (User_UUID, Title, Category_ID, Text, CreatedAt) VALUES (?, ?, ?, ?, ?)`
-	_, err_db := db.Exec(state_post, session_id[0].Value, title, category, text, time.Now())
+	state_post := `INSERT INTO Posts (User_UUID, Title, Category_ID, Text, Like, CreatedAt) VALUES (?, ?, ?, ?, ?, ?)`
+	_, err_db := db.Exec(state_post, session_id[0].Value, title, category, text, like_count, time.Now())
 	if err_db != nil {
 		http.Error(w, "Error inserting new Post", http.StatusUnauthorized)
 		return

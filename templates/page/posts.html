@@ -1,0 +1,11 @@
+{{define "posts"}}
+{{ range .Posts }}
+<div class="Line"></div>
+<div class="post">
+  <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+  <p>Post text: {{ .Text }}</p>
+  <button name="like_button" action="/like?id={{.ID}}">Like</button><p>{{ .Like }}</p>
+  <p>Created at: {{ .CreatedAt }}</p>
+</div>
+{{end}}
+{{end}}

@@ -144,8 +144,8 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Insert new user into the database
 		result, err_doesnt_exist := db.Exec(`
-			INSERT INTO User (UUID, Email, Username, Password, OAuthID, IsSuperUser, IsModerator, IsDeleted) 
-			VALUES (?, ?, ?, ?, ?, false, false, false)
+			INSERT INTO User (UUID, Email, Username, Password, OAuthID, Role, IsDeleted) 
+			VALUES (?, ?, ?, ?, ?, false, ?, false)
 		`, UUID, email, username, password, int64(githubID))
 		if err_doesnt_exist != nil {
 			http.Error(w, "Error creating user", http.StatusInternalServerError)
