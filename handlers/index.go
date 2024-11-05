@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"forum/cmd/lib"
-	"forum/models"
 	"net/http"
 )
 
@@ -25,43 +24,25 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// data := models.PageData{
-	// 	Title:  "Forum",
-	// 	Header: "Welcome to our Forum project.",
-	// 	Content: map[string]template.HTML{
-	// 		"Msg_raw":    "<h2>Sub-Title 02.</h1><p>paragraph</>",
-	// 		"Msg_styled": "<h1 style=\"text=color: blue;\">Title 01.</h1><p>paragraph with</br>style</>",
-	// 	},
+	// Defining variables
+	err := "OK"
+	data := map[string]interface{}{}
 
-	// 	IsError: false,
-	// }
+	// Checking if the User is on guest or is logged
+	_, err_cookie := r.Cookie("session_id")
 
-	// Users posts Request
-	state_posts := `SELECT ID, Category_ID, Title, Text, Like, CreatedAt FROM Posts ORDER BY CreatedAt DESC`
-	var posts []*models.Post
-	rows, err := db.Query(state_posts)
-	if err != nil {
-		http.Error(w, "Error accessing user posts: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-	defer rows.Close()
+	// If he's not logged
+	if err_cookie == http.ErrNoCookie {
+		data, err = lib.GetData(db, "not logged", "not logged", "index")
+	} else {
+		// Checking the cookie values
+		session_id := r.Cookies()
 
-	for rows.Next() {
-		var post models.Post
-		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.CreatedAt); err != nil {
-			http.Error(w, "Error scanning user posts: "+err.Error(), http.StatusInternalServerError)
-			return
+		// Getting the data values
+		data, err = lib.GetData(db, session_id[0].Value, "logged", "index")
+		if err != "OK" {
+
 		}
-		posts = append(posts, &post)
-	}
-
-	if err := rows.Err(); err != nil {
-		http.Error(w, "Error iterating over user posts: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	data := map[string]interface{}{
-		"Posts": posts,
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
