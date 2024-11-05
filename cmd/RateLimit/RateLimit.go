@@ -42,12 +42,12 @@ func (rl *RateLimiter) Limit(next http.Handler) http.Handler {
 				Message:    "Too Many Requests",
 			}
 			//Appel de HandleError
-			handlers.HandleError(w, err.StatusCode, err.Message) // a mettre avec le error.go HandleError
+			handlers.HandleError(w, err.StatusCode, err.Message)
 			return
 		}
 
 		go func() {
-			time.Sleep(10 * time.Minute)
+			time.Sleep(1 * time.Minute)
 			rl.mu.Lock()
 			rl.visitors[ip][path]--
 			if rl.visitors[ip][path] <= 0 {
