@@ -43,7 +43,11 @@ func main() {
 	// lib.OpenBrowser("https://localhost:3131")
 
 	// Démarrage du serveur HTTPS
-	if err := server.ListenAndServeTLS("server.crt", "server.key"); err != nil { // Utilisation de ListenAndServeTLS pour HTTPS
+
+	certFile := os.Getenv("SSL_CERT")
+	keyFile := os.Getenv("SSL_KEY")
+
+	if err := server.ListenAndServeTLS(certFile, keyFile); err != nil { // Utilisation de ListenAndServeTLS pour HTTPS
 		log.Fatalf("Error starting server: %v", err)
 	}
 }
