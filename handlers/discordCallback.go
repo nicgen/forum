@@ -123,9 +123,9 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Exec function to insert a new Users with all the data we got from the token
 		result, err_doesnt_exist := db.Exec(`
-			INSERT INTO User (UUID, Email, Username, Password, OAuthID, IsSuperUser, IsModerator, IsDeleted) 
-			VALUES (?, ?, ?, ?, ?, false, false, false)
-		`, UUID, email, username, password, discordID)
+			INSERT INTO User (UUID, Email, Username, Password, OAuthID, Role, IsDeleted) 
+			VALUES (?, ?, ?, ?, ?, ?, false)
+		`, UUID, email, username, password, discordID, "User")
 		if err_doesnt_exist != nil {
 			http.Error(w, "Error creating user", http.StatusInternalServerError)
 			return
@@ -144,10 +144,22 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Checking if we got the user informations
-	print("-------------------------------\n")
-	print("User email: ", email, "\n")
-	print("Discord ID: ", discordID, "\n")
-	print("-------------------------------\n")
+	println("-------------------------------")
+	println("User email: ", email)
+	println("Discord ID: ", discordID)
+	println("-------------------------------")
+
+	// Getting the UUID from the database
+	var user_uuid string
+	state_uuid := `SELECT UUID FROM User WHERE Email = ?`
+	err_user := db.QueryRow(state_uuid, email).Scan(&user_uuid)
+	if err_user != nil {
+		http.Error(w, "Error accessing User UUID", http.StatusUnauthorized)
+		return
+	}
+
+	// Attribute a session to an User
+	CookieSession(user_uuid, w, r)
 
 	http.Redirect(w, r, "/", http.StatusFound)
 }

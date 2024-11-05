@@ -13,7 +13,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	session_id := r.Cookies()
 
 	// Getting the User Data
-	data, err := lib.GetData(db, session_id[0].Value)
+	data, err := lib.GetData(db, session_id[0].Value, "logged", "profile")
 	if err != "OK" {
 		http.Error(w, err, http.StatusUnauthorized)
 		return
