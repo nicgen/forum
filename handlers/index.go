@@ -10,15 +10,15 @@ import (
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		// * generate your error message
-		// err := &models.CustomError{
-		// 	StatusCode: http.StatusNotFound,
-		// 	Message:    "Page Not Found",
-		// }
+		err := &models.CustomError{
+			StatusCode: http.StatusNotFound,
+			Message:    "Page Not Found",
+		}
 		// Use HandleError to send the error response
-		// HandleError(w, err.StatusCode, err.Message)
+		HandleError(w, err.StatusCode, err.Message)
 		// return
 		// * alt. use the auto-generated error code & message
-		HandleError(w, http.StatusNotFound, "Page Not Found")
+		// HandleError(w, http.StatusNotFound, "Page Not Found")
 		return
 	}
 
