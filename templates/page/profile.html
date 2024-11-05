@@ -4,6 +4,7 @@
   <h3>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</h3>
   <h3>Your role: {{ .Role }}</h3>
   {{ range .Posts }}
+  <div class="Line"></div>
   <div class="post">
     <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
     <p>Post text: {{ .Text }}</p>

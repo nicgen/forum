@@ -98,6 +98,7 @@ func CreateTables() {
   Title TEXT NOT NULL,
   Category_ID INTEGER NOT NULL,
   Text TEXT,
+  Like INTEGER,
   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (User_UUID) REFERENCES User(UUID),
@@ -143,11 +144,11 @@ func CreateTables() {
   ID INTEGER PRIMARY KEY AUTOINCREMENT,
   Post_ID INTEGER,
   Comment_ID INTEGER,
-  User_ID INTEGER,
-  IsLike BOOL,
+  User_UUID VARCHAR(255) NOT NULL,
+  IsLiked BOOL,
   FOREIGN KEY (Post_ID) REFERENCES Posts(ID) ON DELETE CASCADE,
   FOREIGN KEY (Comment_ID) REFERENCES Comments(ID) ON DELETE CASCADE,
-  FOREIGN KEY (User_ID) REFERENCES User(ID)
+  FOREIGN KEY (User_UUID) REFERENCES User(UUID)
   CHECK ((Post_ID is NULL AND Comment_ID IS NOT NULL)OR(Post_ID IS NOT NULL AND Comment_ID IS NULL))
 );`,
 
@@ -171,12 +172,11 @@ func CreateTables() {
   Post_ID INTEGER,
   FOREIGN KEY (Post_ID) REFERENCES Posts(ID) ON DELETE CASCADE
 
-    );`,
-
+);`,
 		`CREATE TABLE IF NOT EXISTS oauth_states (
-      state TEXT PRIMARY KEY,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );`,
+    state TEXT PRIMARY KEY,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);`,
 	}
 	for _, table := range tables {
 		_, err := db.Exec(table)

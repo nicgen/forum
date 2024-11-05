@@ -1,7 +1,8 @@
-{{define "index"}}
+{{define "page/index"}}
 {{template "login-register" .}}
+{{template "posts" .}}
 <div class="home-content">
-  <h1>Forum</h1>
+  <h1 class="text-title">Forum</h1>
   <form action="/auth">
     <button>Login</button>
   </form>

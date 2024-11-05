@@ -11,15 +11,14 @@ import (
 
 // ? Handler to get form values, store them into database after checking them
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	// Storing database into a variable
 	db := lib.GetDB()
 
 	if r.Method == "GET" {
 		http.ServeFile(w, r, "./templates/index.html")
 		return
 	}
-
 	if r.Method == "POST" {
-
 		// Checking if the User is already logged or not
 		_, err_cookie := r.Cookie("session_id")
 		if err_cookie == http.ErrNoCookie {
@@ -128,12 +127,11 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			// Redirect to a success page
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 		} else {
-			http.Error(w, "Unsupported method", http.StatusMethodNotAllowed)
+			// If a logged User tries to register without logging out
+			http.Error(w, "You must log-out before loggin in again", http.StatusUnauthorized)
+			return
 		}
 	} else {
-		// If a logged User tries to register without logging out
-		http.Error(w, "You must log-out before loggin in again", http.StatusUnauthorized)
-		return
+		http.Error(w, "Unsupported method", http.StatusMethodNotAllowed)
 	}
-
 }
