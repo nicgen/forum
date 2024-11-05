@@ -1,6 +1,29 @@
 package models
 
-import "time"
+import (
+	"time"
+)
+
+type Post struct {
+	ID          string
+	Category_ID string
+	Title       string
+	Text        string
+	CreatedAt   time.Time
+}
+
+type User struct {
+	Id           int
+	UUID         string
+	Username     string
+	Email        string
+	Password     string
+	CreatedAt    time.Time
+	StrCreatedAt string
+	Role         string
+	// IsMod        bool
+	// IsAdmin      bool
+}
 
 type TemplateSetting struct {
 	IsLogged bool
@@ -54,19 +77,6 @@ type Request struct {
 	Reason   string
 }
 
-type User struct {
-	Id           int
-	UUID         string
-	Username     string
-	Email        string
-	Password     string
-	CreatedAt    time.Time
-	StrCreatedAt string
-	Role         string
-	IsMod        bool
-	IsAdmin      bool
-}
-
 type UserInfo struct {
 	User          User
 	PostedPost    []Post
@@ -76,7 +86,7 @@ type UserInfo struct {
 	NbrDislike    int
 }
 
-type Post struct {
+type Post2 struct {
 	Id           int
 	User_id      int
 	Title        string

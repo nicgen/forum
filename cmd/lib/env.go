@@ -2,11 +2,13 @@ package lib
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"strings"
 )
 
+// LoadEnv loads environment variables from a .env file
 func LoadEnv(filename string) {
 	file, err := os.Open(filename)
 	if err != nil {
@@ -42,4 +44,14 @@ func LoadEnv(filename string) {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+// AskForPassword prompts the user for a password and verifies it against DB_PASSWORD in the environment
+func AskForPassword() bool {
+	var password string
+	fmt.Print("Enter Password: ")
+	fmt.Scanln(&password)
+
+	storedPassword := os.Getenv("DB_PASSWORD")
+	return password == storedPassword
 }

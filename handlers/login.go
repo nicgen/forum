@@ -4,31 +4,24 @@ import (
 	"database/sql"
 	"forum/cmd/lib"
 	"net/http"
-	"time"
 
-	"github.com/gofrs/uuid/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
+// ? Function that will verify the form values for the login
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	// Storing database into a variable
 	db := lib.GetDB()
 
-	if r.Method == "GET" {
-		http.ServeFile(w, r, "./templates/login.html")
-		return
-	}
-
-	if r.Method == "POST" {
+	// Checking if the User is already logged or not
+	_, err_cookie := r.Cookie("session_id")
+	if err_cookie == http.ErrNoCookie {
+		// Storing form values into variables
 		email := r.FormValue("EmailForm")
 		password := r.FormValue("PasswordForm")
 
-		if email == "" || password == "" {
-			http.Error(w, "Email and password fields are mandatory", http.StatusBadRequest)
-			return
-		}
-
 		// Prepared request to avoid SQL injection
-		stmt, err := db.Prepare("SELECT password FROM users WHERE email = ?")
+		stmt, err := db.Prepare("SELECT password FROM User WHERE email = ?")
 		if err != nil {
 			http.Error(w, "Error preparing query", http.StatusInternalServerError)
 			return
@@ -52,26 +45,26 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Successful login, create a session token
-		sessionUUID, err := uuid.NewV4()
-		if err != nil {
-			http.Error(w, "Error generating session token", http.StatusInternalServerError)
+		// Getting the UUID from the database
+		var user_uuid string
+		state := `SELECT UUID FROM User WHERE Email = ?`
+		err_user := db.QueryRow(state, email).Scan(&user_uuid)
+		if err_user != nil {
+			http.Error(w, "Error accessing User UUID", http.StatusUnauthorized)
 			return
 		}
-		sessionToken := sessionUUID.String()
 
-		http.SetCookie(w, &http.Cookie{
-			Name:     "session_token",
-			Value:    sessionToken,
-			Expires:  time.Now().Add(24 * time.Hour),
-			HttpOnly: true,
-			Secure:   true,
-		})
+		// Attribute a session to an User
+		CookieSession(user_uuid, w, r)
 
-		http.Redirect(w, r, "/index", http.StatusSeeOther)
 	} else {
-		http.Error(w, "Method not supported", http.StatusMethodNotAllowed)
+		// If the User is already logged and tries to log-in
+		http.Error(w, "You must log-out before loggin in again", http.StatusUnauthorized)
+		return
 	}
+
+	// Redirecting to the home page after successful login
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // Function to check if the password matches the stored hash

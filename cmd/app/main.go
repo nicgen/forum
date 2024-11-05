@@ -1,54 +1,41 @@
 package main
 
 import (
+	"forum/cmd/config"
 	"forum/cmd/lib"
-	"forum/handlers"
-
-	// "handlers"
 	"log"
-	"net/http"
-	"time"
 )
 
 func main() {
-	lib.Init()
-	lib.CreateTables()
-	lib.TestDBConnection()
-	mux := setupMux()
+	// Load environment variables from .env file
+	lib.LoadEnv(".env")
 
-	server := setupServer(mux)
-	log.Printf("Server starting on http://%s...\n", server.Addr)
-
-	if err := server.ListenAndServe(); err != nil {
-		log.Fatalf("Error starting server: %v", err)
+	// Request password
+	if !lib.AskForPassword() {
+		log.Println("Incorrect password")
+		return
 	}
-}
 
-func setupMux() *http.ServeMux {
-	// Create a new ServeMux
-	mux := http.NewServeMux()
+	// Initialize the database
+	if err := lib.Init(); err != nil {
+		log.Fatalf("Database initialization error: %v", err)
+	}
 
-	// Serve static files
-	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	// Test database connection
+	lib.TestDBConnection()
 
-	// Set up routes
-	mux.HandleFunc("/", handlers.IndexHandler)
-	mux.HandleFunc("/register", handlers.RegisterHandler)
-	mux.HandleFunc("/about", handlers.AboutHandler)
-	mux.HandleFunc("/error", handlers.ForceDirectError) // !for testing purpose only (not for production)
-	mux.HandleFunc("/500", handlers.Force500Handler)    // !for testing purpose only (not for production)
+	// Configure the router and server
+	mux := config.SetupMux()
+	rateLimiter := lib.NewRateLimiter()
+	server := config.SetupServer(rateLimiter.Limit(mux))
 
-	return mux
-}
+	// Configure HTTPS
+	lib.SetupHTTPS(server)
 
-func setupServer(handler http.Handler) *http.Server {
-	return &http.Server{
-		Addr:              "localhost:8080",
-		Handler:           handlers.WithErrorHandling(handler),
-		ReadHeaderTimeout: 10 * time.Second,
-		WriteTimeout:      10 * time.Second,
-		IdleTimeout:       120 * time.Second,
-		MaxHeaderBytes:    1 << 20,
-		// ErrorLog: *log.Logger,
+	log.Printf("Server starting on https://%s...\n", server.Addr)
+
+	// Start HTTPS server
+	if err := server.ListenAndServeTLS("server.crt", "server.key"); err != nil {
+		log.Fatalf("Error starting server: %v", err)
 	}
 }

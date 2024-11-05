@@ -1,0 +1,34 @@
+{{define "layout_alt"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{template "meta" .}}
+    <title>{{if .Data.IsError}}Error {{.Data.ErrorCode}} - {{end}}{{.Data.Title}}</title>
+</head>
+<body>
+    <header>
+        <!-- <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+            <button id="theme-toggle">
+                <span class="icon moon"></span>
+            </button>
+        </nav> -->
+    </header>
+    <main>
+        {{if .Data.IsError}}
+            <h1>Error {{.Data.ErrorCode}}</h1>
+        {{else}}
+            <h1>{{.Data.Header}}</h1>
+        {{end}}
+        {{.Content}}
+    </main>
+    <!-- <footer>
+        <p>&copy; 2024 My Web App</p>
+    </footer> -->
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
+{{end}}

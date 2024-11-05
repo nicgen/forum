@@ -3,21 +3,70 @@ package lib
 import (
 	"database/sql"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// Variable that will store the database
 var db *sql.DB
 
-func Init() {
+// ? Initiate the database
+func Init() error {
 	var err error
+
+	//Ouverture de la connexion DB
 	db, err = sql.Open("sqlite3", "./forum.db")
 	if err != nil {
 		log.Fatal(err)
+		return fmt.Errorf("Failed to open database: %w", err)
 	}
+
+	// Set DB password if needed
+	dbPassword := os.Getenv("DB_PASSWORD")
+	if dbPassword == "" {
+		return fmt.Errorf("DB_PASSWORD is not set")
+	}
+
+	_, err = db.Exec(fmt.Sprintf("PRAGMA key = '%s'", dbPassword))
+	if err != nil {
+		return fmt.Errorf("failed to set database password: %w", err)
+	}
+
+	// Load and execute SQL schema
+	if err := executeSQLFile("../db/schema"); err != nil {
+		return fmt.Errorf("failed to execute SQL file: %w", err)
+	}
+
+	return nil
 }
 
+// Function to execute an external SQL file
+func executeSQLFile(filename string) error {
+	content, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return fmt.Errorf("failed to read file %s: %w", filename, err)
+	}
+
+	// Split content by semicolons to execute each statement individually
+	queries := strings.Split(string(content), ";")
+	for _, query := range queries {
+		query = strings.TrimSpace(query)
+		if query != "" {
+			_, err := db.Exec(query)
+			if err != nil {
+				return fmt.Errorf("failed to execute query: %w", err)
+			}
+		}
+	}
+
+	return nil
+}
+
+// Test database connection
 func TestDBConnection() {
 	err := db.Ping()
 	if err != nil {
@@ -26,156 +75,47 @@ func TestDBConnection() {
 	log.Println("Database connection established successfully!")
 }
 
+// Send database instance
 func GetDB() *sql.DB {
 	return db
 }
 
-func CreateTables() {
-	tables := []string{
-
-		`CREATE TABLE IF NOT EXISTS User(
-  ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  UUID VARCHAR(255) NOT NULL UNIQUE,
-  Email VARCHAR(50) NOT NULL UNIQUE,
-  Username VARCHAR(25) NOT NULL UNIQUE,
-  Password VARCHAR(100),
-  IsSuperUser    BOOL DEFAULT FALSE, 
-  IsModerator BOOL DEFAULT FALSE, 
-  IsDeleted BOOL DEFAULT FALSE, 
-  CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-);`,
-
-		`CREATE TABLE IF NOT EXISTS Admin (
-  ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  User_ID INTEGER NOT NULL,
-  Mod_ID INTEGER NOT NULL,
-  RequestMod_ID INTEGER NOT NULL,
-  FOREIGN KEY (User_ID) REFERENCES User(ID),
-  FOREIGN KEY (RequestMod_ID) REFERENCES RequestMod(ID),
-  FOREIGN KEY (Mod_ID) REFERENCES Moderateur(ID)
-);`,
-
-		`Create TABLE IF NOT EXISTS Moderateur (
-  ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  User_ID INT NOT NULL,
-  IsAdmin BOOL DEFAULT FALSE,
-  ACCESS_GIVEN DATETIME DEFAULT CURRENT_TIMESTAMP,
-  ACCESS_REVOKED DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (User_ID) REFERENCES User(ID)
-);`,
-
-		`CREATE TABLE IF NOT EXISTS Categories (
-  ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  Name VARCHAR(50) UNIQUE
-);`,
-
-		`CREATE TABLE IF NOT EXISTS Posts (
-  ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  User_ID INTEGER NOT NULL,
-  Title TEXT NOT NULL,
-  Category_ID INTEGER NOT NULL,
-  Texte TEXT,
-  CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-  UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (User_ID) REFERENCES User(ID),
-  FOREIGN KEY (Category_ID) REFERENCES Categories(ID)
-);`,
-
-		`CREATE TABLE IF NOT EXISTS Post_Categories (
-  ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  Post_ID INTEGER NOT NULL, 
-  Categories_ID INTEGER NOT NULL,
-  FOREIGN KEY(Post_ID) REFERENCES Posts(ID),
-  FOREIGN KEY(Categories_ID) REFERENCES Categories(ID)
-);`,
-
-		`CREATE TABLE IF NOT EXISTS Comments (
-  ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  User_ID INTEGER NOT NULL,
-  Post_ID INTEGER NOT NULL,
-  Texte TEXT NOT NULL,
-  CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-  UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (Post_ID) REFERENCES Posts(ID) ON DELETE CASCADE,
-  FOREIGN KEY (User_ID) REFERENCES User(ID)
-);`,
-
-		`CREATE TABLE IF NOT EXISTS Report (
-  ID INTEGER PRIMARY KEY AUTOINCREMENT ,
-  Reported_ID INTEGER NOT NULL, 
-  User_ID INTEGER NOT NULL,
-  Reported_Reason INTEGER NOT NULL,
-  Reported_Texte TEXT,
-  FOREIGN KEY (User_ID) REFERENCES User(ID)
-);`,
-
-		`CREATE TABLE IF NOT EXISTS RequestMod (
-  ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  User_ID INTEGER NOT NULL,
-  Reason TEXT NOT NULL,
-  FOREIGN KEY (User_ID) REFERENCES User(ID)
-);`,
-
-		`CREATE TABLE IF NOT EXISTS Reaction (
-  ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  Post_ID INTEGER,
-  Comment_ID INTEGER,
-  User_ID INTEGER,
-  IsLike BOOL,
-  FOREIGN KEY (Post_ID) REFERENCES Posts(ID) ON DELETE CASCADE,
-  FOREIGN KEY (Comment_ID) REFERENCES Comments(ID) ON DELETE CASCADE,
-  FOREIGN KEY (User_ID) REFERENCES User(ID)
-  CHECK ((Post_ID is NULL AND Comment_ID IS NOT NULL)OR(Post_ID IS NOT NULL AND Comment_ID IS NULL))
-);`,
-
-		`CREATE TABLE IF NOT EXISTS Notification (
-  ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  User_ID INTEGER NOT NULL,
-  Reaction_ID INTEGER,
-  Post_ID INTEGER,
-  Comment_ID INTEGER,
-  CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-  IsRead Bool,
-  FOREIGN KEY(Comment_ID) REFERENCES Comments(ID),
-  FOREIGN KEY(User_ID) REFERENCES User(ID),
-  FOREIGN KEY(Reaction_ID) REFERENCES Reaction(ID)
-  FOREIGN KEY(Post_ID) REFERENCES Posts(ID)
-);`,
-
-		`CREATE TABLE IF NOT EXISTS Image (
-  ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  FilePath TEXT,
-  Post_ID INTEGER,
-  FOREIGN KEY (Post_ID) REFERENCES Posts(ID) ON DELETE CASCADE
-
-    );`,
-
-		`CREATE TABLE IF NOT EXISTS oauth_states (
-      state TEXT PRIMARY KEY,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );`,
-	}
-	for _, table := range tables {
-		_, err := db.Exec(table)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-	fmt.Println("Tables créées avec succès.")
-
-	InsertCategories() // a supprimer
-}
-
-// A modifier : admin doit les créer
+// Insert default categories
 func InsertCategories() {
 	categories := []string{"Test 1", "Test 2", "Test 3"}
-
 	for _, category := range categories {
-		_, err := db.Exec(`INSERT OR IGNORE INTO Categories (Name) VALUES (?)`, category) //créer les catégories ou ignore si elles existent déjà
+		_, err := db.Exec(`INSERT OR IGNORE INTO Categories (Name) VALUES (?)`, category)
 		if err != nil {
 			log.Fatalf("Error inserting category %s: %v", category, err)
 		} else {
-			fmt.Printf("Catégorie '%s' insérée avec succès ou déjà existante.\n", category)
+			fmt.Printf("Category '%s' inserted successfully or already exists.\n", category)
 		}
 	}
+}
+
+// Anonymizes user data upon account deletion request
+func AnonymizeUser(uuid string) error {
+	// Prepare anonymization queries
+	_, err := db.Exec(`UPDATE User SET Username = 'anonymous', Email = 'anonymous@domain.com', Password = '', IsDeleted = TRUE WHERE UUID = ?`, uuid)
+	if err != nil {
+		return fmt.Errorf("failed to anonymize user data: %w", err)
+	}
+
+	// Anonymize posts, comments, reactions
+	_, err = db.Exec(`UPDATE Posts SET User_UUID = 'anonymous' WHERE User_UUID = ?`, uuid)
+	if err != nil {
+		return fmt.Errorf("failed to anonymize user posts: %w", err)
+	}
+
+	_, err = db.Exec(`UPDATE Comments SET User_UUID = 'anonymous' WHERE User_UUID = ?`, uuid)
+	if err != nil {
+		return fmt.Errorf("failed to anonymize user comments: %w", err)
+	}
+
+	_, err = db.Exec(`UPDATE Reaction SET User_ID = NULL WHERE User_ID = (SELECT ID FROM User WHERE UUID = ?)`, uuid)
+	if err != nil {
+		return fmt.Errorf("failed to anonymize user reactions: %w", err)
+	}
+
+	return nil
 }

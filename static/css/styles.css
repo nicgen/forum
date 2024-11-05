@@ -4,6 +4,7 @@
   /* common */
   --font-family-main: Arial, Helvetica, sans-serif;
   --font-size-default: 16px;
+<<<<<<< HEAD
   --font-size-h1: 24px;
   --font-size-h2: 20px;
   --font-size-h3: 18px;
@@ -21,6 +22,17 @@
   --foot-bg-color-light: #5960CB;
   --hover-text-light:#FAE7A5;
   --hover-bg-light: #5960CB;
+=======
+  --line-height: 1.6;
+
+  /* light */
+  --text-color-light: #435c68;
+  --bkg-color-light: #F1F0E8;
+  --nav-bg-color-light: #96B6C5;
+  --foot-bg-color-light: #96B6C5;
+  --hover-text-light:#F1F0E8;
+  --hover-bg-light: #435c68;
+>>>>>>> Back/security
 
   /* dark */
   --text-color-dark: #a58c71;
@@ -107,7 +119,10 @@ body {
   font-family: var(--font-family-main);
   line-height: var(--line-height);
   font-size: var(--font-size-default);
+<<<<<<< HEAD
   word-spacing: var(--word-spacing);
+=======
+>>>>>>> Back/security
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -135,8 +150,12 @@ main .container{
 
 .container {
   width: 80%;
+<<<<<<< HEAD
   max-width: 1014px;
   height: auto;
+=======
+  max-width: 1024px;
+>>>>>>> Back/security
   margin: 0 auto;
   padding: 1rem;
 }
@@ -149,6 +168,7 @@ main .container{
   border: 2px dashed green;
 }
 
+<<<<<<< HEAD
 /* Components */
 
 .icon{
@@ -162,6 +182,8 @@ main .container{
   justify-content: center;
 }
 
+=======
+>>>>>>> Back/security
 /* NAV BAR ------------------------------------------*/
 
 header {
@@ -169,6 +191,7 @@ header {
   /* padding: 10px 20px; */
 }
 
+<<<<<<< HEAD
 .container.header {
   display: flex;
   flex-direction: row;
@@ -244,6 +267,15 @@ header {
 }
 
 /* header nav ul {
+=======
+header nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header nav ul {
+>>>>>>> Back/security
   list-style-type: none;
   display: flex;
   justify-content: center;
@@ -267,7 +299,11 @@ nav ul li a {
 nav ul li a:hover {
   color: var(--hover-text);
   background-color: var(--hover-bg);
+<<<<<<< HEAD
 } */
+=======
+}
+>>>>>>> Back/security
 
 /* THEME button ------------------------------------------*/
 
@@ -305,6 +341,7 @@ footer {
   margin-top: auto; /* Pushes the footer to the bottom */
 }
 
+<<<<<<< HEAD
 /* UNSET CSS classless system */
 
 body {
@@ -325,3 +362,5 @@ main {
   width: 100%;
   grid-column: unset;
 }
+=======
+>>>>>>> Back/security
