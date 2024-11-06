@@ -52,3 +52,9 @@ Zone.Identifier
 *:Zone.Identifier
 
 /doc
+
+#Certificat
+
+server.crt
+server.csr
+server.key
