@@ -1,20 +1,14 @@
 {{define "page/index"}}
-{{ if ne .Role "User" }}
-  {{template "login-register" .}}
-  {{template "posts" .}}
-<div class="home-content">
-  <h1 class="text-title">Forum</h1>
-  <form action="/auth">
-    <button>Login</button>
-  </form>
-</div>
-{{ else }}
-{{template "posts" .}}
-<div class="home-content">
-  <h1 class="text-title">Forum</h1>
-  <form action="/auth">
-    <button>Login</button>
-  </form>
-</div>
-{{end}}
+  {{ if ne .Role "User" }}
+    {{template "login-register" .}}
+    {{template "posts" .}}
+  {{ else }}
+    <form action="/profile">
+      <button>Profile</button>
+    </form> 
+    <form action="/logout">
+      <button>Log out</button>
+    </form> 
+    {{template "posts" .}}
+  {{end}}
 {{end}}
