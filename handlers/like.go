@@ -13,7 +13,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 
 	// Checking the cookie values
-	session_id := r.Cookies()
+	cookie, _ := r.Cookie("session_id")
 
 	// Getting the form values
 	id := strings.TrimSpace(r.URL.Query().Get("id"))
@@ -24,13 +24,13 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 	// Checking if the User already liked the post
 	var is_liked bool = true
 	state_isliked := `SELECT IsLiked FROM Reaction WHERE User_UUID = ? AND Post_ID = ?`
-	err_isliked := db.QueryRow(state_isliked, session_id[0].Value, post_id).Scan(&is_liked)
+	err_isliked := db.QueryRow(state_isliked, cookie.Value, post_id).Scan(&is_liked)
 
 	println("is liked: ", is_liked)
 
 	if err_isliked == sql.ErrNoRows {
 		state_isliked := `INSERT INTO Reaction (Post_ID, User_UUID, IsLiked) VALUES (?, ?, ?)`
-		_, err_add_react := db.Exec(state_isliked, post_id, session_id[0].Value, is_liked)
+		_, err_add_react := db.Exec(state_isliked, post_id, cookie.Value, is_liked)
 		if err_add_react != nil {
 			http.Error(w, "Error creating User reaction", http.StatusUnauthorized)
 			return
@@ -50,7 +50,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 		// Getting the number of likes of the post in the database
 		var like_number int
 		state_like := `SELECT Like FROM Posts WHERE User_UUID = ?`
-		err_like := db.QueryRow(state_like, session_id[0].Value).Scan(&like_number)
+		err_like := db.QueryRow(state_like, cookie.Value).Scan(&like_number)
 		if err_like != nil {
 			http.Error(w, "Error accessing User ID", http.StatusUnauthorized)
 			return
@@ -58,7 +58,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Creating a reaction to keep track of liked posts
 		state_reaction := `INSERT INTO Reaction (Post_ID, User_UUID, IsLiked) VALUES (?, ?, ?)`
-		_, err_db := db.Exec(state_reaction, post_id, session_id[0].Value, false)
+		_, err_db := db.Exec(state_reaction, post_id, cookie.Value, false)
 		if err_db != nil {
 			http.Error(w, "Error liking the post", http.StatusInternalServerError)
 			return
