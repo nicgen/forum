@@ -59,6 +59,9 @@ func WithErrorHandling(next http.Handler) http.Handler {
 					case "not found":
 						statusCode = http.StatusNotFound
 						message = "Not Found"
+					case "too many request":
+						statusCode = http.StatusTooManyRequests
+						message = "Too Many Request"
 					default:
 						// fmt.Println(">>>>>>>>>>STRING:Internal<<<<<<<<<<")
 						statusCode = http.StatusInternalServerError
