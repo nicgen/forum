@@ -2,13 +2,14 @@
   {{ if ne .Role "User" }}
     {{template "login-register" .}}
     {{template "posts" .}}
-  {{ else }}
+    {{ else }}
     <form action="/profile">
       <button>Profile</button>
     </form> 
     <form action="/logout">
       <button>Log out</button>
     </form> 
+    {{template "createposts" .}}
     {{template "posts" .}}
   {{end}}
 {{end}}
