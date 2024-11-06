@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"forum/cmd/RateLimit"
 	"forum/cmd/lib"
 	"forum/handlers"
 	"log"
@@ -31,7 +32,7 @@ func main() {
 
 	// Configuration du routeur
 	mux := setupMux()
-	rateLimiter := lib.NewRateLimiter()
+	rateLimiter := RateLimit.NewRateLimiter()
 	server := setupServer(rateLimiter.Limit(mux))
 
 	// Configuration HTTPS
@@ -98,7 +99,7 @@ func setupMux() *http.ServeMux {
 func setupServer(handler http.Handler) *http.Server {
 	return &http.Server{
 		Addr:              "localhost:8080", // Écoute sur le port HTTPS
-		Handler:           handler,
+		Handler:           handlers.WithErrorHandling(handler),
 		ReadHeaderTimeout: 10 * time.Second,
 		WriteTimeout:      10 * time.Second,
 		IdleTimeout:       120 * time.Second,
