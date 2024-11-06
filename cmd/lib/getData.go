@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func GetData(db *sql.DB, uuid string, status string, page string) (any map[string]interface{}, err_return string) {
+func GetData(db *sql.DB, uuid string, status string, page string) (map[string]interface{}, string) {
 	// Declaring the map we are going to return
 	data := map[string]interface{}{}
 
@@ -40,7 +40,7 @@ func GetData(db *sql.DB, uuid string, status string, page string) (any map[strin
 		// Posts Query based on page
 		var state_posts string
 		if page == "profile" {
-			state_posts = `SELECT ID, Category_ID, Title, Text, Like, CreatedAt FROM Posts WHERE UUID = ? ORDER BY CreatedAt DESC`
+			state_posts = `SELECT ID, Category_ID, Title, Text, Like, CreatedAt FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
 		} else if page == "index" {
 			state_posts = `SELECT ID, Category_ID, Title, Text, Like, CreatedAt FROM Posts ORDER BY CreatedAt DESC`
 		}
