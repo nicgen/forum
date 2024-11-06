@@ -39,17 +39,29 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			log.Printf("Received registration request: Username=%s, Email=%s", username, email)
 
 			// if !lib.IsValidPassword(password) {
-			// 	http.Error(w, "Invalid Password Format, Your password must be at least 8 characters long and include at least one number and one special character.", http.StatusBadRequest)
-			// 	return
+			// 	data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+			// 	if err_getdata != "OK" {
+
+			// 	}
+			// 	data = ErrorMessage(w, data, "RegisterPassword")
+			// 	renderTemplate(w, "layout/index", "page/index", data)
 			// }
 			// if !lib.IsValidEmail(email) {
-			// 	http.Error(w, "Invalid Email Format, Example of a valid email address: example@domain.com", http.StatusBadRequest)
-			// 	return
+			// 	data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+			// 	if err_getdata != "OK" {
+
+			// 	}
+			// 	data = ErrorMessage(w, data, "EmailFormat")
+			// 	renderTemplate(w, "layout/index", "page/index", data)
 			// }
 			// Check if passwords match
 			if password != confirmPassword {
-				http.Error(w, "Password doesn't match", http.StatusBadRequest)
-				return
+				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+				if err_getdata != "OK" {
+
+				}
+				data = ErrorMessage(w, data, "PasswordMatch")
+				renderTemplate(w, "layout/index", "page/index", data)
 			}
 
 			// Generate UUID
@@ -89,16 +101,22 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 			// Check if the user already exists
 			if usernameExists {
-				http.Error(w, "Username already taken", http.StatusConflict)
-				log.Printf("Username already taken: %s", username)
-				return
+				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+				if err_getdata != "OK" {
+
+				}
+				data = ErrorMessage(w, data, "RegisterUsername")
+				renderTemplate(w, "layout/index", "page/index", data)
 			}
 
 			// Check if the email is already taken
 			if emailExists {
-				http.Error(w, "Email already used", http.StatusConflict)
-				log.Printf("Email already used: %s", email)
-				return
+				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+				if err_getdata != "OK" {
+
+				}
+				data = ErrorMessage(w, data, "RegisterEmail")
+				renderTemplate(w, "layout/index", "page/index", data)
 			}
 
 			// Insert the new user into the database as a User

@@ -32,7 +32,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		err = stmt.QueryRow(email).Scan(&hashedPassword)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+				if err_getdata != "OK" {
+
+				}
+				data = ErrorMessage(w, data, "LoginMail")
+				renderTemplate(w, "layout/index", "page/index", data)
 			} else {
 				http.Error(w, "Error retrieving user data", http.StatusInternalServerError)
 			}
@@ -41,8 +46,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Verify password
 		if !CheckPassword(hashedPassword, password) {
-			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
-			return
+			data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+			if err_getdata != "OK" {
+
+			}
+			data = ErrorMessage(w, data, "LoginPassword")
+			renderTemplate(w, "layout/index", "page/index", data)
 		}
 
 		// Getting the UUID from the database
@@ -59,7 +68,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	} else {
 		// If the User is already logged and tries to log-in
-		http.Error(w, "You must log-out before loggin in again", http.StatusUnauthorized)
+		// ErrorMessage(w, "You must log-out before loggin in again")
 		return
 	}
 
