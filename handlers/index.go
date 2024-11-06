@@ -31,26 +31,23 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{}
 
 	// Checking if the User is on guest or is logged
-	_, err_cookie := r.Cookie("session_id")
+	cookie, err_cookie := r.Cookie("session_id")
 
 	// If they're not logged in
 	if err_cookie == http.ErrNoCookie {
 		data, err = lib.GetData(db, "not logged", "not logged", "index")
 	} else {
-		// Getting the uuid from the cookie header
-		session_id := r.Cookies()
-
 		var id int
 		// Checking if the UUID is containned in the database
 		state_check := `SELECT ID FROM User WHERE UUID = ?`
-		err_check := db.QueryRow(state_check, session_id[0].Value).Scan(&id)
+		err_check := db.QueryRow(state_check, cookie.Value).Scan(&id)
 
 		// If the UUID is not contained in db, get rid of that cookie and redirect to homepage
 		if err_check == sql.ErrNoRows {
 			LogoutHandler(w, r)
 		} else {
 			// Else, we show the User the index page of Logged User
-			data, err = lib.GetData(db, session_id[0].Value, "logged", "index")
+			data, err = lib.GetData(db, cookie.Value, "logged", "index")
 		}
 	}
 
