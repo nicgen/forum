@@ -11,15 +11,6 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 
 	if r.URL.Path != "/" {
-		// * generate your error message
-		// err := &models.CustomError{
-		// 	StatusCode: http.StatusNotFound,
-		// 	Message:    "Page Not Found",
-		// }
-		// Use HandleError to send the error response
-		// HandleError(w, err.StatusCode, err.Message)
-		// return
-		// * alt. use the auto-generated error code & message
 		HandleError(w, http.StatusNotFound, "Page Not Found")
 		return
 	}
@@ -31,18 +22,19 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	// Checking if the User is on guest or is logged
 	_, err_cookie := r.Cookie("session_id")
 
-	// If he's not logged
+	// If they're not logged in
 	if err_cookie == http.ErrNoCookie {
 		data, err = lib.GetData(db, "not logged", "not logged", "index")
 	} else {
-		// Checking the cookie values
+		// Get data for logged-in user
 		session_id := r.Cookies()
-
-		// Getting the data values
 		data, err = lib.GetData(db, session_id[0].Value, "logged", "index")
-		if err != "OK" {
+	}
 
-		}
+	// Checking the error returned by the GetData function
+	if err != "OK" {
+		http.Error(w, err, http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

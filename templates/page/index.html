@@ -1,5 +1,7 @@
 {{define "page/index"}}
-{{template "login-register" .}}
+{{ if ne .Role "User" }}
+  {{template "login-register" .}}
+{{ else }}
 {{template "posts" .}}
 <div class="home-content">
   <h1 class="text-title">Forum</h1>
@@ -7,4 +9,5 @@
     <button>Login</button>
   </form>
 </div>
+{{end}}
 {{end}}
