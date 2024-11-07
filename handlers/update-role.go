@@ -11,24 +11,21 @@ func UpdateUserToModerator(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 	// Check if the request method is POST
 	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method.", http.StatusMethodNotAllowed)
-		return
+		ErrorServer(w, "Invalid request method.")
 	}
 
 	// Retrieve the user's UUID from the form
 	userUUID := r.FormValue("userUUID")
 	if userUUID == "" {
-		http.Error(w, "User UUID is required.", http.StatusBadRequest)
-		return
+		ErrorServer(w, "User UUID is required.")
 	}
 
 	// Update the user's role to "Moderator"
 	query := `UPDATE User SET Role = 'Moderator' WHERE UUID = ?`
 	_, err := db.Exec(query, userUUID)
 	if err != nil {
-		http.Error(w, "Failed to update user role.", http.StatusInternalServerError)
+		ErrorServer(w, "Failed to update user role.")
 		fmt.Println("Error updating user role:", err)
-		return
 	}
 
 	// Redirect or send a success message
@@ -39,24 +36,21 @@ func RemoveModerator(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 	// Check if the request method is POST
 	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method.", http.StatusMethodNotAllowed)
-		return
+		ErrorServer(w, "Invalid request method.")
 	}
 
 	// Retrieve the user's UUID from the form
 	userUUID := r.FormValue("userUUID")
 	if userUUID == "" {
-		http.Error(w, "User UUID is required.", http.StatusBadRequest)
-		return
+		ErrorServer(w, "User UUID is required.")
 	}
 
 	// Update the user's role to "Moderator"
 	query := `UPDATE User SET Role = 'User' WHERE UUID = ?`
 	_, err := db.Exec(query, userUUID)
 	if err != nil {
-		http.Error(w, "Failed to update user role.", http.StatusInternalServerError)
+		ErrorServer(w, "Failed to update user role.")
 		fmt.Println("Error updating user role:", err)
-		return
 	}
 
 	// Redirect or send a success message
