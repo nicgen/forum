@@ -1,16 +1,20 @@
-{{define "block/login-register"}}
+{{define "login-register"}}
 <!-- Login container with role and aria-labelledby -->
 <div class="login-container" role="form" aria-labelledby="login-heading">
   <h2 id="login-heading">Login</h2>
 
   <form action="/login" aria-label="Login form">
     <!-- Adds aria-label for the form -->
-    <label for="username">Username</label>
-    <input type="text" name="EmailForm" placeholder="Username" required aria-required="true" />
-
+    <label for="username">Email</label>
+    <input type="text" name="EmailForm" placeholder="Email" required aria-required="true" />
+    {{ if ne .Error.LoginMail "null" }}
+        <span style="color: red;">{{ .Error.LoginMail }}</span>
+    {{ end }}
     <label for="password">Password</label>
     <input type="password" name="PasswordForm" placeholder="Password" required aria-required="true" />
-
+    {{ if ne .Error.LoginPassword "null" }}
+        <span style="color: red;">{{ .Error.LoginPassword }}</span>
+    {{ end }}
     <button type="submit" aria-label="Login button">Login</button>
   </form>
 
@@ -35,16 +39,31 @@
                     <form action="/register" aria-label="Register form" method="POST">
                         <label for="register-username">Username</label>
                         <input type="text" name="UsernameForm" id="register-username" placeholder="Username" required aria-required="true">
+                        {{ if ne .Error.RegisterUsername "null" }}
+                            <span style="color: red;">{{ .Error.RegisterUsername }}</span>
+                        {{ end }}
     
                         <label for="register-email">Email</label>
                         <input type="text" name="EmailForm" id="register-email" placeholder="Email" required aria-required="true">
-    
+                        {{ if ne .Error.RegisterEmail "null" }}
+                            <span style="color: red;">{{ .Error.RegisterEmail }}</span>
+                        {{ end }}
+                        {{ if ne .Error.EmailFormat "null" }}
+                            <span style="color: red;">{{ .Error.EmailFormat }}</span>
+                        {{ end }}                        
+
                         <label for="register-password">Password</label>
                         <input type="password" name="PasswordForm" id="register-password" placeholder="Password" required aria-required="true">
+                        {{ if ne .Error.RegisterPassword "null" }}
+                            <span style="color: red;">{{ .Error.RegisterPassword }}</span>
+                        {{ end }}                        
     
                         <label for="confirm-password">Confirm Password</label>
                         <input type="password" name="ConfirmPasswordForm" id="confirm-password" placeholder="Confirm Password" required aria-required="true">
-    
+                        {{ if ne .Error.PasswordMatch "null" }}
+                            <span style="color: red;">{{ .Error.PasswordMatch }}</span>
+                        {{ end }}
+
                         <div class="form-buttons">
                             <button type="submit" aria-label="Register button">Register</button>
                         </div>
