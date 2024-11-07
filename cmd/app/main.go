@@ -88,6 +88,8 @@ func setupMux() *http.ServeMux {
 	mux.HandleFunc("/profile", handlers.AuthMiddleware(handlers.ProfileHandler))
 	mux.HandleFunc("/post", handlers.AuthMiddleware(handlers.PostHandler))
 	mux.HandleFunc("/like", handlers.AuthMiddleware(handlers.LikeHandler))
+	mux.HandleFunc("/admin/update-role", handlers.AuthMiddleware(handlers.UpdateUserToModerator))
+	mux.HandleFunc("/admin/remove-role", handlers.AuthMiddleware(handlers.RemoveModerator))
 
 	// Basic Web handlers
 	mux.HandleFunc("/about", handlers.AboutHandler)
