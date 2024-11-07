@@ -29,6 +29,7 @@ func main() {
 	// Création des tables et test de la connexion
 	lib.CreateTables()
 	lib.TestDBConnection()
+	lib.Admin()
 
 	// Configuration du routeur
 	mux := setupMux()

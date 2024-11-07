@@ -1,5 +1,6 @@
 {{define "page/index"}}
-  {{ if ne .Role "User" }}
+  {{ if and (ne .Role "Admin") (ne .Role "User") (ne .Role "Moderator") }}
+  
     {{template "login-register" .}}
     {{template "posts" .}}
     {{ else }}
