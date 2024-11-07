@@ -109,7 +109,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// Insert the new user into the database as a User
-			_, err_db := db.Exec("INSERT INTO User (UUID, Username, Password, Email, Role) VALUES (?, ?, ?, ?, ?)", userUUID, username, hashedPassword, email, "User")
+			_, err_db := db.Exec("INSERT INTO User (UUIDrfthtgfdhfg, Username, Password, Email, Role) VALUES (?, ?, ?, ?, ?)", userUUID, username, hashedPassword, email, "User")
 			if err_db != nil {
 				ErrorServer(w, "Error adding user to the database")
 			}

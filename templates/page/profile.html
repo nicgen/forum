@@ -7,7 +7,7 @@
 
   {{if eq .Role "Admin"}}
     <p>Test: admin</p>
-    
+    {{end}}
     
     <h3>List of Users:</h3>
     <ul>
@@ -16,7 +16,6 @@
           Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }} 
         </li>
     </ul>
-    {{end}}
   {{end}}
   
   {{ range .Posts }}

@@ -1,15 +1,9 @@
 {{define "page/index"}}
   {{ if and (ne .Role "Admin") (ne .Role "User") (ne .Role "Moderator") }}
-  
     {{template "login-register" .}}
     {{template "posts" .}}
-    {{ else }}
-    <form action="/profile">
-      <button>Profile</button>
-    </form> 
-    <form action="/logout">
-      <button>Log out</button>
-    </form> 
+  {{ else }}
+    <h3>Create a new post: </h3>
     {{template "createposts" .}}
     {{template "posts" .}}
   {{end}}

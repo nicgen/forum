@@ -66,7 +66,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	} else {
 		// If the User is already logged and tries to log-in
-		// ErrorMessage(w, "You must log-out before loggin in again")
+		ErrorServer(w, "You must log-out before loggin in again")
 		return
 	}
 

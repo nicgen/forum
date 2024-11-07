@@ -7,7 +7,7 @@
   <form action="/like" method="GET">
     <input type="hidden" name="id" value="{{.ID}}">
     <button type="submit" name="like_button">Like</button>
-    <p>{{ .Like }}</p>
+    <span>{{ .Like }}</span>
   </form>
   <p>Created at: {{ .CreatedAt }}</p>
 </div>
