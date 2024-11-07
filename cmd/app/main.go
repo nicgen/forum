@@ -29,6 +29,7 @@ func main() {
 	// Création des tables et test de la connexion
 	lib.CreateTables()
 	lib.TestDBConnection()
+	lib.Admin()
 
 	// Configuration du routeur
 	mux := setupMux()
@@ -86,6 +87,7 @@ func setupMux() *http.ServeMux {
 	// DB Requests
 	mux.HandleFunc("/profile", handlers.AuthMiddleware(handlers.ProfileHandler))
 	mux.HandleFunc("/post", handlers.AuthMiddleware(handlers.PostHandler))
+	mux.HandleFunc("/like", handlers.AuthMiddleware(handlers.LikeHandler))
 
 	// Basic Web handlers
 	mux.HandleFunc("/about", handlers.AboutHandler)

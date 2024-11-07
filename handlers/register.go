@@ -11,24 +11,21 @@ import (
 
 // ? Handler to get form values, store them into database after checking them
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	// Storing database into a variable
 	db := lib.GetDB()
 
 	if r.Method == "GET" {
 		http.ServeFile(w, r, "./templates/index.html")
 		return
 	}
-
 	if r.Method == "POST" {
-
 		// Checking if the User is already logged or not
 		_, err_cookie := r.Cookie("session_id")
 		if err_cookie == http.ErrNoCookie {
 			// Parsing form values
 			err1 := r.ParseForm()
 			if err1 != nil {
-				http.Error(w, "Error parsing form data", http.StatusBadRequest)
-				log.Printf("Error parsing form: %v", err1)
-				return
+				ErrorServer(w, "Error parsing form data")
 			}
 
 			// Getting form values
@@ -40,25 +37,35 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			log.Printf("Received registration request: Username=%s, Email=%s", username, email)
 
 			// if !lib.IsValidPassword(password) {
-			// 	http.Error(w, "Invalid Password Format, Your password must be at least 8 characters long and include at least one number and one special character.", http.StatusBadRequest)
-			// 	return
+			// 	data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+			// 	if err_getdata != "OK" {
+			// 		ErrorServer(w, err_getdata)
+			// 	}
+			// 	data = ErrorMessage(w, data, "RegisterPassword")
+			// 	renderTemplate(w, "layout/index", "page/index", data)
 			// }
 			// if !lib.IsValidEmail(email) {
-			// 	http.Error(w, "Invalid Email Format, Example of a valid email address: example@domain.com", http.StatusBadRequest)
-			// 	return
+			// 	data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+			// 	if err_getdata != "OK" {
+			// 		ErrorServer(w, err_getdata)
+			// 	}
+			// 	data = ErrorMessage(w, data, "EmailFormat")
+			// 	renderTemplate(w, "layout/index", "page/index", data)
 			// }
 			// Check if passwords match
 			if password != confirmPassword {
-				http.Error(w, "Password doesn't match", http.StatusBadRequest)
-				return
+				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+				if err_getdata != "OK" {
+					ErrorServer(w, err_getdata)
+				}
+				data = ErrorMessage(w, data, "PasswordMatch")
+				renderTemplate(w, "layout/index", "page/index", data)
 			}
 
 			// Generate UUID
 			userUUID, errUUID := uuid.NewV4()
 			if errUUID != nil {
-				http.Error(w, "Error generating user UUID", http.StatusInternalServerError)
-				log.Printf("Error generating UUID: %v", errUUID)
-				return
+				ErrorServer(w, "Error generating user UUID on register")
 			}
 
 			var usernameExists bool
@@ -68,14 +75,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			err_email := db.QueryRow("SELECT EXISTS(SELECT 1 FROM User WHERE Email=?)", email).Scan(&emailExists)
 
 			if err_user != nil {
-				http.Error(w, "Error checking username", http.StatusInternalServerError)
-				log.Printf("Error checking username: %v", err_user)
-				return
-			}
-			if err_email != nil {
-				http.Error(w, "Error checking email", http.StatusInternalServerError)
-				log.Printf("Error checking email: %v", err_email)
-				return
+				ErrorServer(w, "Error checking username in database")
+			} else if err_email != nil {
+				ErrorServer(w, "Error checking email in database")
 			}
 
 			log.Printf("Username exists: %v, Email exists: %v", usernameExists, emailExists)
@@ -83,31 +85,33 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			// Hash password
 			hashedPassword, err_password := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 			if err_password != nil {
-				http.Error(w, "Error hashing the password", http.StatusInternalServerError)
-				log.Printf("Error hashing password: %v", err_password)
-				return
+				ErrorServer(w, "Error hashing the password")
 			}
 
 			// Check if the user already exists
 			if usernameExists {
-				http.Error(w, "Username already taken", http.StatusConflict)
-				log.Printf("Username already taken: %s", username)
-				return
+				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+				if err_getdata != "OK" {
+					ErrorServer(w, err_getdata)
+				}
+				data = ErrorMessage(w, data, "RegisterUsername")
+				renderTemplate(w, "layout/index", "page/index", data)
 			}
 
 			// Check if the email is already taken
 			if emailExists {
-				http.Error(w, "Email already used", http.StatusConflict)
-				log.Printf("Email already used: %s", email)
-				return
+				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+				if err_getdata != "OK" {
+					ErrorServer(w, err_getdata)
+				}
+				data = ErrorMessage(w, data, "RegisterEmail")
+				renderTemplate(w, "layout/index", "page/index", data)
 			}
 
 			// Insert the new user into the database as a User
 			_, err_db := db.Exec("INSERT INTO User (UUID, Username, Password, Email, Role) VALUES (?, ?, ?, ?, ?)", userUUID, username, hashedPassword, email, "User")
 			if err_db != nil {
-				log.Printf("Error adding user to the database: %v", err_db)
-				http.Error(w, "Error adding user to the database", http.StatusInternalServerError)
-				return
+				ErrorServer(w, "Error adding user to the database")
 			}
 
 			// Getting the UUID from the database
@@ -115,8 +119,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			state := `SELECT UUID FROM User WHERE Email = ?`
 			err_user = db.QueryRow(state, email).Scan(&user_uuid)
 			if err_user != nil {
-				http.Error(w, "Error accessing User UUID", http.StatusUnauthorized)
-				return
+				ErrorServer(w, "Error accessing User UUID")
 			}
 
 			// Attribute a session to an User
@@ -128,12 +131,10 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			// Redirect to a success page
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 		} else {
-			http.Error(w, "Unsupported method", http.StatusMethodNotAllowed)
+			// If a logged User tries to register without logging out
+			ErrorServer(w, "You must log-out before loggin in again")
 		}
 	} else {
-		// If a logged User tries to register without logging out
-		http.Error(w, "You must log-out before loggin in again", http.StatusUnauthorized)
-		return
+		ErrorServer(w, "Unsupported method")
 	}
-
 }

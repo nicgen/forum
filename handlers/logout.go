@@ -12,14 +12,13 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 
 	// Checking the cookie values
-	session_id := r.Cookies()
+	cookie, _ := r.Cookie("session_id")
 
 	// Unlogging the User in the database
 	state := `UPDATE User SET IsLogged = ? WHERE UUID = ?`
-	_, err_db := db.Exec(state, false, session_id[0].Value)
+	_, err_db := db.Exec(state, false, cookie.Value)
 	if err_db != nil {
-		http.Error(w, "Error logging out", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Error logging out")
 	}
 
 	// Overwrite the cookie with one that expire instantly

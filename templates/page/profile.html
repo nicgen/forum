@@ -3,6 +3,22 @@
   <h3>Your Email: {{ .Email }}</h3>
   <h3>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</h3>
   <h3>Your role: {{ .Role }}</h3>
+  
+
+  {{if eq .Role "Admin"}}
+    <p>Test: admin</p>
+    
+    
+    <h3>List of Users:</h3>
+    <ul>
+      {{ range .AllUsers }}
+        <li>
+          Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }} 
+        </li>
+    </ul>
+    {{end}}
+  {{end}}
+  
   {{ range .Posts }}
   <div class="post">
     <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
