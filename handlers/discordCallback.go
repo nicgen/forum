@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"forum/cmd/lib"
+	"forum/models"
 	"log"
 	"net/http"
 	"net/url"
@@ -43,7 +44,12 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	resp, err_post := http.PostForm(tokenURL, values)
 	if err_post != nil {
-		http.Error(w, "Error exchanging code", http.StatusInternalServerError)
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error exchanging code",
+		}
+
+		HandleError(w, err.StatusCode, err.Message)
 		return
 	}
 	defer resp.Body.Close()
