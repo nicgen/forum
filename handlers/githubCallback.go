@@ -3,7 +3,6 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"forum/cmd/lib"
 	"log"
 	"net/http"
@@ -25,14 +24,13 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	var storedState string
 	err_check_db := db.QueryRow("SELECT state FROM oauth_states WHERE state = ?", state).Scan(&storedState)
 	if err_check_db != nil || state != storedState {
-		http.Error(w, "Invalid state parameter", http.StatusBadRequest)
-		return
+		ErrorServer(w, "Invalid state parameter")
 	}
 
 	// Delete the used state from the database
 	_, err_delete_db := db.Exec("DELETE FROM oauth_states WHERE state = ?", state)
 	if err_delete_db != nil {
-		log.Printf("Error deleting state: %v", err_delete_db)
+		ErrorServer(w, "Error deleting state")
 	}
 
 	// Exchange the authorization code for an access token
@@ -53,22 +51,19 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	client := &http.Client{}
 	resp, err_request := client.Do(req)
 	if err_request != nil {
-		http.Error(w, err_request.Error(), http.StatusInternalServerError)
-		return
+		ErrorServer(w, err_request.Error())
 	}
 	defer resp.Body.Close()
 
 	// Parse the JSON response
 	var result map[string]interface{}
 	if err_json := json.NewDecoder(resp.Body).Decode(&result); err_json != nil {
-		http.Error(w, "Error decoding token response", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Error decoding token response")
 	}
 
 	accessToken, ok := result["access_token"].(string)
 	if !ok {
-		http.Error(w, "Unable to get access token", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Unable to get access token")
 	}
 
 	// Use the access token to make API requests to GitHub's user endpoint
@@ -79,15 +74,13 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		ErrorServer(w, err.Error())
 	}
 	defer resp.Body.Close()
 
 	var userInfo map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
-		http.Error(w, "Error decoding user info", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Error decoding user info")
 	}
 
 	githubID, id_error := userInfo["id"].(float64)
@@ -95,20 +88,17 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	username, username_error := userInfo["login"].(string)
 
 	if !id_error {
-		http.Error(w, "Unable to get GitHub ID", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Unable to get GitHub ID")
 	}
 	if !email_error {
 		// If email is not public, fetch it separately
 		email = fetchGitHubEmail(accessToken)
 		if email == "" {
-			http.Error(w, "Unable to get user email", http.StatusInternalServerError)
-			return
+			ErrorServer(w, "Unable to get user email")
 		}
 	}
 	if !username_error {
-		http.Error(w, "Unable to get GitHub username", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Unable to get GitHub username")
 	}
 
 	var userID int64
@@ -125,50 +115,54 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Checking for password errors
 		if err_password != nil {
-			http.Error(w, "Error creating password", http.StatusInternalServerError)
-			return
+			ErrorServer(w, "Error creating password")
 		} else if err_hashing != nil {
-			http.Error(w, "Error hashing password", http.StatusInternalServerError)
-			return
+			ErrorServer(w, "Error hashing password")
 		} else if err_email != nil {
-			http.Error(w, "Error sending email", http.StatusInternalServerError)
-			return
+			ErrorServer(w, "Error sending email")
 		}
 
 		//Generate Random UUID for the user
 		UUID, err := uuid.NewV4()
 		if err != nil {
-			fmt.Printf("failed to generate UUID: %v\n", err)
-			return
+			ErrorServer(w, "failed to generate UUID")
 		}
 
 		// Insert new user into the database
 		result, err_doesnt_exist := db.Exec(`
-			INSERT INTO User (UUID, Email, Username, Password, OAuthID, IsSuperUser, IsModerator, IsDeleted) 
-			VALUES (?, ?, ?, ?, ?, false, false, false)
-		`, UUID, email, username, password, int64(githubID))
+			INSERT INTO User (UUID, Email, Username, Password, OAuthID, Role, IsDeleted) 
+			VALUES (?, ?, ?, ?, ?, ?, false)
+		`, UUID, email, username, password, int64(githubID), "User")
 		if err_doesnt_exist != nil {
-			http.Error(w, "Error creating user", http.StatusInternalServerError)
-			return
+			ErrorServer(w, "Error creating user")
 		}
 		userID, _ = result.LastInsertId()
 	} else if err_db != nil {
-		http.Error(w, "Database error", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Database error")
 	} else {
 		// User exists, update GitHubID if necessary
 		_, err_exist := db.Exec("UPDATE User SET OAuthID = ? WHERE ID = ?", int64(githubID), userID)
 		if err_exist != nil {
-			http.Error(w, "Error updating user", http.StatusInternalServerError)
-			return
+			ErrorServer(w, "Error updating user")
 		}
 	}
 
 	//Checking if we got the user informations
-	print("-------------------------------\n")
-	print("User email: ", email, "\n")
-	print("Github ID: ", githubID, "\n")
-	print("-------------------------------\n")
+	print("-------------------------------")
+	print("User email: ", email)
+	print("Github ID: ", githubID)
+	print("-------------------------------")
+
+	// Getting the UUID from the database
+	var user_uuid string
+	state_uuid := `SELECT UUID FROM User WHERE Email = ?`
+	err_user := db.QueryRow(state_uuid, email).Scan(&user_uuid)
+	if err_user != nil {
+		ErrorServer(w, "Error accessing User UUID")
+	}
+
+	// Attribute a session to an User
+	CookieSession(user_uuid, w, r)
 
 	// Redirect the user to a success page or your main application
 	http.Redirect(w, r, "/", http.StatusFound)

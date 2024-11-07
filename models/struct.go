@@ -9,6 +9,7 @@ type Post struct {
 	Category_ID string
 	Title       string
 	Text        string
+	Like        int
 	CreatedAt   time.Time
 }
 

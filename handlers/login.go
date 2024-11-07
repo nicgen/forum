@@ -23,8 +23,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		// Prepared request to avoid SQL injection
 		stmt, err := db.Prepare("SELECT password FROM User WHERE email = ?")
 		if err != nil {
-			http.Error(w, "Error preparing query", http.StatusInternalServerError)
-			return
+			ErrorServer(w, "Error preparing query")
 		}
 		defer stmt.Close()
 
@@ -32,17 +31,26 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		err = stmt.QueryRow(email).Scan(&hashedPassword)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+				if err_getdata != "OK" {
+					ErrorServer(w, err_getdata)
+				}
+				data = ErrorMessage(w, data, "LoginMail")
+				renderTemplate(w, "layout/index", "page/index", data)
 			} else {
-				http.Error(w, "Error retrieving user data", http.StatusInternalServerError)
+				ErrorServer(w, "Error retrieving user data")
 			}
 			return
 		}
 
 		// Verify password
 		if !CheckPassword(hashedPassword, password) {
-			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
-			return
+			data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+			if err_getdata != "OK" {
+				ErrorServer(w, err_getdata)
+			}
+			data = ErrorMessage(w, data, "LoginPassword")
+			renderTemplate(w, "layout/index", "page/index", data)
 		}
 
 		// Getting the UUID from the database
@@ -50,8 +58,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		state := `SELECT UUID FROM User WHERE Email = ?`
 		err_user := db.QueryRow(state, email).Scan(&user_uuid)
 		if err_user != nil {
-			http.Error(w, "Error accessing User UUID", http.StatusUnauthorized)
-			return
+			ErrorServer(w, "Error accessing User UUID in the database")
 		}
 
 		// Attribute a session to an User
@@ -59,7 +66,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	} else {
 		// If the User is already logged and tries to log-in
-		http.Error(w, "You must log-out before loggin in again", http.StatusUnauthorized)
+		// ErrorMessage(w, "You must log-out before loggin in again")
 		return
 	}
 

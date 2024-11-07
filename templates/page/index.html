@@ -1,9 +1,16 @@
 {{define "page/index"}}
-{{template "block/login-register" .}}
-<div class="home-content">
-  <h1 class="text-title">Forum</h1>
-  <form action="/auth">
-    <button>Login</button>
-  </form>
-</div>
+  {{ if and (ne .Role "Admin") (ne .Role "User") (ne .Role "Moderator") }}
+  
+    {{template "login-register" .}}
+    {{template "posts" .}}
+    {{ else }}
+    <form action="/profile">
+      <button>Profile</button>
+    </form> 
+    <form action="/logout">
+      <button>Log out</button>
+    </form> 
+    {{template "createposts" .}}
+    {{template "posts" .}}
+  {{end}}
 {{end}}
