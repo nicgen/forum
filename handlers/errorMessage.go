@@ -42,4 +42,13 @@ func ErrorMessage(w http.ResponseWriter, data map[string]interface{}, errtype st
 	return data
 }
 
-func ErrorServer() {}
+// ? Function to add error to the Error map for the index
+func ErrorServer(w http.ResponseWriter, errtype string) {
+	// Storing the error into a map
+	data := map[string]interface{}{
+		"ErrorServer": errtype,
+	}
+
+	// Load the page with the Error sent on the map
+	renderTemplate(w, "layout/index", "page/errorServer", data)
+}

@@ -18,15 +18,13 @@ func GoogleOAuthHandler(w http.ResponseWriter, r *http.Request) {
 	// Generate a random state parameter to prevent CSRF attacks
 	state, err_state := lib.GenerateRandomID()
 	if err_state != nil {
-		http.Error(w, "Error generating state", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Error generating state")
 	}
 
 	// Store the state in the database
 	_, err := db.Exec("INSERT INTO oauth_states (state) VALUES (?)", state)
 	if err != nil {
-		http.Error(w, "Error storing state", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Error storing state")
 	}
 
 	// Redirect the user to the Google OAuth 2.0 authorization URL
@@ -48,15 +46,13 @@ func GitHubOAuthHandler(w http.ResponseWriter, r *http.Request) {
 	// Generate a random state parameter to prevent CSRF attacks
 	state, err_state := lib.GenerateRandomID()
 	if err_state != nil {
-		http.Error(w, "Error generating state", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Error generating state")
 	}
 
 	// Store the state in the database
 	_, err := db.Exec("INSERT INTO oauth_states (state) VALUES (?)", state)
 	if err != nil {
-		http.Error(w, "Error storing state", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Error storing state")
 	}
 
 	// Redirect the user to the GitHub OAuth 2.0 authorization URL
@@ -76,14 +72,12 @@ func DiscordOAuthHandler(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 	state, err := lib.GenerateRandomID()
 	if err != nil {
-		http.Error(w, "Error generating state", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Error generating state")
 	}
 
 	_, err = db.Exec("INSERT INTO oauth_states (state) VALUES (?)", state)
 	if err != nil {
-		http.Error(w, "Error storing state", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Error storing state")
 	}
 
 	authURL := "https://discord.com/api/oauth2/authorize"

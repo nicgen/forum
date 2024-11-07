@@ -15,8 +15,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	// Getting the User Data
 	data, err := lib.GetData(db, cookie.Value, "logged", "profile")
 	if err != "OK" {
-		http.Error(w, err, http.StatusUnauthorized)
-		return
+		ErrorServer(w, err)
 	}
 
 	// Redirect User to the profile html page and sending the data to it

@@ -53,8 +53,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Checking the error returned by the GetData function
 	if err != "OK" {
-		http.Error(w, err, http.StatusInternalServerError)
-		return
+		ErrorServer(w, err)
 	}
 
 	data = ErrorMessage(w, data, "none")

@@ -3,9 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"forum/cmd/lib"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -25,14 +23,13 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	var storedState string
 	err_check_db := db.QueryRow("SELECT state FROM oauth_states WHERE state = ?", state).Scan(&storedState)
 	if err_check_db != nil || state != storedState {
-		http.Error(w, "Invalid state parameter", http.StatusBadRequest)
-		return
+		ErrorServer(w, "Invalid state parameter")
 	}
 
 	// Delete the used state from the database
 	_, err_delete_db := db.Exec("DELETE FROM oauth_states WHERE state = ?", state)
 	if err_delete_db != nil {
-		log.Printf("Error deleting state: %v", err_delete_db)
+		ErrorServer(w, "Error deleting state")
 	}
 	// Exchange the authorization code for an access token
 	tokenURL := "https://oauth2.googleapis.com/token"
@@ -48,22 +45,19 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	// Sending the POST request
 	resp, err_request := http.PostForm(tokenURL, values)
 	if err_request != nil {
-		http.Error(w, err_request.Error(), http.StatusInternalServerError)
-		return
+		ErrorServer(w, err_request.Error())
 	}
 	defer resp.Body.Close()
 
 	// Parse the JSON response
 	var result map[string]interface{}
 	if err_json := json.NewDecoder(resp.Body).Decode(&result); err_json != nil {
-		http.Error(w, "Error decoding token response", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Error decoding token response")
 	}
 
 	accessToken, ok := result["access_token"].(string)
 	if !ok {
-		http.Error(w, "Unable to get access token", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Unable to get access token")
 	}
 
 	// Use the access token to make API requests to Google's userinfo endpoint
@@ -76,27 +70,23 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		ErrorServer(w, err.Error())
 	}
 	defer resp.Body.Close()
 
 	var userInfo map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
-		http.Error(w, "Error decoding user info", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Error decoding user info")
 	}
 
 	googleID, id_error := userInfo["sub"].(string)
 	email, email_error := userInfo["email"].(string)
 
 	if !id_error {
-		http.Error(w, "Unable to get Google ID", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Unable to get Google ID")
 	}
 	if !email_error {
-		http.Error(w, "Unable to get user email", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Unable to get user email")
 	}
 
 	var userID int64
@@ -117,21 +107,17 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Checking for password errors
 		if err_password != nil {
-			http.Error(w, "Error creating password", http.StatusInternalServerError)
-			return
+			ErrorServer(w, "Error creating password")
 		} else if err_hashing != nil {
-			http.Error(w, "Error hashing password", http.StatusInternalServerError)
-			return
+			ErrorServer(w, "Error hashing password")
 		} else if err_email != nil {
-			http.Error(w, "Error sending email", http.StatusInternalServerError)
-			return
+			ErrorServer(w, "Error sending email")
 		}
 
 		//Generate Random UUID for the user
 		UUID, err := uuid.NewV4()
 		if err != nil {
-			fmt.Printf("failed to generate UUID: %v\n", err)
-			return
+			ErrorServer(w, "failed to generate UUID")
 		}
 
 		// Exec function to insert a new Users with all the data we got from the token
@@ -140,19 +126,16 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 			VALUES (?, ?, ?, ?, ?, ?, false)
 		`, UUID, email, username, password, googleID, "User")
 		if err_doesnt_exist != nil {
-			http.Error(w, "Error creating user", http.StatusInternalServerError)
-			return
+			ErrorServer(w, "Error creating user")
 		}
 		userID, _ = result.LastInsertId()
 	} else if err != nil {
-		http.Error(w, "Database error", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Database error")
 	} else {
 		// User exists, update GoogleID if necessary
 		_, err_exist := db.Exec("UPDATE User SET OAuthID = ? WHERE ID = ?", googleID, userID)
 		if err_exist != nil {
-			http.Error(w, "Error updating user", http.StatusInternalServerError)
-			return
+			ErrorServer(w, "Error updating user")
 		}
 	}
 
@@ -167,8 +150,7 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	state_uuid := `SELECT UUID FROM User WHERE Email = ?`
 	err_user := db.QueryRow(state_uuid, email).Scan(&user_uuid)
 	if err_user != nil {
-		http.Error(w, "Error accessing User UUID", http.StatusUnauthorized)
-		return
+		ErrorServer(w, "Error accessing User UUID")
 	}
 
 	// Attribute a session to an User
