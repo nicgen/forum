@@ -23,8 +23,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		// Prepared request to avoid SQL injection
 		stmt, err := db.Prepare("SELECT password FROM User WHERE email = ?")
 		if err != nil {
-			http.Error(w, "Error preparing query", http.StatusInternalServerError)
-			return
+			ErrorServer(w, "Error preparing query")
 		}
 		defer stmt.Close()
 
@@ -34,12 +33,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			if err == sql.ErrNoRows {
 				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
 				if err_getdata != "OK" {
-
+					ErrorServer(w, err_getdata)
 				}
 				data = ErrorMessage(w, data, "LoginMail")
 				renderTemplate(w, "layout/index", "page/index", data)
 			} else {
-				http.Error(w, "Error retrieving user data", http.StatusInternalServerError)
+				ErrorServer(w, "Error retrieving user data")
 			}
 			return
 		}
@@ -48,7 +47,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		if !CheckPassword(hashedPassword, password) {
 			data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
 			if err_getdata != "OK" {
-
+				ErrorServer(w, err_getdata)
 			}
 			data = ErrorMessage(w, data, "LoginPassword")
 			renderTemplate(w, "layout/index", "page/index", data)
@@ -59,8 +58,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		state := `SELECT UUID FROM User WHERE Email = ?`
 		err_user := db.QueryRow(state, email).Scan(&user_uuid)
 		if err_user != nil {
-			http.Error(w, "Error accessing User UUID", http.StatusUnauthorized)
-			return
+			ErrorServer(w, "Error accessing User UUID in the database")
 		}
 
 		// Attribute a session to an User

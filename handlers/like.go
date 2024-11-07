@@ -32,12 +32,10 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 		state_isliked := `INSERT INTO Reaction (Post_ID, User_UUID, IsLiked) VALUES (?, ?, ?)`
 		_, err_add_react := db.Exec(state_isliked, post_id, cookie.Value, is_liked)
 		if err_add_react != nil {
-			http.Error(w, "Error creating User reaction", http.StatusUnauthorized)
-			return
+			ErrorServer(w, "Error creating User reaction")
 		}
 	} else if err_isliked != nil {
-		http.Error(w, "Error checking User like", http.StatusUnauthorized)
-		return
+		ErrorServer(w, "Error checking User like")
 	}
 
 	// If the post is already liked by the User, simply redirect to home page
@@ -52,24 +50,21 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 		state_like := `SELECT Like FROM Posts WHERE User_UUID = ?`
 		err_like := db.QueryRow(state_like, cookie.Value).Scan(&like_number)
 		if err_like != nil {
-			http.Error(w, "Error accessing User ID", http.StatusUnauthorized)
-			return
+			ErrorServer(w, "Error accessing User ID")
 		}
 
 		// Creating a reaction to keep track of liked posts
 		state_reaction := `INSERT INTO Reaction (Post_ID, User_UUID, IsLiked) VALUES (?, ?, ?)`
 		_, err_db := db.Exec(state_reaction, post_id, cookie.Value, false)
 		if err_db != nil {
-			http.Error(w, "Error liking the post", http.StatusInternalServerError)
-			return
+			ErrorServer(w, "Error liking the post")
 		}
 
 		// Updating the number of likes
 		state_add_like := `UPDATE Posts SET Like = ? WHERE ID = ?`
 		_, err_addlike := db.Exec(state_add_like, like_number+1, post_id)
 		if err_addlike != nil {
-			http.Error(w, "Error liking the post", http.StatusInternalServerError)
-			return
+			ErrorServer(w, "Error liking the post")
 		}
 
 		// Redirect User to the home page

@@ -24,8 +24,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	state_post := `INSERT INTO Posts (User_UUID, Title, Category_ID, Text, Like, CreatedAt) VALUES (?, ?, ?, ?, ?, ?)`
 	_, err_db := db.Exec(state_post, cookie.Value, title, category, text, like_count, time.Now())
 	if err_db != nil {
-		http.Error(w, "Error inserting new Post", http.StatusUnauthorized)
-		return
+		ErrorServer(w, "Error inserting new Post")
 	}
 
 	// Redirect User to the home page

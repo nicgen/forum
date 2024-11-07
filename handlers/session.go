@@ -27,8 +27,7 @@ func CookieSession(user_uuid string, w http.ResponseWriter, r *http.Request) {
 	state := `UPDATE User SET IsLogged = ? WHERE UUID = ?`
 	_, err_db := db.Exec(state, true, user_uuid)
 	if err_db != nil {
-		http.Error(w, "Error logging in", http.StatusInternalServerError)
-		return
+		ErrorServer(w, "Error logging in")
 	}
 
 	// Set the cookie in the response header
