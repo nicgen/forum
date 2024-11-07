@@ -5,8 +5,8 @@
 
   <form action="/login" aria-label="Login form">
     <!-- Adds aria-label for the form -->
-    <label for="username">Username</label>
-    <input type="text" name="EmailForm" placeholder="Username" required aria-required="true" />
+    <label for="username">Email</label>
+    <input type="text" name="EmailForm" placeholder="Email" required aria-required="true" />
     {{ if ne .Error.LoginMail "null" }}
         <span style="color: red;">{{ .Error.LoginMail }}</span>
     {{ end }}
