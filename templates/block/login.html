@@ -11,13 +11,13 @@
     <!-- Adds aria-label for the form -->
     <label for="username">Email</label>
     <input type="text" name="EmailForm" placeholder="Email" required aria-required="true" />
-    {{ if ne .Error.LoginMail "null" }}
-        <span style="color: red;">{{ .Error.LoginMail }}</span>
+    {{ if ne .UserContent.Error.LoginMail "null" }}
+        <span style="color: red;">{{ .UserContent.Error.LoginMail }}</span>
     {{ end }}
     <label for="password">Password</label>
     <input type="password" name="PasswordForm" placeholder="Password" required aria-required="true" />
-    {{ if ne .Error.LoginPassword "null" }}
-        <span style="color: red;">{{ .Error.LoginPassword }}</span>
+    {{ if ne .UserContent.Error.LoginPassword "null" }}
+        <span style="color: red;">{{ .UserContent.Error.LoginPassword }}</span>
     {{ end }}
     <button type="submit" aria-label="Login button">Login</button>
   </form>
