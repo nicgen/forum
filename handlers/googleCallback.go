@@ -140,10 +140,10 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Checking if we got the user informations
-	print("-------------------------------")
-	print("User email: ", email)
-	print("Google ID: ", googleID)
-	print("-------------------------------")
+	println("-------------------------------")
+	println("User email: ", email)
+	println("Google ID: ", googleID)
+	println("-------------------------------")
 
 	// Getting the UUID from the database
 	var user_uuid string
@@ -156,6 +156,11 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	// Attribute a session to an User
 	CookieSession(user_uuid, w, r)
 
+	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index")
+	if err_getdata != "OK" {
+		ErrorServer(w, err_getdata)
+	}
+
 	// Redirect the user to a success page or your main application
-	http.Redirect(w, r, "/", http.StatusFound)
+	renderTemplate(w, "layout/default", "page/index", data)
 }
