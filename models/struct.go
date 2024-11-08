@@ -10,6 +10,7 @@ type Post struct {
 	Title       string
 	Text        string
 	Like        int
+	Dislike     int
 	CreatedAt   time.Time
 }
 

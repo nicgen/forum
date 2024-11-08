@@ -8,13 +8,17 @@ import (
 func ErrorMessage(w http.ResponseWriter, data map[string]interface{}, errtype string) map[string]interface{} {
 	// Defining the error map that will contain the error we need to send
 	errorMap := map[string]interface{}{
-		"LoginMail":        "null",
-		"LoginPassword":    "null",
-		"RegisterUsername": "null",
-		"RegisterEmail":    "null",
-		"EmailFormat":      "null",
-		"RegisterPassword": "null",
-		"PasswordMatch":    "null",
+		"LoginMail":              "null",
+		"LoginPassword":          "null",
+		"RegisterUsername":       "null",
+		"RegisterEmail":          "null",
+		"EmailFormat":            "null",
+		"RegisterPassword":       "null",
+		"PasswordMatch":          "null",
+		"PostAlreadyLiked":       "null",
+		"PostAlreadyDisliked":    "null",
+		"CommentAlreadyLiked":    "null",
+		"CommentAlreadyDisliked": "null",
 	}
 
 	// Changing the error depending on the errtype variable given
@@ -33,6 +37,14 @@ func ErrorMessage(w http.ResponseWriter, data map[string]interface{}, errtype st
 		errorMap["RegisterPassword"] = "Invalid password, password must contain 8 characters, at least 1 special character and a number"
 	case "PasswordMatch":
 		errorMap["PasswordMatch"] = "Password doesn't match"
+	case "PostAlreadyLiked":
+		errorMap["PostAlreadyLiked"] = "You already liked this post"
+	case "PostAlreadyDisliked":
+		errorMap["PostAlreadyDisliked"] = "You already disliked this post"
+	case "CommentAlreadyLiked":
+		errorMap["CommentAlreadyLiked"] = "You already liked this comment"
+	case "CommentAlreadyDisliked":
+		errorMap["CommentAlreadyDisliked"] = "You already disliked this comment"
 	}
 
 	// Adding the errorMap to the data map

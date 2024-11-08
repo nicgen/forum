@@ -8,10 +8,20 @@
     </div>
 
     <nav class="nav" role="navigation">
-      <div id="nav-guest" class="nav nav-guest">
-        <a href="">Sign Up</a>
-        <a href="">Login</a>
-      </div>
+    {{ if eq .UserContent.Role "Guest" }}
+    <div id="nav-guest" class="nav nav-guest">
+      <a href="">Sign Up</a>
+      <a href="">Login</a>
+    </div>
+    {{ else }}
+    <form action="/profile">
+      <button>Profile</button>
+    </form> 
+    <form action="/logout">
+      <button>Log out</button>
+    </form> 
+    {{ end }}
+
       <div id="nav-user" class="nav nav-user">
         <div class="notification">
           <img class="icon icon-notification" src="/static/icon/bell-ringing-2.svg" alt="Notification icon">

@@ -228,10 +228,10 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Checking if we got the user informations
-	print("-------------------------------")
-	print("User email: ", email)
-	print("Google ID: ", googleID)
-	print("-------------------------------")
+	println("-------------------------------")
+	println("User email: ", email)
+	println("Google ID: ", googleID)
+	println("-------------------------------")
 
 	// Getting the UUID from the database
 	var user_uuid string
@@ -254,8 +254,13 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index")
 	if err_getdata != "OK" {
-		// Erreur non critique : Unable to retrieve user data
-		ErrorServer(w, err_getdata)
+		// Erreur critique : Error retrieving user data
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error retrieving user data",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	// Redirect the user to a success page or your main application
