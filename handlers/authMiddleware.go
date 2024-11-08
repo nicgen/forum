@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"forum/cmd/lib"
+	"forum/models"
 	"net/http"
 )
 
@@ -14,8 +15,12 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		// Get session cookie
 		cookie, err_cookie := r.Cookie("session_id")
 		if err_cookie != nil {
-			// Redirect User to login page if the cookie doesn't exist
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+			err := &models.CustomError{
+				StatusCode: http.StatusSeeOther,
+				Message:    "See Other",
+			}
+
+			HandleError(w, err.StatusCode, err.Message)
 			return
 		}
 
@@ -24,9 +29,15 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		state := "SELECT IsLogged FROM User WHERE UUID = ?"
 		err_db := db.QueryRow(state, cookie.Value).Scan(&userUUID)
 		if err_db != nil {
-			// Session not found or expired
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+			err := &models.CustomError{
+				StatusCode: http.StatusSeeOther,
+				Message:    "Session not found or expired",
+			}
+
+			// Appel de HandleError
+			HandleError(w, err.StatusCode, err.Message)
 			return
+
 		}
 
 		// Session is valid, proceed to handler
