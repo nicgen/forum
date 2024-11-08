@@ -1,15 +1,17 @@
 {{define "block/post"}}
-<article>
-    <h2><a href="post1.html">Post 1 Title</a></h2>
-    <p>Posted on January 1, 2022</p>
-    <p>Likes: 10</p>
-</article>
+{{ if eq .UserContent.Role "Guest" }}
+<div class="posting">
+    <h1 class="title">Post Title: {{ .Title }}</h1>
+    <h4 class="categorie">Category: {{ .Category_ID }}</h4>
+    <h4 class="username">{{ .Username }}</h4>
+    <h4 class="username">{{ .CreatedAt }}</h4>
+</div>
+{{else}}
+<div class="posting">
+  <h1 class="title">Post Title: {{ .Title }}</h1>
+  <h4 class="categorie">Category: {{ .Category_ID }}</h4>
+  <h4 class="username">{{ .Username }}</h4>
+  <h4 class="username">{{ .CreatedAt }}</h4>
+</div>
+{{template .icons}}
 {{end}}
-<!-- use it in a list
-```
-<ul>
-    <li>
-    </li>
-</ul>
-```
--->

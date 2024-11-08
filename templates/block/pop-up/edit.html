@@ -1,0 +1,8 @@
+{{define "edit"}}
+{{ if or (eq .Role "Admin") (eq .Role "Moderator") (eq .Role "User") }}
+<div class="edit">
+    <a href="#">Change username</a>
+    <a href="#">Change my password</a>
+    <a href="#">Delete Account</a>
+</div>
+{{end}}
