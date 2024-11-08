@@ -1,31 +1,41 @@
 {{define "layout/index"}}
+
+<!-- /!\ default layout -->
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+    <!-- todo, modify Title -->
     <title>{{if .Data.IsError}}Error {{.Data.ErrorCode}} - {{end}}{{if .Data.Title}}{{.Data.Title}}{{end}}</title>
-    {{template "share/meta" .}}
+    {{ template "share/meta" . }}
+    {{ if .Title }}{{ template "share/meta_social" . }}{{ end }}
 </head>
 
 <body>
     <div>
     </div>
     <div class="wrapper">
-        {{template "block/banner" .}}
-        {{template "block/nav" .}}
+        {{/* template "block/banner" . */}}  <!-- not for production -->
+        {{ template "block/nav" . }}
+
+        <!-- todo, add condition -->
+        {{ template "block/login" . }}
+        {{ template "block/register" . }}
+
         <main role="main">
             <div class="container">
-                <p>LAYOUT[index]</p>
+                <!-- <p>LAYOUT[index]</p> -->
                 {{if .Data.IsError}}
                 <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
                 {{else}}
                 <h1 role="heading" aria-level="1">{{.Data.Header}}</h1>
                 {{end}}
-                {{.Content}}
+                {{ .Content }}
             </div>
         </main>
-        {{template "block/footer" .}}
-        <script src="/static/js/theme.js"></script>
+        {{/* template "block/footer" . */}} <!-- not for production -->
+        <script src="/static/js/theme.js"></script> <!-- import for the js (theme) -->
     </div>
 </body>
 
