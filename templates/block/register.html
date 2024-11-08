@@ -15,29 +15,29 @@
                 <form action="/register" aria-label="Register form" method="POST">
                     <label for="register-username">Username</label>
                     <input type="text" name="UsernameForm" id="register-username" placeholder="Username" required aria-required="true">
-                    {{ if ne .Error.RegisterUsername "null" }}
-                        <span style="color: red;">{{ .Error.RegisterUsername }}</span>
+                    {{ if ne .UserContent.Error.RegisterUsername "null" }}
+                        <span style="color: red;">{{ .UserContent.Error.RegisterUsername }}</span>
                     {{ end }}
 
                     <label for="register-email">Email</label>
                     <input type="text" name="EmailForm" id="register-email" placeholder="Email" required aria-required="true">
-                    {{ if ne .Error.RegisterEmail "null" }}
-                        <span style="color: red;">{{ .Error.RegisterEmail }}</span>
+                    {{ if ne .UserContent.Error.RegisterEmail "null" }}
+                        <span style="color: red;">{{ .UserContent.Error.RegisterEmail }}</span>
                     {{ end }}
-                    {{ if ne .Error.EmailFormat "null" }}
-                        <span style="color: red;">{{ .Error.EmailFormat }}</span>
+                    {{ if ne .UserContent.Error.EmailFormat "null" }}
+                        <span style="color: red;">{{ .UserContent.Error.EmailFormat }}</span>
                     {{ end }}                        
 
                     <label for="register-password">Password</label>
                     <input type="password" name="PasswordForm" id="register-password" placeholder="Password" required aria-required="true">
-                    {{ if ne .Error.RegisterPassword "null" }}
-                        <span style="color: red;">{{ .Error.RegisterPassword }}</span>
+                    {{ if ne .UserContent.Error.RegisterPassword "null" }}
+                        <span style="color: red;">{{ .UserContent.Error.RegisterPassword }}</span>
                     {{ end }}                        
 
                     <label for="confirm-password">Confirm Password</label>
                     <input type="password" name="ConfirmPasswordForm" id="confirm-password" placeholder="Confirm Password" required aria-required="true">
-                    {{ if ne .Error.PasswordMatch "null" }}
-                        <span style="color: red;">{{ .Error.PasswordMatch }}</span>
+                    {{ if ne .UserContent.Error.PasswordMatch "null" }}
+                        <span style="color: red;">{{ .UserContent.Error.PasswordMatch }}</span>
                     {{ end }}
 
                     <div class="form-buttons">

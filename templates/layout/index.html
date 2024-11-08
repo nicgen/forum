@@ -7,21 +7,28 @@
 
 <head>
     <!-- todo, modify Title -->
-    <title>{{if .Data.IsError}}Error {{.Data.ErrorCode}} - {{end}}{{if .Data.Title}}{{.Data.Title}}{{end}}</title>
+    <title>{{if .Data.IsError}}Error {{.Data.ErrorCode}} - {{end}}{{if .Data.Title}}{{ .Data.Title }}{{end}}</title>
     {{ template "share/meta" . }}
-    {{ if .Title }}{{ template "share/meta_social" . }}{{ end }}
+    {{ if .Data.Title }}{{ template "share/meta_social" . }}{{ end }}
 </head>
 
 <body>
     <div>
     </div>
     <div class="wrapper">
-        {{/* template "block/banner" . */}}  <!-- not for production -->
-        {{ template "block/nav" . }}
 
-        <!-- todo, add condition -->
-        {{ template "block/login" . }}
-        {{ template "block/register" . }}
+        <div class="container">
+            {{/* template "block/banner" . */}}  <!-- not for production -->
+            {{ template "block/nav" . }}
+        </div>    
+
+        {{ if eq .UserContent.Role "Guest" }}
+        <div class="container">
+            <!-- todo, add condition -->
+            {{ template "block/login" . }}
+            {{ template "block/register" . }}
+        </div>
+        {{ end }}
 
         <main role="main">
             <div class="container">
@@ -34,7 +41,9 @@
                 {{ .Content }}
             </div>
         </main>
+
         {{/* template "block/footer" . */}} <!-- not for production -->
+
         <script src="/static/js/theme.js"></script> <!-- import for the js (theme) -->
     </div>
 </body>

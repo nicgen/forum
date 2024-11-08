@@ -1,11 +1,12 @@
 {{define "page/index"}}
-  {{ if and (ne .Role "Admin") (ne .Role "User") (ne .Role "Moderator") }}
-  
-    {{ template "posts" . }}
-    {{ range .Posts }}
+  {{template "block/createpost" .}}
+  {{/* if  ne .Role "Guest" */}}
 
+  {{ range .Posts }}
+    {{ template "block/post" . }}
   {{ end }}
-  {{ else }}
+
+  {{/* else */}}
   <!-- not for production, testing purpose only -->
     <form action="/profile">
       <button>Profile</button>
@@ -15,7 +16,5 @@
     <form action="/logout">
       <button>Log out</button>
     </form> 
-  {{template "block/createposts" .}}
-  {{template "posts" .}}
-  {{end}}
+  {{/* end */}}
 {{end}}
