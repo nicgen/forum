@@ -1,10 +1,21 @@
 {{define "page/index"}}
   {{ if and (ne .Role "Admin") (ne .Role "User") (ne .Role "Moderator") }}
-    {{template "login-register" .}}
-    {{template "posts" .}}
+  
+    {{ template "posts" . }}
+    {{ range .Posts }}
+
+  {{ end }}
   {{ else }}
-    <h3>Create a new post: </h3>
-    {{template "createposts" .}}
-    {{template "posts" .}}
+  <!-- not for production, testing purpose only -->
+    <form action="/profile">
+      <button>Profile</button>
+    </form> 
+
+  <!-- todo, integrate logout to the navbar/profil -->
+    <form action="/logout">
+      <button>Log out</button>
+    </form> 
+  {{template "block/createposts" .}}
+  {{template "posts" .}}
   {{end}}
 {{end}}

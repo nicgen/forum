@@ -1,0 +1,48 @@
+{{define "block/login"}}
+
+<!-- todo, use blocks, separate login / register -->
+
+<!-- Login container with role and aria-labelledby -->
+<div class="login-container" role="form" aria-labelledby="login-heading">
+
+  <h2 id="login-heading">Login</h2>
+
+  <form action="/login" aria-label="Login form">
+    <!-- Adds aria-label for the form -->
+    <label for="username">Email</label>
+    <input type="text" name="EmailForm" placeholder="Email" required aria-required="true" />
+    {{ if ne .Error.LoginMail "null" }}
+        <span style="color: red;">{{ .Error.LoginMail }}</span>
+    {{ end }}
+    <label for="password">Password</label>
+    <input type="password" name="PasswordForm" placeholder="Password" required aria-required="true" />
+    {{ if ne .Error.LoginPassword "null" }}
+        <span style="color: red;">{{ .Error.LoginPassword }}</span>
+    {{ end }}
+    <button type="submit" aria-label="Login button">Login</button>
+  </form>
+
+  <!-- Register link -->
+  <div class="register-link">
+    <p>
+      Don't have an account?
+      <label class="open-modal" for="registerToggle" role="button" aria-controls="registerModal"
+        aria-expanded="false">Register</label>
+    </p>
+  </div>
+
+</div>
+
+<!-- Social login section with roles and aria-labels -->
+<div class="socials" role="complementary" aria-label="Social login options">
+    <div>
+        <h3>Sign in with :</h3>
+        <button class="Google" onclick="window.location.href='https://localhost:8080/google';" aria-label="Sign in with Google">Google</button>
+        <button class="Github" onclick="window.location.href='https://localhost:8080/github';" aria-label="Sign in with Github">Github</button>
+        <button class="Discord" onclick="window.location.href='https://localhost:8080/discord';" aria-label="Sign in with Discord">Discord</button>
+    </div>
+</div>
+
+</body>
+</html> 
+{{end}}
