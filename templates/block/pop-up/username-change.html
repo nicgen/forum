@@ -1,0 +1,13 @@
+{{define .username}}
+{{ if or (eq .Role "Admin") (eq .Role "Moderator") (eq .Role "User") }}
+<div class="username-change">
+    <form class="user-change">
+        <textarea placeholder="old username"></textarea>
+        <textarea placeholder="new username"></textarea>
+        <textarea placeholder="confirm username"></textarea>
+      </form>
+      <button class="confimation">
+          <i class="fa fa-thumbs-up"></i> Confirm
+        </button>
+    </div>
+{{end}}

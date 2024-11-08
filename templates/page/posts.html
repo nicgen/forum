@@ -1,15 +1,17 @@
 {{define "posts"}}
-{{ range .Posts }}
-<div class="Line"></div>
-<div class="post">
-  <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-  <p>Post text: {{ .Text }}</p>
-  <form action="/like" method="GET">
-    <input type="hidden" name="id" value="{{.ID}}">
-    <button type="submit" name="like_button">Like</button>
-    <span>{{ .Like }}</span>
-  </form>
-  <p>Created at: {{ .CreatedAt }}</p>
-</div>
-{{end}}
+{{ if and (ne .Role "Admin") (ne .Role "User") (ne .Role "Moderator") }}
+{{template "login-register" .}}
+{{template "posts" .}}
+{{ else }}
+{{if or (eq .Role "User")}}
+{{template "post"}}
+{{template "icons"}}
+{{range .Comments}}
+{{else}}
+{{ if or (eq .Role "Admin") (eq .Role "Moderator") }}
+{{template "request-post"}}
+{{template "post"}}
+{{template "icons"}}
+{{range .Comments}}
+{{end}} 
 {{end}}

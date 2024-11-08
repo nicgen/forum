@@ -1,0 +1,25 @@
+{{define "layout/post"}}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{{if .Data.IsError}}Error {{.Data.ErrorCode}} - {{end}}{{if .Data.Title}}{{.Data.Title}}{{end}}</title>
+        {{template "share/meta" .}}
+    </head>
+    <body>
+        <div>
+        </div>
+        <div class="wrapper">
+            {{template "block/banner" .}}
+            {{template "block/nav" .}}
+            <main role="main">
+                <div class="container">
+                 
+                    {{.Content}}
+                </div>
+            </main>
+            {{template "block/footer" .}}
+            <script src="/static/js/theme.js"></script>
+        </div>
+    </body>
+    </html>
+    {{end}}
