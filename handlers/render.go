@@ -54,8 +54,7 @@ func findAndParseTemplates(rootDir string, funcMap template.FuncMap) (*template.
 
 // renderer function (handles different layouts)
 func renderTemplate(w http.ResponseWriter, layoutName, tmplName string, data interface{}) {
-	// layout := "layout/default"
-	// execute the specific template first
+	// Execute the specific template first and get the rendered content
 	var buf bytes.Buffer
 	err := tmpl.ExecuteTemplate(&buf, tmplName, data)
 	if err != nil {
@@ -63,18 +62,21 @@ func renderTemplate(w http.ResponseWriter, layoutName, tmplName string, data int
 		return
 	}
 
-	// execute the layout, passing the executed template as content
+	// Create the layoutData struct to pass to the layout template
 	layoutData := struct {
-		Content template.HTML
-		Data    interface{}
+		Content     template.HTML
+		Data        interface{}
+		UserContent interface{}
 	}{
-		Content: template.HTML(buf.String()),
-		Data:    data,
+		Content:     template.HTML(buf.String()),
+		Data:        data,
+		UserContent: data,
 	}
 
-	// err = tmpl.ExecuteTemplate(w, layout, layoutData)
+	// Execute the layout template, passing the layoutData struct as the template data
 	err = tmpl.ExecuteTemplate(w, layoutName, layoutData)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }

@@ -6,8 +6,11 @@
   <p>Post text: {{ .Text }}</p>
   <form action="/like" method="GET">
     <input type="hidden" name="id" value="{{.ID}}">
-    <button type="submit" name="like_button">Like</button>
-    <p>{{ .Like }}</p>
+    <button type="submit" name="like_button" value="like_button">Like</button>
+    <button type="submit" name="dislike_button" value="dislike_button">Dislike</button>
+    <br>
+    <span>Like count: {{ .Like }}</span>
+    <span>Dislike count: {{ .Dislike }}</span>
   </form>
   <p>Created at: {{ .CreatedAt }}</p>
 </div>
