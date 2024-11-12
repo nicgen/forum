@@ -70,7 +70,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		ErrorServer(w, "User UUID is required.")
 	}
 
-	query := `UPDATE User SET Role = 'DeleteUser' WHERE UUID = ?`
+	query := `UPDATE User SET Role = 'DeletUser' WHERE UUID = ?`
 	_, err := db.Exec(query, userUUID)
 	if err != nil {
 		ErrorServer(w, "Failed to update user role.")
