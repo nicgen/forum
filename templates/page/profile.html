@@ -17,6 +17,10 @@
             <input type="hidden" name="userUUID" value="{{ .UUID }}">
             <button type="submit">Promote to Moderator</button>
           </form>
+          <form method="POST" action="/admin/delete-user">
+            <input type="hidden" name="userUUID" value="{{ .UUID }}">
+            <button type="submit">Delete my account</button>
+          </form>
           {{ end }}
           {{ if and (ne .Role "Admin") (ne .Role "User") }}
           <form method="POST" action="/admin/remove-role">
@@ -27,7 +31,18 @@
         </li>
       {{ end }}
     </ul>
-  {{ end }}
+  {{ else }}
+  <li>
+    Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
+    {{ if ne .Role "Admin"}}
+    <form method="POST" action="/admin/delete-user">
+      <input type="hidden" name="userUUID" value="{{ .UUID }}">
+      <button type="submit">Delete my account</button>
+    </form>
+    {{end}}
+  </li>
+  {{end}}
+
   
   {{ range .Posts }}
   <div class="post">
