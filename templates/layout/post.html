@@ -1,25 +1,26 @@
 {{define "layout/post"}}
+
+<!-- post layout -->
+
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>{{if .Data.IsError}}Error {{.Data.ErrorCode}} - {{end}}{{if .Data.Title}}{{.Data.Title}}{{end}}</title>
-        {{template "share/meta" .}}
-    </head>
-    <body>
-        <div>
-        </div>
-        <div class="wrapper">
-            {{template "block/banner" .}}
-            {{template "block/nav" .}}
-            <main role="main">
-                <div class="container">
-                 
-                    {{.Content}}
-                </div>
-            </main>
-            {{template "block/footer" .}}
-            <script src="/static/js/theme.js"></script>
-        </div>
-    </body>
-    </html>
-    {{end}}
+
+{{ template "block/share/head" }}
+
+<body>
+    <div>
+    </div>
+    <div class="wrapper">
+        {{template "blocks/debug/banner_error" .}}
+        {{template "block/nav" .}}
+        <main role="main">
+            <div class="container">
+                {{if .Content}}{{.Content}}{{else}}<p>no content</p>{{end}}
+            </div>
+        </main>
+        {{template "block/nav/footer" .}}
+        <script src="/static/js/theme.js"></script>
+    </div>
+</body>
+</html>
+{{end}}

@@ -9,7 +9,7 @@
   {{if eq .Role "Admin"}}
     <p>Test: admin</p>
     {{end}}
-    
+
     <h3>List of Users:</h3>
     <ul>
       {{ range .AllUsers }}
@@ -20,8 +20,8 @@
   {{end}}
   
   {{ range .Posts }}
-  <!-- todo use block/post -->
-  {{ template "block/post" }}
+  <!-- todo use block/content/post -->
+  {{ template "block/content/post" }}
   <div class="post">
     <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
     <p>Post text: {{ .Text }}</p>
