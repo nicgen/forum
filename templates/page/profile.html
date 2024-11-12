@@ -31,16 +31,17 @@
         </li>
       {{ end }}
     </ul>
-  {{ else }}
-  <li>
-    Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
-    {{ if ne .Role "Admin"}}
-    <form method="POST" action="/admin/delete-user">
-      <input type="hidden" name="userUUID" value="{{ .UUID }}">
-      <button type="submit">Delete my account</button>
-    </form>
     {{end}}
-  </li>
+  {{if eq .Role "User" }}
+  <ul>
+    <li>
+      Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
+      <form method="POST" action="/admin/delete-user">
+        <input type="hidden" name="userUUID" value="{{ .UUID }}">
+        <button type="submit">Delete my account</button>
+      </form>
+    </li>
+  </ul>
   {{end}}
 
   
