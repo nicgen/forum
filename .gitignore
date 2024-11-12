@@ -51,7 +51,11 @@ forum.db*
 Zone.Identifier
 *:Zone.Identifier
 
+# doc
 /doc
+
+# backups
+/templates/.unused
 
 #Certificat
 

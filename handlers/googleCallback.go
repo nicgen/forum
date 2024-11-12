@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"forum/cmd/lib"
+	"forum/models"
 	"net/http"
 	"net/url"
 	"os"
@@ -23,13 +24,25 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	var storedState string
 	err_check_db := db.QueryRow("SELECT state FROM oauth_states WHERE state = ?", state).Scan(&storedState)
 	if err_check_db != nil || state != storedState {
-		ErrorServer(w, "Invalid state parameter")
+		// Erreur critique : Invalid state parameter
+		err := &models.CustomError{
+			StatusCode: http.StatusBadRequest,
+			Message:    "Invalid state parameter",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	// Delete the used state from the database
 	_, err_delete_db := db.Exec("DELETE FROM oauth_states WHERE state = ?", state)
 	if err_delete_db != nil {
-		ErrorServer(w, "Error deleting state")
+		// Erreur critique : Error deleting state
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error deleting state",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 	// Exchange the authorization code for an access token
 	tokenURL := "https://oauth2.googleapis.com/token"
@@ -45,48 +58,93 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	// Sending the POST request
 	resp, err_request := http.PostForm(tokenURL, values)
 	if err_request != nil {
-		ErrorServer(w, err_request.Error())
+		// Erreur critique : Error exchanging code
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error exchanging code",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 	defer resp.Body.Close()
 
 	// Parse the JSON response
 	var result map[string]interface{}
 	if err_json := json.NewDecoder(resp.Body).Decode(&result); err_json != nil {
-		ErrorServer(w, "Error decoding token response")
+		// Erreur critique : Error decoding token response
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error decoding token response",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	accessToken, ok := result["access_token"].(string)
 	if !ok {
-		ErrorServer(w, "Unable to get access token")
+		// Erreur critique : Unable to get access token
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Unable to get access token",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	// Use the access token to make API requests to Google's userinfo endpoint
 	userInfoURL := "https://openidconnect.googleapis.com/v1/userinfo"
-	req, _ := http.NewRequest("GET", userInfoURL, nil)
+	req, errr := http.NewRequest("GET", userInfoURL, nil)
+	if errr != nil {
+		// Erreur critique : Error creating user info request
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error creating user info request",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
+	}
 
 	req.Header.Set("Authorization", "Bearer "+accessToken)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
-
 	if err != nil {
-		ErrorServer(w, err.Error())
+		// Erreur critique : Error fetching user info
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error fetching user info",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 	defer resp.Body.Close()
 
 	var userInfo map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
-		ErrorServer(w, "Error decoding user info")
+		// Erreur critique: Error decoding user info
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error decoding user info",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	googleID, id_error := userInfo["sub"].(string)
 	email, email_error := userInfo["email"].(string)
 
 	if !id_error {
-		ErrorServer(w, "Unable to get Google ID")
+		//Critical error : Unable to get Google ID
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Unable to get Google ID",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 	if !email_error {
-		ErrorServer(w, "Unable to get user email")
+		// Erreur non critique : Unable to get user email
+		ErrorServer(w, "Unable to get user email, some features may not work.")
 	}
 
 	var userID int64
@@ -102,22 +160,39 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 		// If the user login for the first time we generate a password for him
 		password, err_password := lib.GeneratePassword(16)
-		err_email := lib.SendEmail(email, "Your forum password", password)
-		password, err_hashing := lib.HashPassword(password)
-
-		// Checking for password errors
 		if err_password != nil {
-			ErrorServer(w, "Error creating password")
-		} else if err_hashing != nil {
-			ErrorServer(w, "Error hashing password")
-		} else if err_email != nil {
-			ErrorServer(w, "Error sending email")
+			// Erreur critique : Error creating password
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error creating password",
+			}
+			HandleError(w, err.StatusCode, err.Message)
+			return
+		}
+
+		err_email := lib.SendEmail(email, "Your forum password", password)
+		if err_email != nil {
+			// Erreur non critique : Error sending email
+			ErrorServer(w, "Error sending email, please check your inbox.")
+		}
+
+		password, err_hashing := lib.HashPassword(password)
+		if err_hashing != nil {
+			// Erreur critique : Error hashing password
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error hashing password",
+			}
+			HandleError(w, err.StatusCode, err.Message)
+			return
 		}
 
 		//Generate Random UUID for the user
 		UUID, err := uuid.NewV4()
 		if err != nil {
-			ErrorServer(w, "failed to generate UUID")
+			// Erreur critique : Failed to generate UUID
+			ErrorServer(w, "Failed to generate UUID")
+			return
 		}
 
 		// Exec function to insert a new Users with all the data we got from the token
@@ -126,36 +201,68 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 			VALUES (?, ?, ?, ?, ?, ?, false)
 		`, UUID, email, username, password, googleID, "User")
 		if err_doesnt_exist != nil {
-			ErrorServer(w, "Error creating user")
+			// Erreur critique : Error creating user
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error creating user",
+			}
+			HandleError(w, err.StatusCode, err.Message)
+			return
 		}
 		userID, _ = result.LastInsertId()
 	} else if err != nil {
-		ErrorServer(w, "Database error")
+		// Erreur critique : Database error
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Database error",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	} else {
 		// User exists, update GoogleID if necessary
 		_, err_exist := db.Exec("UPDATE User SET OAuthID = ? WHERE ID = ?", googleID, userID)
 		if err_exist != nil {
-			ErrorServer(w, "Error updating user")
+			// Erreur non critique : Error updating user
+			ErrorServer(w, "Error updating user, please try again later.")
 		}
 	}
 
 	//Checking if we got the user informations
-	print("-------------------------------")
-	print("User email: ", email)
-	print("Google ID: ", googleID)
-	print("-------------------------------")
+	println("-------------------------------")
+	println("User email: ", email)
+	println("Google ID: ", googleID)
+	println("-------------------------------")
 
 	// Getting the UUID from the database
 	var user_uuid string
 	state_uuid := `SELECT UUID FROM User WHERE Email = ?`
 	err_user := db.QueryRow(state_uuid, email).Scan(&user_uuid)
 	if err_user != nil {
-		ErrorServer(w, "Error accessing User UUID")
+		// Erreur critique : Error accessing User UUID
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error accessing User UUID",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	// Attribute a session to an User
 	CookieSession(user_uuid, w, r)
 
 	// Redirect the user to a success page or your main application
-	http.Redirect(w, r, "/", http.StatusFound)
+
+	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index")
+	if err_getdata != "OK" {
+		// Erreur critique : Error retrieving user data
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error retrieving user data",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
+	}
+
+	// Redirect the user to a success page or your main application
+	renderTemplate(w, "layout/default", "page/index", data)
 }

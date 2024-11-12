@@ -58,5 +58,5 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	data = ErrorMessage(w, data, "none")
 
-	renderTemplate(w, "layout/default", "page/index", data)
+	renderTemplate(w, "layout/index", "page/index", data)
 }
