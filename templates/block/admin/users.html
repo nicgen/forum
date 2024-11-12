@@ -1,4 +1,4 @@
-{{define "userlist"}}
+{{define "block/admin/users"}}
 {{ if (eq .UserContent.Role "Admin")}}
     <div class="userlist">
     <h3>{{ .Username }}</h3>
@@ -7,3 +7,4 @@
     <h3>{{ .Role }}</h3>
     </div>
     {{end}}
+{{end}}

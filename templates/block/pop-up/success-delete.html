@@ -1,8 +1,9 @@
-{{define "success-delete"}}
+{{define "block/popup/account_delete"}}
 {{ if and (ne .Role "Admin") (ne .Role "Moderator") }}
 <div class="delete">
     <h3>DELETE ACCOUNT</h3>
     <h2>You're deleted your account</h2>
     <h2>SEE YOU SOON</h2>
 </div>
+{{end}}
 {{end}}

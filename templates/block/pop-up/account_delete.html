@@ -1,4 +1,4 @@
-{{define "delete-account"}}
+{{define "block/popup/account_delete"}}
 {{ if and (ne .Role "Admin") (ne .Role "Moderator") }}
     <div class="delete">
         <h2>DELETE ACCOUNT</h2>
@@ -13,3 +13,4 @@
           </div>
     </div>
     {{end}}
+{{end}}

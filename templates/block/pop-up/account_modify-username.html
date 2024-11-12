@@ -1,4 +1,4 @@
-{{define .username}}
+{{define "block/popup/account_modify-username"}}
 {{ if or (eq .Role "Admin") (eq .Role "Moderator") (eq .Role "User") }}
 <div class="username-change">
     <form class="user-change">
@@ -10,4 +10,5 @@
           <i class="fa fa-thumbs-up"></i> Confirm
         </button>
     </div>
+{{end}}
 {{end}}

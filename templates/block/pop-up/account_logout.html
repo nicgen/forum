@@ -1,7 +1,8 @@
-{{define "logout"}}
+{{define "block/popup/account_logout"}}
 {{ if or (eq .Role "Admin") (eq .Role "Moderator") (eq .Role "User") }}
 <div class="pop-logout">
     <a href="#">My Profil</a>
     <a href="#">Log Out</a>
 </div>
+{{end}}
 {{end}}
