@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"forum/cmd/lib"
+	"forum/models"
 	"net/http"
 	"net/url"
 	"os"
@@ -40,7 +41,13 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	resp, err_post := http.PostForm(tokenURL, values)
 	if err_post != nil {
-		ErrorServer(w, "Error exchanging code")
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error exchanging code",
+		}
+
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 	defer resp.Body.Close()
 
@@ -144,5 +151,12 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	// Attribute a session to an User
 	CookieSession(user_uuid, w, r)
 
-	http.Redirect(w, r, "/", http.StatusFound)
+	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index")
+	if err_getdata != "OK" {
+		ErrorServer(w, err_getdata)
+	}
+
+	// Redirect the user to a success page or your main application
+	renderTemplate(w, "layout/default", "page/index", data)
+
 }
