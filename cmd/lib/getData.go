@@ -2,8 +2,10 @@ package lib
 
 import (
 	"database/sql"
+	"fmt"
 	"forum/models"
 	"strings"
+	"time"
 )
 
 func GetData(db *sql.DB, uuid string, status string, page string) (map[string]interface{}, string) {
@@ -66,6 +68,11 @@ func GetData(db *sql.DB, uuid string, status string, page string) (map[string]in
 			if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt); err != nil {
 				return nil, "Error scanning user posts"
 			}
+
+			fmt.Println("---------------------------")
+			fmt.Println("Actual time: ", time.Now())
+			fmt.Println("post creation date: ", post.CreatedAt)
+			fmt.Println("---------------------------")
 			posts = append(posts, &post)
 		}
 

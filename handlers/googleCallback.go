@@ -144,7 +144,7 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if !email_error {
 		// Erreur non critique : Unable to get user email
-		ErrorServer(w, "Unable to get user email, some features may not work.")
+		lib.ErrorServer(w, "Unable to get user email, some features may not work.")
 	}
 
 	var userID int64
@@ -173,7 +173,7 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		err_email := lib.SendEmail(email, "Your forum password", password)
 		if err_email != nil {
 			// Erreur non critique : Error sending email
-			ErrorServer(w, "Error sending email, please check your inbox.")
+			lib.ErrorServer(w, "Error sending email, please check your inbox.")
 		}
 
 		password, err_hashing := lib.HashPassword(password)
@@ -191,7 +191,7 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		UUID, err := uuid.NewV4()
 		if err != nil {
 			// Erreur critique : Failed to generate UUID
-			ErrorServer(w, "Failed to generate UUID")
+			lib.ErrorServer(w, "Failed to generate UUID")
 			return
 		}
 
@@ -223,7 +223,7 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		_, err_exist := db.Exec("UPDATE User SET OAuthID = ? WHERE ID = ?", googleID, userID)
 		if err_exist != nil {
 			// Erreur non critique : Error updating user
-			ErrorServer(w, "Error updating user, please try again later.")
+			lib.ErrorServer(w, "Error updating user, please try again later.")
 		}
 	}
 
@@ -248,7 +248,7 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Attribute a session to an User
-	CookieSession(user_uuid, w, r)
+	lib.CookieSession(user_uuid, w, r)
 
 	// Redirect the user to a success page or your main application
 
@@ -264,5 +264,5 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Redirect the user to a success page or your main application
-	renderTemplate(w, "layout/default", "page/index", data)
+	lib.RenderTemplate(w, "layout/default", "page/index", data)
 }
