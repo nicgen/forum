@@ -24,13 +24,13 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	var storedState string
 	err_check_db := db.QueryRow("SELECT state FROM oauth_states WHERE state = ?", state).Scan(&storedState)
 	if err_check_db != nil || state != storedState {
-		ErrorServer(w, "Invalid state parameter")
+		lib.ErrorServer(w, "Invalid state parameter")
 	}
 
 	// Delete the used state from the database
 	_, err_delete_db := db.Exec("DELETE FROM oauth_states WHERE state = ?", state)
 	if err_delete_db != nil {
-		ErrorServer(w, "Error deleting state")
+		lib.ErrorServer(w, "Error deleting state")
 	}
 
 	// Exchange the authorization code for an access token
@@ -51,19 +51,19 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	client := &http.Client{}
 	resp, err_request := client.Do(req)
 	if err_request != nil {
-		ErrorServer(w, err_request.Error())
+		lib.ErrorServer(w, err_request.Error())
 	}
 	defer resp.Body.Close()
 
 	// Parse the JSON response
 	var result map[string]interface{}
 	if err_json := json.NewDecoder(resp.Body).Decode(&result); err_json != nil {
-		ErrorServer(w, "Error decoding token response")
+		lib.ErrorServer(w, "Error decoding token response")
 	}
 
 	accessToken, ok := result["access_token"].(string)
 	if !ok {
-		ErrorServer(w, "Unable to get access token")
+		lib.ErrorServer(w, "Unable to get access token")
 	}
 
 	// Use the access token to make API requests to GitHub's user endpoint
@@ -74,13 +74,13 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		ErrorServer(w, err.Error())
+		lib.ErrorServer(w, err.Error())
 	}
 	defer resp.Body.Close()
 
 	var userInfo map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
-		ErrorServer(w, "Error decoding user info")
+		lib.ErrorServer(w, "Error decoding user info")
 	}
 
 	githubID, id_error := userInfo["id"].(float64)
@@ -88,17 +88,17 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	username, username_error := userInfo["login"].(string)
 
 	if !id_error {
-		ErrorServer(w, "Unable to get GitHub ID")
+		lib.ErrorServer(w, "Unable to get GitHub ID")
 	}
 	if !email_error {
 		// If email is not public, fetch it separately
 		email = fetchGitHubEmail(accessToken)
 		if email == "" {
-			ErrorServer(w, "Unable to get user email")
+			lib.ErrorServer(w, "Unable to get user email")
 		}
 	}
 	if !username_error {
-		ErrorServer(w, "Unable to get GitHub username")
+		lib.ErrorServer(w, "Unable to get GitHub username")
 	}
 
 	var userID int64
@@ -115,17 +115,17 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Checking for password errors
 		if err_password != nil {
-			ErrorServer(w, "Error creating password")
+			lib.ErrorServer(w, "Error creating password")
 		} else if err_hashing != nil {
-			ErrorServer(w, "Error hashing password")
+			lib.ErrorServer(w, "Error hashing password")
 		} else if err_email != nil {
-			ErrorServer(w, "Error sending email")
+			lib.ErrorServer(w, "Error sending email")
 		}
 
 		//Generate Random UUID for the user
 		UUID, err := uuid.NewV4()
 		if err != nil {
-			ErrorServer(w, "failed to generate UUID")
+			lib.ErrorServer(w, "failed to generate UUID")
 		}
 
 		// Insert new user into the database
@@ -134,16 +134,16 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 			VALUES (?, ?, ?, ?, ?, ?, false)
 		`, UUID, email, username, password, int64(githubID), "User")
 		if err_doesnt_exist != nil {
-			ErrorServer(w, "Error creating user")
+			lib.ErrorServer(w, "Error creating user")
 		}
 		userID, _ = result.LastInsertId()
 	} else if err_db != nil {
-		ErrorServer(w, "Database error")
+		lib.ErrorServer(w, "Database error")
 	} else {
 		// User exists, update GitHubID if necessary
 		_, err_exist := db.Exec("UPDATE User SET OAuthID = ? WHERE ID = ?", int64(githubID), userID)
 		if err_exist != nil {
-			ErrorServer(w, "Error updating user")
+			lib.ErrorServer(w, "Error updating user")
 		}
 	}
 
@@ -158,19 +158,19 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	state_uuid := `SELECT UUID FROM User WHERE Email = ?`
 	err_user := db.QueryRow(state_uuid, email).Scan(&user_uuid)
 	if err_user != nil {
-		ErrorServer(w, "Error accessing User UUID")
+		lib.ErrorServer(w, "Error accessing User UUID")
 	}
 
 	// Attribute a session to an User
-	CookieSession(user_uuid, w, r)
+	lib.CookieSession(user_uuid, w, r)
 
 	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index")
 	if err_getdata != "OK" {
-		ErrorServer(w, err_getdata)
+		lib.ErrorServer(w, err_getdata)
 	}
 
 	// Redirect the user to a success page or your main application
-	renderTemplate(w, "layout/default", "page/index", data)
+	lib.RenderTemplate(w, "layout/default", "page/index", data)
 }
 
 // Helper function to fetch GitHub email if it's not public

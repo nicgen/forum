@@ -1,4 +1,4 @@
-package handlers
+package lib
 
 import (
 	"net/http"
@@ -62,5 +62,5 @@ func ErrorServer(w http.ResponseWriter, errtype string) {
 	}
 
 	// Load the page with the Error sent on the map
-	renderTemplate(w, "layout/index", "page/errorServer", data)
+	RenderTemplate(w, "layout/index", "page/errorServer", data)
 }

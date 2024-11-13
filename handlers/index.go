@@ -53,10 +53,10 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Checking the error returned by the GetData function
 	if err != "OK" {
-		ErrorServer(w, err)
+		lib.ErrorServer(w, err)
 	}
 
-	data = ErrorMessage(w, data, "none")
+	data = lib.ErrorMessage(w, data, "none")
 
-	renderTemplate(w, "layout/default", "page/index", data)
+	lib.RenderTemplate(w, "layout/default", "page/index", data)
 }
