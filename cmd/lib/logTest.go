@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func Cook(w http.ResponseWriter, r *http.Request) map[string]interface{} {
+func DataTest(w http.ResponseWriter, r *http.Request) map[string]interface{} {
 	// Checking if the User is on guest or is logged
 	cookie, err_cookie := r.Cookie("session_id")
 	data := map[string]interface{}{}
