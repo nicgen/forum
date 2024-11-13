@@ -62,7 +62,7 @@ func CreateTables() {
       Username VARCHAR(25) NOT NULL UNIQUE,
       Password VARCHAR(100),
       OAuthID VARCHAR(255) UNIQUE,
-      Role TEXT NOT NULL CHECK (role IN ('Admin', 'User', 'Moderator', 'SuperUser')),
+      Role TEXT NOT NULL CHECK (role IN ('Admin', 'User', 'Moderator', 'DeletUser')),
       IsLogged BOOL DEFAULT FALSE,
       IsDeleted BOOL DEFAULT FALSE, 
       CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
