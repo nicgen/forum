@@ -23,7 +23,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		// Prepared request to avoid SQL injection
 		stmt, err := db.Prepare("SELECT password FROM User WHERE email = ?")
 		if err != nil {
-			ErrorServer(w, "Error preparing query")
+			lib.ErrorServer(w, "Error preparing query")
 		}
 		defer stmt.Close()
 
@@ -33,12 +33,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			if err == sql.ErrNoRows {
 				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
 				if err_getdata != "OK" {
-					ErrorServer(w, err_getdata)
+					lib.ErrorServer(w, err_getdata)
 				}
-				data = ErrorMessage(w, data, "LoginMail")
-				renderTemplate(w, "layout/index", "page/index", data)
+				data = lib.ErrorMessage(w, data, "LoginMail")
+				lib.RenderTemplate(w, "layout/index", "page/index", data)
 			} else {
-				ErrorServer(w, "Error retrieving user data")
+				lib.ErrorServer(w, "Error retrieving user data")
 			}
 			return
 		}
@@ -47,10 +47,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		if !CheckPassword(hashedPassword, password) {
 			data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
 			if err_getdata != "OK" {
-				ErrorServer(w, err_getdata)
+				lib.ErrorServer(w, err_getdata)
 			}
-			data = ErrorMessage(w, data, "LoginPassword")
-			renderTemplate(w, "layout/index", "page/index", data)
+			data = lib.ErrorMessage(w, data, "LoginPassword")
+			lib.RenderTemplate(w, "layout/index", "page/index", data)
 		}
 
 		// Getting the UUID from the database
@@ -58,15 +58,15 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		state := `SELECT UUID FROM User WHERE Email = ?`
 		err_user := db.QueryRow(state, email).Scan(&user_uuid)
 		if err_user != nil {
-			ErrorServer(w, "Error accessing User UUID in the database")
+			lib.ErrorServer(w, "Error accessing User UUID in the database")
 		}
 
 		// Attribute a session to an User
-		CookieSession(user_uuid, w, r)
+		lib.CookieSession(user_uuid, w, r)
 
 	} else {
 		// If the User is already logged and tries to log-in
-		ErrorServer(w, "You must log-out before loggin in again")
+		lib.ErrorServer(w, "You must log-out before loggin in again")
 		return
 	}
 

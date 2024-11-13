@@ -22,12 +22,12 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	var storedState string
 	err_check_db := db.QueryRow("SELECT state FROM oauth_states WHERE state = ?", state).Scan(&storedState)
 	if err_check_db != nil || state != storedState {
-		ErrorServer(w, "Invalid state parameter")
+		lib.ErrorServer(w, "Invalid state parameter")
 	}
 
 	_, err_db := db.Exec("DELETE FROM oauth_states WHERE state = ?", state)
 	if err_db != nil {
-		ErrorServer(w, "Error deleting state")
+		lib.ErrorServer(w, "Error deleting state")
 	}
 
 	tokenURL := "https://discord.com/api/oauth2/token"
@@ -53,12 +53,12 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	var tokenResponse map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&tokenResponse); err != nil {
-		ErrorServer(w, "Error decoding token response")
+		lib.ErrorServer(w, "Error decoding token response")
 	}
 
 	accessToken, ok := tokenResponse["access_token"].(string)
 	if !ok {
-		ErrorServer(w, "Invalid access token")
+		lib.ErrorServer(w, "Invalid access token")
 	}
 
 	userInfoURL := "https://discord.com/api/users/@me"
@@ -68,20 +68,20 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	client := &http.Client{}
 	resp, err_client_var := client.Do(req)
 	if err_client_var != nil {
-		ErrorServer(w, "Error fetching user info")
+		lib.ErrorServer(w, "Error fetching user info")
 	}
 	defer resp.Body.Close()
 
 	var userInfo map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
-		ErrorServer(w, "Error decoding user info")
+		lib.ErrorServer(w, "Error decoding user info")
 	}
 
 	discordID, idOk := userInfo["id"].(string)
 	email, emailOk := userInfo["email"].(string)
 
 	if !idOk || !emailOk {
-		ErrorServer(w, "Missing user information")
+		lib.ErrorServer(w, "Missing user information")
 	}
 
 	var userID int64
@@ -102,17 +102,17 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Checking for password errors
 		if err_password != nil {
-			ErrorServer(w, "Error creating password")
+			lib.ErrorServer(w, "Error creating password")
 		} else if err_hashing != nil {
-			ErrorServer(w, "Error hashing password")
+			lib.ErrorServer(w, "Error hashing password")
 		} else if err_email != nil {
-			ErrorServer(w, "Error sending email")
+			lib.ErrorServer(w, "Error sending email")
 		}
 
 		//Generate Random UUID for the user
 		UUID, err := uuid.NewV4()
 		if err != nil {
-			ErrorServer(w, "Failed to generate UUID")
+			lib.ErrorServer(w, "Failed to generate UUID")
 		}
 
 		// Exec function to insert a new Users with all the data we got from the token
@@ -121,16 +121,16 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 			VALUES (?, ?, ?, ?, ?, ?, false)
 		`, UUID, email, username, password, discordID, "User")
 		if err_doesnt_exist != nil {
-			ErrorServer(w, "Error creating user")
+			lib.ErrorServer(w, "Error creating user")
 		}
 		userID, _ = result.LastInsertId()
 	} else if err_db_check != nil {
-		ErrorServer(w, "Database error")
+		lib.ErrorServer(w, "Database error")
 	} else {
 		// User exists, update GoogleID if necessary
 		_, err_exist := db.Exec("UPDATE User SET OAuthID = ? WHERE ID = ?", discordID, userID)
 		if err_exist != nil {
-			ErrorServer(w, "Error updating user")
+			lib.ErrorServer(w, "Error updating user")
 		}
 	}
 
@@ -145,18 +145,18 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	state_uuid := `SELECT UUID FROM User WHERE Email = ?`
 	err_user := db.QueryRow(state_uuid, email).Scan(&user_uuid)
 	if err_user != nil {
-		ErrorServer(w, "Error accessing User UUID")
+		lib.ErrorServer(w, "Error accessing User UUID")
 	}
 
 	// Attribute a session to an User
-	CookieSession(user_uuid, w, r)
+	lib.CookieSession(user_uuid, w, r)
 
 	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index")
 	if err_getdata != "OK" {
-		ErrorServer(w, err_getdata)
+		lib.ErrorServer(w, err_getdata)
 	}
 
 	// Redirect the user to a success page or your main application
-	renderTemplate(w, "layout/default", "page/index", data)
+	lib.RenderTemplate(w, "layout/default", "page/index", data)
 
 }

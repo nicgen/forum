@@ -1,4 +1,4 @@
-package handlers
+package lib
 
 import (
 	"bytes"
@@ -53,7 +53,7 @@ func findAndParseTemplates(rootDir string, funcMap template.FuncMap) (*template.
 }
 
 // renderer function (handles different layouts)
-func renderTemplate(w http.ResponseWriter, layoutName, tmplName string, data interface{}) {
+func RenderTemplate(w http.ResponseWriter, layoutName, tmplName string, data interface{}) {
 	// Execute the specific template first and get the rendered content
 	var buf bytes.Buffer
 	err := tmpl.ExecuteTemplate(&buf, tmplName, data)

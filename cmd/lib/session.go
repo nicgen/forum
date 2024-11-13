@@ -1,7 +1,6 @@
-package handlers
+package lib
 
 import (
-	"forum/cmd/lib"
 	"net/http"
 	"time"
 )
@@ -9,7 +8,7 @@ import (
 // ? Function to attribute a temporary cookie that will store User UUID in header
 func CookieSession(user_uuid string, w http.ResponseWriter, r *http.Request) {
 	// Storing Db data into a variable
-	db := lib.GetDB()
+	db := GetDB()
 
 	// Setting the User UUID into the cookie
 	cookie := &http.Cookie{
