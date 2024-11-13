@@ -19,7 +19,7 @@
             </form>
             <form method="POST" action="/admin/admindelete-user">
               <input type="hidden" name="userUUID" value="{{ .UUID }}">
-              <button type="submit">Delete my account</button>
+              <button type="submit">Delete User</button>
             </form>
             {{ end }}
             {{ if and (ne .Role "Admin") (ne .Role "User") (ne .Role "DeletUser") }}
