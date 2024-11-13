@@ -25,7 +25,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			// Parsing form values
 			err1 := r.ParseForm()
 			if err1 != nil {
-				ErrorServer(w, "Error parsing form data")
+				lib.ErrorServer(w, "Error parsing form data")
 			}
 
 			// Getting form values
@@ -39,33 +39,33 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			// if !lib.IsValidPassword(password) {
 			// 	data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
 			// 	if err_getdata != "OK" {
-			// 		ErrorServer(w, err_getdata)
+			// 		lib.ErrorServer(w, err_getdata)
 			// 	}
-			// 	data = ErrorMessage(w, data, "RegisterPassword")
-			// 	renderTemplate(w, "layout/index", "page/index", data)
+			// 	data = lib.ErrorMessage(w, data, "RegisterPassword")
+			// 	lib.RenderTemplate(w, "layout/index", "page/index", data)
 			// }
 			// if !lib.IsValidEmail(email) {
 			// 	data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
 			// 	if err_getdata != "OK" {
-			// 		ErrorServer(w, err_getdata)
+			// 		lib.ErrorServer(w, err_getdata)
 			// 	}
-			// 	data = ErrorMessage(w, data, "EmailFormat")
-			// 	renderTemplate(w, "layout/index", "page/index", data)
+			// 	data = lib.ErrorMessage(w, data, "EmailFormat")
+			// 	lib.RenderTemplate(w, "layout/index", "page/index", data)
 			// }
 			// Check if passwords match
 			if password != confirmPassword {
 				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
 				if err_getdata != "OK" {
-					ErrorServer(w, err_getdata)
+					lib.ErrorServer(w, err_getdata)
 				}
-				data = ErrorMessage(w, data, "PasswordMatch")
-				renderTemplate(w, "layout/index", "page/index", data)
+				data = lib.ErrorMessage(w, data, "PasswordMatch")
+				lib.RenderTemplate(w, "layout/index", "page/index", data)
 			}
 
 			// Generate UUID
 			userUUID, errUUID := uuid.NewV4()
 			if errUUID != nil {
-				ErrorServer(w, "Error generating user UUID on register")
+				lib.ErrorServer(w, "Error generating user UUID on register")
 			}
 
 			var usernameExists bool
@@ -75,9 +75,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			err_email := db.QueryRow("SELECT EXISTS(SELECT 1 FROM User WHERE Email=?)", email).Scan(&emailExists)
 
 			if err_user != nil {
-				ErrorServer(w, "Error checking username in database")
+				lib.ErrorServer(w, "Error checking username in database")
 			} else if err_email != nil {
-				ErrorServer(w, "Error checking email in database")
+				lib.ErrorServer(w, "Error checking email in database")
 			}
 
 			log.Printf("Username exists: %v, Email exists: %v", usernameExists, emailExists)
@@ -85,33 +85,33 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			// Hash password
 			hashedPassword, err_password := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 			if err_password != nil {
-				ErrorServer(w, "Error hashing the password")
+				lib.ErrorServer(w, "Error hashing the password")
 			}
 
 			// Check if the user already exists
 			if usernameExists {
 				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
 				if err_getdata != "OK" {
-					ErrorServer(w, err_getdata)
+					lib.ErrorServer(w, err_getdata)
 				}
-				data = ErrorMessage(w, data, "RegisterUsername")
-				renderTemplate(w, "layout/index", "page/index", data)
+				data = lib.ErrorMessage(w, data, "RegisterUsername")
+				lib.RenderTemplate(w, "layout/index", "page/index", data)
 			}
 
 			// Check if the email is already taken
 			if emailExists {
 				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
 				if err_getdata != "OK" {
-					ErrorServer(w, err_getdata)
+					lib.ErrorServer(w, err_getdata)
 				}
-				data = ErrorMessage(w, data, "RegisterEmail")
-				renderTemplate(w, "layout/index", "page/index", data)
+				data = lib.ErrorMessage(w, data, "RegisterEmail")
+				lib.RenderTemplate(w, "layout/index", "page/index", data)
 			}
 
 			// Insert the new user into the database as a User
 			_, err_db := db.Exec("INSERT INTO User (UUID, Username, Password, Email, Role) VALUES (?, ?, ?, ?, ?)", userUUID, username, hashedPassword, email, "User")
 			if err_db != nil {
-				ErrorServer(w, "Error adding user to the database")
+				lib.ErrorServer(w, "Error adding user to the database")
 			}
 
 			// Getting the UUID from the database
@@ -119,11 +119,11 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			state := `SELECT UUID FROM User WHERE Email = ?`
 			err_user = db.QueryRow(state, email).Scan(&user_uuid)
 			if err_user != nil {
-				ErrorServer(w, "Error accessing User UUID")
+				lib.ErrorServer(w, "Error accessing User UUID")
 			}
 
 			// Attribute a session to an User
-			CookieSession(user_uuid, w, r)
+			lib.CookieSession(user_uuid, w, r)
 
 			// Notify server new User as been added
 			log.Printf("User %s added successfully", username)
@@ -132,9 +132,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 		} else {
 			// If a logged User tries to register without logging out
-			ErrorServer(w, "You must log-out before loggin in again")
+			lib.ErrorServer(w, "You must log-out before loggin in again")
 		}
 	} else {
-		ErrorServer(w, "Unsupported method")
+		lib.ErrorServer(w, "Unsupported method")
 	}
 }

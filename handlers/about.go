@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"forum/cmd/lib"
 	"forum/models"
 	"html/template"
 	"net/http"
@@ -18,5 +19,5 @@ func AboutHandler(w http.ResponseWriter, r *http.Request) {
 		IsError: false,
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	renderTemplate(w, "layout/index", "page/about", data)
+	lib.RenderTemplate(w, "layout/index", "page/about", data)
 }
