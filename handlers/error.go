@@ -65,6 +65,9 @@ func WithErrorHandling(next http.Handler) http.Handler {
 					case "see other":
 						statusCode = http.StatusSeeOther
 						message = "See Other"
+					case "Unauthorized":
+						statusCode = http.StatusUnauthorized
+						message = "Status Unauthorized"
 					default:
 						// fmt.Println(">>>>>>>>>>STRING:Internal<<<<<<<<<<")
 						statusCode = http.StatusInternalServerError

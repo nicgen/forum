@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"forum/cmd/lib"
+	"forum/models"
 	"net/http"
 	"net/url"
 	"os"
@@ -18,7 +19,13 @@ func GoogleOAuthHandler(w http.ResponseWriter, r *http.Request) {
 	// Generate a random state parameter to prevent CSRF attacks
 	state, err_state := lib.GenerateRandomID()
 	if err_state != nil {
-		lib.ErrorServer(w, "Error generating state")
+		// Erreur critique : Échec de la génération de l'état
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error generating state",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	// Store the state in the database

@@ -286,7 +286,7 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Redirect the user to a success page or your main application
-	lib.RenderTemplate(w, "layout/default", "page/index", data)
+	lib.RenderTemplate(w, "layout/index", "page/index", data)
 
 }
 

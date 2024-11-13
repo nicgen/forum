@@ -14,11 +14,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 			StatusCode: http.StatusNotFound,
 			Message:    "Page Not Found",
 		}
-		// Use HandleError to send the error response
 		HandleError(w, err.StatusCode, err.Message)
-		// return
-		// * alt. use the auto-generated error code & message
-		// HandleError(w, http.StatusNotFound, "Page Not Found")
 		return
 	}
 
