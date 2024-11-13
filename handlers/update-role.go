@@ -11,20 +11,20 @@ func UpdateUserToModerator(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 	// Check if the request method is POST
 	if r.Method != http.MethodPost {
-		ErrorServer(w, "Invalid request method.")
+		lib.ErrorServer(w, "Invalid request method.")
 	}
 
 	// Retrieve the user's UUID from the form
 	userUUID := r.FormValue("userUUID")
 	if userUUID == "" {
-		ErrorServer(w, "User UUID is required.")
+		lib.ErrorServer(w, "User UUID is required.")
 	}
 
 	// Update the user's role to "Moderator"
 	query := `UPDATE User SET Role = 'Moderator' WHERE UUID = ?`
 	_, err := db.Exec(query, userUUID)
 	if err != nil {
-		ErrorServer(w, "Failed to update user role.")
+		lib.ErrorServer(w, "Failed to update user role.")
 		fmt.Println("Error updating user role:", err)
 	}
 
@@ -36,20 +36,19 @@ func RemoveModerator(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 	// Check if the request method is POST
 	if r.Method != http.MethodPost {
-		ErrorServer(w, "Invalid request method.")
+		lib.ErrorServer(w, "Invalid request method.")
 	}
 
 	// Retrieve the user's UUID from the form
 	userUUID := r.FormValue("userUUID")
 	if userUUID == "" {
-		ErrorServer(w, "User UUID is required.")
+		lib.ErrorServer(w, "User UUID is required.")
 	}
-
 
 	query := `UPDATE User SET Role = 'User' WHERE UUID = ?`
 	_, err := db.Exec(query, userUUID)
 	if err != nil {
-		ErrorServer(w, "Failed to update user role.")
+		lib.ErrorServer(w, "Failed to update user role.")
 		fmt.Println("Error updating user role:", err)
 	}
 
@@ -61,20 +60,20 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 	// Check if the request method is POST
 	if r.Method != http.MethodPost {
-		ErrorServer(w, "Invalid request method.")
+		lib.ErrorServer(w, "Invalid request method.")
 	}
 
 	// Retrieve the user's UUID from the form
 	userUUID := r.FormValue("userUUID")
 	fmt.Println("Received userUUID:", userUUID)
 	if userUUID == "" {
-		ErrorServer(w, "User UUID is required.")
+		lib.ErrorServer(w, "User UUID is required.")
 	}
 
 	query := `UPDATE User SET Role = 'DeletUser' WHERE UUID = ?`
 	_, err := db.Exec(query, userUUID)
 	if err != nil {
-		ErrorServer(w, "Failed to update user role.")
+		lib.ErrorServer(w, "Failed to update user role.")
 		fmt.Println("Error updating user role:", err)
 	}
 
