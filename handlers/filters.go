@@ -75,7 +75,7 @@ func Category(w http.ResponseWriter, r *http.Request) {
 	// db.Exec()
 	// db.QueryRow()
 	// db.Query(state_category, Category_ID)
-	data := lib.Cook(w, r)
+	data := lib.DataTest(w, r)
 	data["Posts"] = posts
 }
 
@@ -130,7 +130,7 @@ func Like(w http.ResponseWriter, r *http.Request) {
 
 	if err := rows.Err(); err != nil {
 	}
-	data := lib.Cook(w, r)
+	data := lib.DataTest(w, r)
 	data["Posts"] = posts
 }
 
@@ -185,7 +185,7 @@ func Dislike(w http.ResponseWriter, r *http.Request) {
 
 	if err := rows.Err(); err != nil {
 	}
-	data := lib.Cook(w, r)
+	data := lib.DataTest(w, r)
 	data["Posts"] = posts
 }
 
