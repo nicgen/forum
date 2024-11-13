@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"forum/cmd/lib"
+	"forum/models"
 	"net/http"
 	"time"
 )
@@ -12,12 +13,22 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 
 	// Checking the cookie values
-	cookie, _ := r.Cookie("session_id")
+	cookie, err := r.Cookie("session_id")
+	if err != nil {
+		// Erreur critique : Échec de la récupération du cookie de session
+		err := &models.CustomError{
+			StatusCode: http.StatusUnauthorized,
+			Message:    "Session ID cookie not found",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
+	}
 
 	// Unlogging the User in the database
 	state := `UPDATE User SET IsLogged = ? WHERE UUID = ?`
 	_, err_db := db.Exec(state, false, cookie.Value)
 	if err_db != nil {
+		// Erreur non critique : Échec de la déconnexion de l'utilisateur
 		lib.ErrorServer(w, "Error logging out")
 	}
 
