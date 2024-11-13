@@ -22,12 +22,19 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	var storedState string
 	err_check_db := db.QueryRow("SELECT state FROM oauth_states WHERE state = ?", state).Scan(&storedState)
 	if err_check_db != nil || state != storedState {
-		ErrorServer(w, "Invalid state parameter")
+		// Erreur critique : Invalid state parameter
+		err := &models.CustomError{
+			StatusCode: http.StatusBadRequest,
+			Message:    "Invalid state parameter",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	_, err_db := db.Exec("DELETE FROM oauth_states WHERE state = ?", state)
 	if err_db != nil {
-		ErrorServer(w, "Error deleting state")
+		// Erreur non critique : Error deleting state
+		ErrorServer(w, "Error deleting state, please try again later.")
 	}
 
 	tokenURL := "https://discord.com/api/oauth2/token"
@@ -41,11 +48,11 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	resp, err_post := http.PostForm(tokenURL, values)
 	if err_post != nil {
+		// Erreur critique : Error exchanging code
 		err := &models.CustomError{
 			StatusCode: http.StatusInternalServerError,
 			Message:    "Error exchanging code",
 		}
-
 		HandleError(w, err.StatusCode, err.Message)
 		return
 	}
@@ -53,12 +60,24 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	var tokenResponse map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&tokenResponse); err != nil {
-		ErrorServer(w, "Error decoding token response")
+		// Erreur critique : Error decoding token response
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error decoding token response",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	accessToken, ok := tokenResponse["access_token"].(string)
 	if !ok {
-		ErrorServer(w, "Invalid access token")
+		// Erreur critique : Invalid access token
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Invalid access token",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	userInfoURL := "https://discord.com/api/users/@me"
@@ -68,20 +87,38 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	client := &http.Client{}
 	resp, err_client_var := client.Do(req)
 	if err_client_var != nil {
-		ErrorServer(w, "Error fetching user info")
+		// Erreur critique : Error fetching user info
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error fetching user info",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 	defer resp.Body.Close()
 
 	var userInfo map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
-		ErrorServer(w, "Error decoding user info")
+		// Erreur critique : Error decoding user info
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error decoding user info",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	discordID, idOk := userInfo["id"].(string)
 	email, emailOk := userInfo["email"].(string)
 
 	if !idOk || !emailOk {
-		ErrorServer(w, "Missing user information")
+		// Erreur critique : Missing user information
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Missing user information",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	var userID int64
@@ -97,22 +134,42 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 		// If the user login for the first time we generate a password for him
 		password, err_password := lib.GeneratePassword(16)
-		err_email := lib.SendEmail(email, "Your forum password", password)
-		password, err_hashing := lib.HashPassword(password)
-
-		// Checking for password errors
 		if err_password != nil {
-			ErrorServer(w, "Error creating password")
-		} else if err_hashing != nil {
-			ErrorServer(w, "Error hashing password")
-		} else if err_email != nil {
-			ErrorServer(w, "Error sending email")
+			// Erreur critique : Error creating Password
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error creating password",
+			}
+			HandleError(w, err.StatusCode, err.Message)
+			return
+		}
+
+		err_email := lib.SendEmail(email, "Your forum password", password)
+		if err_email != nil {
+			// Erreur non critique : Error sending email
+			ErrorServer(w, "Error sending email, please check your inbox.")
+		}
+		password, err_hashing := lib.HashPassword(password)
+		if err_hashing != nil {
+			// Erreur critique : Error hashing password
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error hashing password",
+			}
+			HandleError(w, err.StatusCode, err.Message)
+			return
 		}
 
 		//Generate Random UUID for the user
 		UUID, err := uuid.NewV4()
 		if err != nil {
-			ErrorServer(w, "Failed to generate UUID")
+			// Erreur critique : Failed to generate UUID
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Failed to generate UUID",
+			}
+			HandleError(w, err.StatusCode, err.Message)
+			return
 		}
 
 		// Exec function to insert a new Users with all the data we got from the token
@@ -121,16 +178,29 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 			VALUES (?, ?, ?, ?, ?, ?, false)
 		`, UUID, email, username, password, discordID, "User")
 		if err_doesnt_exist != nil {
-			ErrorServer(w, "Error creating user")
+			// Erreur critique : Error creating user
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error creating user",
+			}
+			HandleError(w, err.StatusCode, err.Message)
+			return
 		}
 		userID, _ = result.LastInsertId()
 	} else if err_db_check != nil {
-		ErrorServer(w, "Database error")
+		// Erreur critique : Database error
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Database error",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	} else {
 		// User exists, update GoogleID if necessary
 		_, err_exist := db.Exec("UPDATE User SET OAuthID = ? WHERE ID = ?", discordID, userID)
 		if err_exist != nil {
-			ErrorServer(w, "Error updating user")
+			// Erreur non critique : Error updating user
+			ErrorServer(w, "Error updating user, please try again later.")
 		}
 	}
 
@@ -145,7 +215,13 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	state_uuid := `SELECT UUID FROM User WHERE Email = ?`
 	err_user := db.QueryRow(state_uuid, email).Scan(&user_uuid)
 	if err_user != nil {
-		ErrorServer(w, "Error accessing User UUID")
+		// Erreur critique : Error accessing User UUID
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error accessing User UUID",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	// Attribute a session to an User
@@ -153,7 +229,8 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index")
 	if err_getdata != "OK" {
-		ErrorServer(w, err_getdata)
+		// Erreur non critique : Unable to retrieve user data
+		ErrorServer(w, "Unable to retrieve user data, please try again later.")
 	}
 
 	// Redirect the user to a success page or your main application
