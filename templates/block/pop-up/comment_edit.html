@@ -1,0 +1,7 @@
+{{define "block/popup/comment_edit"}}
+{{ if and (ne .Role "Admin") (ne .Role "Moderator") }}
+    <div class="delete">
+
+    </div>
+    {{end}}
+{{end}}
