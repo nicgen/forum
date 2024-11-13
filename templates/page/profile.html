@@ -1,24 +1,68 @@
 {{define "page/profile"}}
+<!-- todo, externalize and import block () -->
   <h2>Welcome, {{ .Username }}</h2>
   <h3>Your Email: {{ .Email }}</h3>
   <h3>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</h3>
   <h3>Your role: {{ .Role }}</h3>
   
-
+<<<<<<< HEAD
+  <!-- not needed, create an admin layout/page -->
   {{if eq .Role "Admin"}}
     <p>Test: admin</p>
     {{end}}
+<<<<<<< HEAD
+=======
+  {{if eq .Role "Admin"}}
+    <p>Test: admin</p>
+>>>>>>> back/update-role-from-admin
     
+=======
+
+>>>>>>> a27ab1d1a9dee72c24747e1ae0d5fc33db0c4b08
     <h3>List of Users:</h3>
     <ul>
       {{ range .AllUsers }}
         <li>
-          Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }} 
+          Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
+          {{ if and (ne .Role "Admin") (ne .Role "Moderator") }}
+          <form method="POST" action="/admin/update-role">
+            <input type="hidden" name="userUUID" value="{{ .UUID }}">
+            <button type="submit">Promote to Moderator</button>
+          </form>
+          <form method="POST" action="/admin/delete-user">
+            <input type="hidden" name="userUUID" value="{{ .UUID }}">
+            <button type="submit">Delete my account</button>
+          </form>
+          {{ end }}
+          {{ if and (ne .Role "Admin") (ne .Role "User") }}
+          <form method="POST" action="/admin/remove-role">
+            <input type="hidden" name="userUUID" value="{{ .UUID }}">
+            <button type="submit">Remote Moderator</button>
+          </form>
+          {{ end }}
         </li>
+      {{ end }}
     </ul>
+<<<<<<< HEAD
+=======
+    {{end}}
+  {{if eq .Role "User" }}
+  <ul>
+    <li>
+      Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
+      <form method="POST" action="/admin/delete-user">
+        <input type="hidden" name="userUUID" value="{{ .UUID }}">
+        <button type="submit">Delete my account</button>
+      </form>
+    </li>
+  </ul>
+>>>>>>> back/update-role-from-admin
   {{end}}
+
   
   {{ range .Posts }}
+  <!-- todo use block/content/post -->
+  {{ template "block/content/post" }}
   <div class="post">
     <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
     <p>Post text: {{ .Text }}</p>

@@ -1,7 +1,10 @@
-{{define "createposts"}}
+{{define "block/form/post-create"}}
   <form action="/post">
     <select name="post_category">
       <option value="">--Please choose an option--</option>
+      {{ range .Category_ID }}
+      <option value="{{ .Category_ID }}">{{ .Category_ID }}</option>
+      {{ end }}
       <option value="cat">cat</option>
       <option value="dog">dog</option>
     </select>
