@@ -1,0 +1,26 @@
+{{define "layout/post"}}
+
+<!-- post layout -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+{{ template "block/share/head" }}
+
+<body>
+    <div>
+    </div>
+    <div class="wrapper">
+        {{template "blocks/debug/banner_error" .}}
+        {{template "block/nav" .}}
+        <main role="main">
+            <div class="container">
+                {{if .Content}}{{.Content}}{{else}}<p>no content</p>{{end}}
+            </div>
+        </main>
+        {{template "block/nav/footer" .}}
+        <script src="/static/js/theme.js"></script>
+    </div>
+</body>
+</html>
+{{end}}

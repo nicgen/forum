@@ -1,0 +1,18 @@
+{{define "block/admin/posts"}}
+{{ if (eq .UserContent.Role "Admin") (eq .UserContent.Role "Moderator")}}
+<div class="request#">
+    <h2 class="title">Post Title: {{ .Title }}</h1>
+    <p class="username">{{/* .Username */}}</p>
+    <p class="username">{{/* .CreatedAt */}}</p>
+    <p class="username">{{/* .Reason */}}</p>
+    <div class="actionmodo">
+        <button class="yes">
+          YES
+        </button>
+        <button class="no">
+          NO
+        </button>
+      </div>
+</div>
+{{end}}
+{{end}}
