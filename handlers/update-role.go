@@ -45,7 +45,7 @@ func RemoveModerator(w http.ResponseWriter, r *http.Request) {
 		ErrorServer(w, "User UUID is required.")
 	}
 
-	// Update the user's role to "Moderator"
+
 	query := `UPDATE User SET Role = 'User' WHERE UUID = ?`
 	_, err := db.Exec(query, userUUID)
 	if err != nil {
@@ -66,6 +66,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	// Retrieve the user's UUID from the form
 	userUUID := r.FormValue("userUUID")
+	fmt.Println("Received userUUID:", userUUID)
 	if userUUID == "" {
 		ErrorServer(w, "User UUID is required.")
 	}
