@@ -58,5 +58,5 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	data = lib.ErrorMessage(w, data, "none")
 
-	renderTemplate(w, "layout/index", "page/index", data)
+	lib.RenderTemplate(w, "layout/index", "page/index", data)
 }

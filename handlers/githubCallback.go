@@ -164,7 +164,7 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		email = fetchGitHubEmail(accessToken)
 		if email == "" {
 			// Erreur non critique : Unable to get user email
-			ErrorServer(w, "Unable to get user email")
+			lib.ErrorServer(w, "Unable to get user email")
 		}
 	}
 	if !username_error {
@@ -198,7 +198,7 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		err_email := lib.SendEmail(email, "Your forum password", password)
 		if err_email != nil {
 			// Erreur non critique : Error sending email
-			ErrorServer(w, "Error sending email")
+			lib.ErrorServer(w, "Error sending email")
 		}
 
 		password, err_hashing := lib.HashPassword(password)
@@ -252,7 +252,7 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		_, err_exist := db.Exec("UPDATE User SET OAuthID = ? WHERE ID = ?", int64(githubID), userID)
 		if err_exist != nil {
 			// Erreur non critique : Error updating user
-			ErrorServer(w, "Error updating user")
+			lib.ErrorServer(w, "Error updating user")
 		}
 	}
 
@@ -268,7 +268,7 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	err_user := db.QueryRow(state_uuid, email).Scan(&user_uuid)
 	if err_user != nil {
 		// Erreur non critique : Error accessing User UUID
-		ErrorServer(w, "Error accessing User UUID")
+		lib.ErrorServer(w, "Error accessing User UUID")
 	}
 
 	// Attribute a session to an User
@@ -286,7 +286,7 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Redirect the user to a success page or your main application
-	renderTemplate(w, "layout/default", "page/index", data)
+	lib.RenderTemplate(w, "layout/default", "page/index", data)
 
 }
 
