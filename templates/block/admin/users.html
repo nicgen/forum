@@ -1,10 +1,26 @@
 {{define "block/admin/users"}}
-{{ if (eq .UserContent.Role "Admin")}}
-    <div class="userlist">
-    <h3>{{ .Username }}</h3>
-    <h3>{{ .Email }}</h3>
-    <h3>{{ .MemberDate }}</h3>
-    <h3>{{ .Role }}</h3>
-    </div>
-    {{end}}
-{{end}}
+<h3>List of Users:</h3>
+      <ul>
+        {{ range .AllUsers }}
+          <li>
+            Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
+            {{ if and (ne .Role "Admin") (ne .Role "Moderator") (ne .Role "DeletUser")}}
+            <form method="POST" action="/admin/update-role">
+              <input type="hidden" name="userUUID" value="{{ .UUID }}">
+              <button type="submit">Promote to Moderator</button>
+            </form>
+            <form method="POST" action="/admin/admindelete-user">
+              <input type="hidden" name="userUUID" value="{{ .UUID }}">
+              <button type="submit">Delete User</button>
+            </form>
+            {{ end }}
+            {{ if and (ne .Role "Admin") (ne .Role "User") (ne .Role "DeletUser") }}
+            <form method="POST" action="/admin/remove-role">
+              <input type="hidden" name="userUUID" value="{{ .UUID }}">
+              <button type="submit">Remote Moderator</button>
+            </form>
+            {{ end }}
+          </li>
+        {{ end }}
+      </ul>
+      {{end}}
