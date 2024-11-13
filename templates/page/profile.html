@@ -1,28 +1,30 @@
-{{define "page/profile"}}
-  <h2>Welcome, {{ .Username }}</h2>
-  <h3>Your Email: {{ .Email }}</h3>
-  <h3>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</h3>
-  <h3>Your role: {{ .Role }}</h3>
-  
-
-  {{if eq .Role "Admin"}}
-    <p>Test: admin</p>
-    {{end}}
+  {{define "page/profile"}}
+    <h2>Welcome, {{ .Username }}</h2>
+    <h3>Your Email: {{ .Email }}</h3>
+    <h3>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</h3>
+    <h3>Your role: {{ .Role }}</h3>
     
-    <h3>List of Users:</h3>
+    {{if eq .Role "Admin"}}
+    {{template "block/admin/users" .}}
+    {{end}}
+    {{if eq .Role "User" }}
     <ul>
-      {{ range .AllUsers }}
-        <li>
-          Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }} 
-        </li>
+      <li>
+        Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
+        <form method="POST" action="/admin/delete-user">
+          <input type="hidden" name="userUUID" value="{{ .UUID }}">
+          <button type="submit">Delete my account</button>
+        </form>
+      </li>
     </ul>
+    {{end}}
+
+    
+    {{ range .Posts }}
+    <div class="post">
+      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+      <p>Post text: {{ .Text }}</p>
+      <p>Created at: {{ .CreatedAt }}</p>
+    </div>
+    {{end}}
   {{end}}
-  
-  {{ range .Posts }}
-  <div class="post">
-    <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-    <p>Post text: {{ .Text }}</p>
-    <p>Created at: {{ .CreatedAt }}</p>
-  </div>
-  {{ end }}
-{{end}}

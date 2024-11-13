@@ -26,7 +26,7 @@ func HandleError(w http.ResponseWriter, statusCode int, message string) {
 		IsError:   true,
 		ErrorCode: statusCode,
 	}
-	renderTemplate(w, "layout/error", "page/error", data)
+	lib.RenderTemplate(w, "layout/error", "page/error", data)
 }
 
 // WithErrorHandling middleware that handles all errors and panics

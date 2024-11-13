@@ -1,0 +1,27 @@
+{{define "block/content/post"}}
+<article aria-label="Forum post" role="article">
+  <header>
+    <h2 aria-label="Post title" role="heading" id="post-title-1">
+    <a href="#post-content-1" aria-label="Link to post content">
+      {{ .Title }}
+    </a>
+    </h2>
+    <p aria-label="Post date" role="definition">
+    {{ .CreatedAt }}
+    </p>
+  </header>
+  <!-- post image -->
+  {{/* if .image_url */}}
+  <figure aria-label="Post image" role="img">
+      <img src="{{/* image_url */}}" alt="image" aria-label="Post image" role="img">
+      <!-- todo add {{/* image_alt */}} later -->
+  </figure>
+  {{/* else */}}
+  <p>no image (text for testing purpose only, delete on 'block/content/post.html')</p>
+  {{/* end */}}
+  <!-- post content -->
+  <div aria-label="Post content" role="contentinfo" id="post-content-1">
+      {{ .Text }}
+  </div>
+</article>  
+{{end}}

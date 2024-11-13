@@ -1,31 +1,58 @@
 {{define "layout/index"}}
+
+<!-- /!\ default layout -->
+
+<!-- todo, add path condition?: `if /register` or `if /log` -->
+
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <title>{{if .Data.IsError}}Error {{.Data.ErrorCode}} - {{end}}{{if .Data.Title}}{{.Data.Title}}{{end}}</title>
-    {{template "share/meta" .}}
-</head>
+{{ template "block/share/head" }}
 
 <body>
     <div>
     </div>
     <div class="wrapper">
-        {{template "block/banner" .}}
-        {{template "block/nav" .}}
+
+        <div class="container">
+            <ul>
+                {{if .Data.Title }}<li>{{ .Data.Title . }}</li>{{ end }}
+                <li>{{ .Data.ErrorCode }}</li>
+                <li></li>
+            </ul>
+        </div>
+
+        <!-- dev banner (force error), not for production -->
+        {{ template "block/dev/force-error" . }}
+
+        <!-- main nav -->
+        {{ template "block/nav/main" . }}
+
         <main role="main">
             <div class="container">
-                <p>LAYOUT[index]</p>
-                {{if .Data.IsError}}
+            {{if .Data.IsError}}
+            <!-- if error -->
                 <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
-                {{else}}
-                <h1 role="heading" aria-level="1">{{.Data.Header}}</h1>
-                {{end}}
-                {{.Content}}
+                {{ .Content }}
+            {{else}}
+            {{ if eq .UserContent.Role "Guest" }}
+            
+            <!-- todo, add condition for login/register -->
+            {{ template "block/login" . }}
+            {{ template "block/register" . }}
+            
+            {{ end }}
+            
+            <!-- page content -->
+            {{if .Content}}{{.Content}}{{else}}<p>no content</p>{{end}}
+
+            {{end}}
             </div>
         </main>
-        {{template "block/footer" .}}
-        <script src="/static/js/theme.js"></script>
+
+        {{/* template "block/nav/footer" . */}} <!-- not for production (no use) -->
+
+        <script src="/static/js/theme.js"></script> <!-- import for the js (theme) -->
     </div>
 </body>
 

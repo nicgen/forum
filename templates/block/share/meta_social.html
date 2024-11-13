@@ -1,0 +1,21 @@
+{{define "block/share/meta_social"}}
+<!-- todo add social meta -->
+
+<!-- facebook -->
+<meta property="og:title" content="{{/* .Post.Image-alt . */}}">
+<meta property="og:description" content="{{ .Title }}">
+<meta property="og:image" content="{{/* .Post.Image-url . */}}">
+<meta property="og:url" content="{{/* .Post.url . */}}">
+<meta property="og:site_name" content="{{ .Data.Title }}">
+<meta property="og:type" content="article">
+
+<!-- twitter -->
+
+<meta name="twitter:card" content="{{/* .Post.Image-alt . */}}">
+<meta name="twitter:site" content="{{ .Data.Title }}">
+<meta name="twitter:creator" content="{{ .user_username }}">
+<meta name="twitter:title" content="{{ .Title }}">
+<!-- <meta name="twitter:description" content="This is a brief summary of the forum post"> -->
+<meta name="twitter:image" content="{{/* .Post.Image-url . */}}">
+
+{{end}}

@@ -34,7 +34,7 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	_, err_db := db.Exec("DELETE FROM oauth_states WHERE state = ?", state)
 	if err_db != nil {
 		// Erreur non critique : Error deleting state
-		ErrorServer(w, "Error deleting state, please try again later.")
+		lib.ErrorServer(w, "Error deleting state, please try again later.")
 	}
 
 	tokenURL := "https://discord.com/api/oauth2/token"
@@ -147,7 +147,7 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		err_email := lib.SendEmail(email, "Your forum password", password)
 		if err_email != nil {
 			// Erreur non critique : Error sending email
-			ErrorServer(w, "Error sending email, please check your inbox.")
+			lib.ErrorServer(w, "Error sending email, please check your inbox.")
 		}
 		password, err_hashing := lib.HashPassword(password)
 		if err_hashing != nil {
@@ -200,7 +200,7 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		_, err_exist := db.Exec("UPDATE User SET OAuthID = ? WHERE ID = ?", discordID, userID)
 		if err_exist != nil {
 			// Erreur non critique : Error updating user
-			ErrorServer(w, "Error updating user, please try again later.")
+			lib.ErrorServer(w, "Error updating user, please try again later.")
 		}
 	}
 
@@ -225,15 +225,15 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Attribute a session to an User
-	CookieSession(user_uuid, w, r)
+	lib.CookieSession(user_uuid, w, r)
 
 	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index")
 	if err_getdata != "OK" {
 		// Erreur non critique : Unable to retrieve user data
-		ErrorServer(w, "Unable to retrieve user data, please try again later.")
+		lib.ErrorServer(w, "Unable to retrieve user data, please try again later.")
 	}
 
 	// Redirect the user to a success page or your main application
-	renderTemplate(w, "layout/default", "page/index", data)
+	lib.RenderTemplate(w, "layout/default", "page/index", data)
 
 }

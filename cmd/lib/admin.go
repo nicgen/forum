@@ -38,9 +38,9 @@ func createAdminUserIfNotExists(db *sql.DB, hashedPassword string) {
 
 	if !exists {
 		// Example UUID and email for the admin user
-		userUUID := os.Getenv("USER_UUID")
-		email := os.Getenv("EMAIL")
-		username := os.Getenv("USERNAME")
+		userUUID := "123e4567-e89b-12d3-a456-426614174000"
+		email := "admin@admin.com"
+		username := "admin"
 
 		_, err := db.Exec(
 			"INSERT INTO User (UUID, Username, Password, Email, Role) VALUES (?, ?, ?, ?, ?)",

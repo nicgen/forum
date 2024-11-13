@@ -51,10 +51,18 @@ forum.db*
 Zone.Identifier
 *:Zone.Identifier
 
+# doc
 /doc
 
-#Certificat
+# backups
+/templates/.unused
+
+# Certificat
 
 server.crt
 server.csr
 server.key
+
+# my files
+git_clean.sh
+

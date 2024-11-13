@@ -18,7 +18,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	state := `UPDATE User SET IsLogged = ? WHERE UUID = ?`
 	_, err_db := db.Exec(state, false, cookie.Value)
 	if err_db != nil {
-		ErrorServer(w, "Error logging out")
+		lib.ErrorServer(w, "Error logging out")
 	}
 
 	// Overwrite the cookie with one that expire instantly

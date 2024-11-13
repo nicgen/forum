@@ -1,9 +1,9 @@
-{{define "posts"}}
-{{ range .Posts }}
-<div class="Line"></div>
+{{define "page/post"}}
+<!-- <div class="Line"></div> -->
 <div class="post">
-  <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-  <p>Post text: {{ .Text }}</p>
+  <h3>{{ .Title }}</h3>
+  <p>{{ .Category_ID }}</p>
+  <p>{{ .CreatedAt  }}</p>
   <form action="/like" method="GET">
     <input type="hidden" name="id" value="{{.ID}}">
     <button type="submit" name="like_button" value="like_button">Like</button>
@@ -14,5 +14,4 @@
   </form>
   <p>Created at: {{ .CreatedAt }}</p>
 </div>
-{{end}}
 {{end}}
