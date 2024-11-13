@@ -57,8 +57,12 @@ Zone.Identifier
 # backups
 /templates/.unused
 
-#Certificat
+# Certificat
 
 server.crt
 server.csr
 server.key
+
+# my files
+git_clean.sh
+

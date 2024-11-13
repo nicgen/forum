@@ -1,0 +1,16 @@
+{{define "block/popup/account_delete"}}
+{{ if and (ne .Role "Admin") (ne .Role "Moderator") }}
+    <div class="delete">
+        <h2>DELETE ACCOUNT</h2>
+        <h3>Are your sur ?</h3>
+        <div class="suppression">
+            <button class="yes">
+              <i class="fa fa-thumbs-up"></i> YES
+            </button>
+            <button class="no">
+              <i class="fa fa-thumbs-down"></i> NO
+            </button>
+          </div>
+    </div>
+    {{end}}
+{{end}}
