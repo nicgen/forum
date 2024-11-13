@@ -24,7 +24,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	state_post := `INSERT INTO Posts (User_UUID, Title, Category_ID, Text, Like, Dislike, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	_, err_db := db.Exec(state_post, cookie.Value, title, category, text, like_count, dislike_count, time.Now())
 	if err_db != nil {
-		ErrorServer(w, "Error inserting new Post")
+		lib.ErrorServer(w, "Error inserting new Post")
 	}
 
 	// Redirect User to the home page
