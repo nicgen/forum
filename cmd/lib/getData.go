@@ -40,9 +40,9 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 		// Posts Query based on page
 		var state_posts string
 		if page == "profile" {
-			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
+			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
 		} else if page == "index" {
-			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt FROM Posts ORDER BY CreatedAt DESC`
+			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts ORDER BY CreatedAt DESC`
 		}
 
 		// Users posts Request
@@ -63,10 +63,16 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 
 		for rows.Next() {
 			var post models.Post
-			if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt); err != nil {
+			if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
 				return nil, "Error scanning user posts"
 			}
 
+			// Getting the Username of the person who made the post
+			state_username := `SELECT Username FROM User WHERE UUID = ?`
+			err_db := db.QueryRow(state_username, post.User_UUID).Scan(&post.Username)
+			if err_db != nil {
+				return nil, "Error getting User's Username"
+			}
 			posts = append(posts, &post)
 		}
 
@@ -106,11 +112,11 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 			"Role":         user_role,
 			"Posts":        posts,
 			"AllUsers":     allUsers,
-			"UUID":			uuid,
+			"UUID":         uuid,
 		}
 	} else {
 		// Not logged in - show all posts
-		state_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt FROM Posts ORDER BY CreatedAt DESC`
+		state_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts ORDER BY CreatedAt DESC`
 		var posts []*models.Post
 		rows, err := db.Query(state_posts)
 		if err != nil {
@@ -120,9 +126,17 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 
 		for rows.Next() {
 			var post models.Post
-			if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt); err != nil {
+			if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
 				return nil, "Error scanning posts"
 			}
+
+			// Getting the Username of the person who made the post
+			state_username := `SELECT Username FROM User WHERE UUID = ?`
+			err_db := db.QueryRow(state_username, post.User_UUID).Scan(&post.Username)
+			if err_db != nil {
+				return nil, "Error getting User's Username"
+			}
+
 			posts = append(posts, &post)
 		}
 
