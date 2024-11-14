@@ -184,9 +184,10 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var userID int64
+	role := "User"
 
 	// Checking if the user is already in the database
-	err_db := db.QueryRow("SELECT ID FROM User WHERE OAuthID = ? OR Email = ?", int64(githubID), email).Scan(&userID)
+	err_db := db.QueryRow("SELECT ID, Role FROM User WHERE OAuthID = ? OR Email = ?", int64(githubID), email).Scan(&userID, &role)
 
 	// If the user doesn't exist, create a new one
 	if err_db == sql.ErrNoRows {
@@ -278,7 +279,7 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Attribute a session to an User
-	lib.CookieSession(user_uuid, username, creation_date, creation_hour, w, r)
+	lib.CookieSession(user_uuid, username, creation_date, creation_hour, email, role, w, r)
 
 	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index", r)
 	if err_getdata != "OK" {

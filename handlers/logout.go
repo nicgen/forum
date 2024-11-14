@@ -48,6 +48,14 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 			Name:  "creation_hour",
 			Value: "",
 		},
+		{
+			Name:  "email",
+			Value: "",
+		},
+		{
+			Name:  "role",
+			Value: "",
+		},
 	}
 
 	// Set common properties and add cookies
