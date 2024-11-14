@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gofrs/uuid/v5"
 	_ "github.com/mattn/go-sqlite3"
@@ -130,8 +131,14 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Setting up the variables we are going to set into cookies
+	var username, creation_date, creation_hour string
+	actual_time := strings.Split(time.Now().Format("2006-01-02 15:04:05"), " ")
+	creation_date = actual_time[0]
+	creation_hour = actual_time[1]
 	googleID, id_error := userInfo["sub"].(string)
 	email, email_error := userInfo["email"].(string)
+	username = email[:strings.Index(email, "@")]
 
 	if !id_error {
 		//Critical error : Unable to get Google ID
@@ -248,11 +255,11 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Attribute a session to an User
-	lib.CookieSession(user_uuid, w, r)
+	lib.CookieSession(user_uuid, username, creation_date, creation_hour, w, r)
 
 	// Redirect the user to a success page or your main application
 
-	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index")
+	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index", r)
 	if err_getdata != "OK" {
 		// Erreur critique : Error retrieving user data
 		err := &models.CustomError{
@@ -264,5 +271,5 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Redirect the user to a success page or your main application
-	lib.RenderTemplate(w, "layout/default", "page/index", data)
+	lib.RenderTemplate(w, "layout/index", "page/index", data)
 }
