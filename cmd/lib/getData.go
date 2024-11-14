@@ -106,6 +106,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 			"Role":         user_role,
 			"Posts":        posts,
 			"AllUsers":     allUsers,
+			"UUID":			uuid,
 		}
 	} else {
 		// Not logged in - show all posts
