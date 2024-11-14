@@ -1,4 +1,8 @@
 {{define "page/index"}}
+
+{{if eq .Role "DeletUser"}}
+{{template "block/deleteduser" .}}
+{{else}}
   <!-- create a post -->
   {{if ne .Role "Guest"}}
   {{template "block/form/post-create" .}}
@@ -12,4 +16,5 @@
     {{ end }}
   {{ end }}
 
+{{end}}
 {{end}}
