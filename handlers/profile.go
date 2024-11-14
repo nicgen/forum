@@ -13,7 +13,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, _ := r.Cookie("session_id")
 
 	// Getting the User Data
-	data, err := lib.GetData(db, cookie.Value, "logged", "profile")
+	data, err := lib.GetData(db, cookie.Value, "logged", "profile", r)
 	if err != "OK" {
 		lib.ErrorServer(w, err)
 	}
