@@ -13,6 +13,7 @@ type Post struct {
 	Text        string
 	Like        int
 	Dislike     int
+	Data        map[string]interface{}
 	CreatedAt   time.Time
 }
 

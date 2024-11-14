@@ -6,7 +6,7 @@ import (
 )
 
 // ? Function to attribute a temporary cookie that will store User UUID in header
-func CookieSession(user_uuid, username, creation_date, creation_hour string, w http.ResponseWriter, r *http.Request) {
+func CookieSession(user_uuid, username, creation_date, creation_hour, email, role string, w http.ResponseWriter, r *http.Request) {
 	// Storing Db data into a variable
 	db := GetDB()
 
@@ -36,6 +36,14 @@ func CookieSession(user_uuid, username, creation_date, creation_hour string, w h
 		{
 			Name:  "creation_hour",
 			Value: creation_hour,
+		},
+		{
+			Name:  "email",
+			Value: email,
+		},
+		{
+			Name:  "role",
+			Value: role,
 		},
 	}
 
