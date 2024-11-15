@@ -89,6 +89,7 @@ func setupMux() *http.ServeMux {
 	// DB Requests
 	mux.HandleFunc("/profile", handlers.AuthMiddleware(handlers.ProfileHandler))
 	mux.HandleFunc("/post", handlers.AuthMiddleware(handlers.PostHandler))
+	mux.HandleFunc("/create-post", handlers.AuthMiddleware(handlers.CreatePostHandler))
 	mux.HandleFunc("/comment", handlers.AuthMiddleware(handlers.CommentHandler))
 	mux.HandleFunc("/like", handlers.AuthMiddleware(handlers.LikeHandler))
 	mux.HandleFunc("/admin/update-role", handlers.AuthMiddleware(handlers.UpdateUserToModerator))
