@@ -6,6 +6,11 @@
       {{ .Username }}: {{ .Title }}
     </a>
     </h2>
+    <div>
+    {{/* range .Category_ID */}}
+      {{ .Category_ID }}
+    {{/* end */}}
+    </div>
     <p aria-label="Post date" role="definition">
       {{ .Creation_Date }}
       {{ .Creation_Hour }}
@@ -25,12 +30,6 @@
       {{ .Text }}
   </div>
   {{ template "block/content/comment_add" . }}
-  {{ range .Comments }}
-    {{ .Text }}
-    {{ .Like }}
-    {{ .Dislike }}
-    {{ .Creation_Date }}
-    {{ .Creation_Hour }}
-  {{ end }}
+
 </article>  
 {{end}}
