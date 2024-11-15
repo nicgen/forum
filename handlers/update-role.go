@@ -148,5 +148,6 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	})
 
 	// Redirige ou envoie un message de succès
+	LogoutHandler(w, r)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
