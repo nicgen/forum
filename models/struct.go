@@ -14,6 +14,7 @@ type Post struct {
 	Like        int
 	Dislike     int
 	Data        map[string]interface{}
+	Comments    []*Comment
 	CreatedAt   time.Time
 }
 
@@ -28,6 +29,17 @@ type User struct {
 	Role         string
 	// IsMod        bool
 	// IsAdmin      bool
+}
+
+type Comment struct {
+	ID        int
+	Post_ID   int
+	User_UUID int
+	Username  string
+	Text      string
+	CreatedAt time.Time
+	Like      int
+	Dislike   int
 }
 
 type TemplateSetting struct {
@@ -107,20 +119,6 @@ type Post2 struct {
 	IsDisliked   bool
 	Username     string
 	Categories   []Category
-}
-
-type Comment struct {
-	Id           int
-	Post_Id      int
-	User_Id      int
-	Text         string
-	CreatedAt    time.Time
-	StrCreatedAt string
-	Likecount    int
-	Dislikecount int
-	IsLiked      bool
-	IsDisliked   bool
-	Username     string
 }
 
 type Category struct {
