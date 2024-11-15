@@ -37,6 +37,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 					lib.ErrorServer(w, err_getdata)
 				}
 				data = lib.ErrorMessage(w, data, "LoginMail")
+				data["NavLogin"] = "show"
 				lib.RenderTemplate(w, "layout/index", "page/index", data)
 			} else {
 				lib.ErrorServer(w, "Error retrieving user data")
@@ -51,6 +52,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 				lib.ErrorServer(w, err_getdata)
 			}
 			data = lib.ErrorMessage(w, data, "LoginPassword")
+			data["NavLogin"] = "show"
 			lib.RenderTemplate(w, "layout/index", "page/index", data)
 		}
 

@@ -50,6 +50,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			// 		lib.ErrorServer(w, err_getdata)
 			// 	}
 			// 	data = lib.ErrorMessage(w, data, "RegisterPassword")
+			// data["NavRegister"] = "show"
 			// 	lib.RenderTemplate(w, "layout/index", "page/index", data)
 			// }
 			// if !lib.IsValidEmail(email) {
@@ -58,6 +59,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			// 		lib.ErrorServer(w, err_getdata)
 			// 	}
 			// 	data = lib.ErrorMessage(w, data, "EmailFormat")
+			// data["NavRegister"] = "show"
 			// 	lib.RenderTemplate(w, "layout/index", "page/index", data)
 			// }
 			// Check if passwords match
@@ -67,6 +69,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 					lib.ErrorServer(w, err_getdata)
 				}
 				data = lib.ErrorMessage(w, data, "PasswordMatch")
+				data["NavRegister"] = "show"
 				lib.RenderTemplate(w, "layout/index", "page/index", data)
 			}
 
@@ -103,6 +106,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 					lib.ErrorServer(w, err_getdata)
 				}
 				data = lib.ErrorMessage(w, data, "RegisterUsername")
+				data["NavRegister"] = "show"
 				lib.RenderTemplate(w, "layout/index", "page/index", data)
 			}
 
@@ -113,6 +117,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 					lib.ErrorServer(w, err_getdata)
 				}
 				data = lib.ErrorMessage(w, data, "RegisterEmail")
+				data["NavRegister"] = "show"
 				lib.RenderTemplate(w, "layout/index", "page/index", data)
 			}
 
