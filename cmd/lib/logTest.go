@@ -10,10 +10,13 @@ func DataTest(w http.ResponseWriter, r *http.Request) map[string]interface{} {
 	// Checking if the User is on guest or is logged
 	cookie, err_cookie := r.Cookie("session_id")
 	data := map[string]interface{}{}
-	err := ""
+	err_data := ""
 	// If they're not logged in
 	if err_cookie == http.ErrNoCookie {
-		data, err = GetData(db, "not logged", "not logged", "index", r)
+		data, err_data = GetData(db, "not logged", "not logged", "index", r)
+		if err_data != "OK" {
+			ErrorServer(w, "Error getting data (in DataTest)")
+		}
 	} else {
 		var id int
 		// Checking if the UUID is containned in the database
@@ -25,9 +28,9 @@ func DataTest(w http.ResponseWriter, r *http.Request) map[string]interface{} {
 			// handlers.LogoutHandler(w, r)
 		} else {
 			// Else, we show the User the index page of Logged User
-			data, err = GetData(db, cookie.Value, "logged", "index", r)
-			if err != "OK" {
-				ErrorServer(w, "Err getting Data")
+			data, err_data = GetData(db, cookie.Value, "logged", "index", r)
+			if err_data != "OK" {
+				ErrorServer(w, "Error getting Data (in DataTest 2)")
 			}
 		}
 	}
