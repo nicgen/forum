@@ -14,17 +14,8 @@
 {{ template "block/share/head" }}
 
 <body>
-    <div>
-    </div>
-    <div class="wrapper">
 
-        <div class="container">
-            <ul>
-                {{if .Data.Title }}<li>{{ .Data.Title . }}</li>{{ end }}
-                <li>{{ .Data.ErrorCode }}</li>
-                <li></li>
-            </ul>
-        </div>
+    <div class="wrapper" role="document">
 
         <!-- dev banner (force error), not for production -->
         {{ template "block/dev/force-error" . }}
@@ -32,8 +23,8 @@
         <!-- main nav -->
         {{ template "block/nav/main" . }}
 
-        <main role="main">
-            <div class="container">
+        <main role="main" aria-label="Main content">
+            <div class="container" role="region" aria-label="Page content container">
             {{if .Data.IsError}}
             <!-- if error -->
                 <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
@@ -42,13 +33,14 @@
             {{ if eq .UserContent.Role "Guest" }}
             
             <!-- todo, add condition for login/register -->
-            {{ template "block/login" . }}
-            {{ template "block/register" . }}
+
+            {{if eq .UserContent.NavLogin "show"}}{{ template "block/login" }}{{else}}{{end}}
+            {{if eq .UserContent.NavRegister "show"}}{{ template "block/register" }}{{else}}{{end}}
             
             {{ end }}
             
             <!-- page content -->
-            {{if .Content}}{{.Content}}{{else}}<p>no content</p>{{end}}
+            {{if .Content}}{{.Content}}{{else}}<p role="definition">no content</p>{{end}}
 
             {{end}}
             </div>
