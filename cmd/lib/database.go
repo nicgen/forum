@@ -12,24 +12,24 @@ import (
 // Variable that will store the database
 var db *sql.DB
 
-// ? Initiate the database
+// Initiate the database
 func Init() error {
 	var err error
 
-	//Ouvertur de la connexion DB
+	// Open the DB connection
 	db, err = sql.Open("sqlite3", "./forum.db")
 	if err != nil {
 		log.Fatal(err)
 		return fmt.Errorf("Failed to open database: %w", err)
 	}
 
-	//MDP DB défini
+	// Set database password
 	dbPassword := os.Getenv("DB_PASSWORD")
 	if dbPassword == "" {
 		return fmt.Errorf("DB_PASSWORD is not set")
 	}
 
-	//Défini le mdp de la DB
+	// Define the database password
 	_, err = db.Exec(fmt.Sprintf("PRAGMA key = '%s'", dbPassword))
 	if err != nil {
 		return fmt.Errorf("failed to set database password: %w", err)
@@ -37,7 +37,7 @@ func Init() error {
 	return nil
 }
 
-// ? Function to test database connection
+// Test database connection
 func TestDBConnection() {
 	err := db.Ping()
 	if err != nil {
@@ -46,27 +46,26 @@ func TestDBConnection() {
 	log.Println("Database connection established successfully!")
 }
 
-// ? Function to send database into handlers
+// Send database into handlers
 func GetDB() *sql.DB {
 	return db
 }
 
-// ? Function to create the database
+// Create the database
 func CreateTables() {
 	tables := []string{
-
 		`CREATE TABLE IF NOT EXISTS User(
-      ID INTEGER PRIMARY KEY AUTOINCREMENT,
-      UUID VARCHAR(255) NOT NULL UNIQUE,
-      Email VARCHAR(50) NOT NULL UNIQUE,
-      Username VARCHAR(25) NOT NULL UNIQUE,
-      Password VARCHAR(100),
-      OAuthID VARCHAR(255) UNIQUE,
-      Role TEXT NOT NULL CHECK (role IN ('Admin', 'User', 'Moderator', 'SuperUser')),
-      IsLogged BOOL DEFAULT FALSE,
-      IsDeleted BOOL DEFAULT FALSE, 
-      CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-    );`,
+   ID INTEGER PRIMARY KEY AUTOINCREMENT,
+   UUID VARCHAR(255) NOT NULL UNIQUE,
+   Email VARCHAR(50) NOT NULL UNIQUE,
+   Username VARCHAR(25) NOT NULL UNIQUE,
+   Password VARCHAR(100),
+   OAuthID VARCHAR(255) UNIQUE,
+   Role TEXT NOT NULL CHECK (Role IN ('Admin', 'User', 'Moderator', 'DeleteUser')),
+   IsLogged BOOL DEFAULT FALSE,
+   IsDeleted BOOL DEFAULT FALSE, 
+   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+  );`,
 
 		`CREATE TABLE IF NOT EXISTS Admin (
   ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,10 +74,10 @@ func CreateTables() {
   RequestMod_ID INTEGER NOT NULL,
   FOREIGN KEY (User_UUID) REFERENCES User(UUID),
   FOREIGN KEY (RequestMod_ID) REFERENCES RequestMod(ID),
-  FOREIGN KEY (Mod_ID) REFERENCES Moderateur(ID)
+  FOREIGN KEY (Mod_ID) REFERENCES Moderator(ID)
 );`,
 
-		`Create TABLE IF NOT EXISTS Moderator (
+		`CREATE TABLE IF NOT EXISTS Moderator (
   ID INTEGER PRIMARY KEY AUTOINCREMENT,
   User_UUID VARCHAR(255) NOT NULL,
   IsAdmin BOOL DEFAULT FALSE,
@@ -118,7 +117,9 @@ func CreateTables() {
   ID INTEGER PRIMARY KEY AUTOINCREMENT,
   User_UUID VARCHAR(255) NOT NULL,
   Post_ID INTEGER NOT NULL,
-  Texte TEXT NOT NULL,
+  Text TEXT NOT NULL,
+  Like INTEGER,
+  Dislike INTEGER,
   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (Post_ID) REFERENCES Posts(ID) ON DELETE CASCADE,
@@ -126,11 +127,11 @@ func CreateTables() {
 );`,
 
 		`CREATE TABLE IF NOT EXISTS Report (
-  ID INTEGER PRIMARY KEY AUTOINCREMENT ,
+  ID INTEGER PRIMARY KEY AUTOINCREMENT,
   Reported_ID INTEGER NOT NULL, 
   User_UUID VARCHAR(255) NOT NULL,
   Reported_Reason INTEGER NOT NULL,
-  Reported_Texte TEXT,
+  Reported_Text TEXT,
   FOREIGN KEY (User_UUID) REFERENCES User(UUID)
 );`,
 
@@ -149,8 +150,8 @@ func CreateTables() {
   Status VARCHAR(255) NOT NULL,
   FOREIGN KEY (Post_ID) REFERENCES Posts(ID) ON DELETE CASCADE,
   FOREIGN KEY (Comment_ID) REFERENCES Comments(ID) ON DELETE CASCADE,
-  FOREIGN KEY (User_UUID) REFERENCES User(UUID)
-  CHECK ((Post_ID is NULL AND Comment_ID IS NOT NULL)OR(Post_ID IS NOT NULL AND Comment_ID IS NULL))
+  FOREIGN KEY (User_UUID) REFERENCES User(UUID),
+  CHECK ((Post_ID IS NULL AND Comment_ID IS NOT NULL) OR (Post_ID IS NOT NULL AND Comment_ID IS NULL))
 );`,
 
 		`CREATE TABLE IF NOT EXISTS Notification (
@@ -160,11 +161,11 @@ func CreateTables() {
   Post_ID INTEGER,
   Comment_ID INTEGER,
   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-  IsRead Bool,
-  FOREIGN KEY(Comment_ID) REFERENCES Comments(ID),
-  FOREIGN KEY(User_UUID) REFERENCES User(UUID),
-  FOREIGN KEY(Reaction_ID) REFERENCES Reaction(ID)
-  FOREIGN KEY(Post_ID) REFERENCES Posts(ID)
+  IsRead BOOL,
+  FOREIGN KEY (Comment_ID) REFERENCES Comments(ID),
+  FOREIGN KEY (User_UUID) REFERENCES User(UUID),
+  FOREIGN KEY (Reaction_ID) REFERENCES Reaction(ID),
+  FOREIGN KEY (Post_ID) REFERENCES Posts(ID)
 );`,
 
 		`CREATE TABLE IF NOT EXISTS Image (
@@ -172,8 +173,8 @@ func CreateTables() {
   FilePath TEXT,
   Post_ID INTEGER,
   FOREIGN KEY (Post_ID) REFERENCES Posts(ID) ON DELETE CASCADE
-
 );`,
+
 		`CREATE TABLE IF NOT EXISTS oauth_states (
     state TEXT PRIMARY KEY,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -185,21 +186,21 @@ func CreateTables() {
 			log.Fatal(err)
 		}
 	}
-	fmt.Println("Tables créées avec succès.")
+	fmt.Println("Tables created successfully.")
 
-	InsertCategories() // a supprimer
+	InsertCategories()
 }
 
-// A modifier : admin doit les créer
+// Insert predefined categories (to be modified as needed)
 func InsertCategories() {
 	categories := []string{"Test 1", "Test 2", "Test 3"}
 
 	for _, category := range categories {
-		_, err := db.Exec(`INSERT OR IGNORE INTO Categories (Name) VALUES (?)`, category) //créer les catégories ou ignore si elles existent déjà
+		_, err := db.Exec(`INSERT OR IGNORE INTO Categories (Name) VALUES (?)`, category)
 		if err != nil {
 			log.Fatalf("Error inserting category %s: %v", category, err)
 		} else {
-			fmt.Printf("Catégorie '%s' insérée avec succès ou déjà existante.\n", category)
+			fmt.Printf("Category '%s' inserted successfully or already exists.\n", category)
 		}
 	}
 }

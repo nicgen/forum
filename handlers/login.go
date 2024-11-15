@@ -54,12 +54,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			lib.RenderTemplate(w, "layout/index", "page/index", data)
 		}
 
-		var uuid, username, creation_date, creation_hour string
+		var uuid, username, creation_date, creation_hour, role string
 		createdAt := time.Now()
 
 		// Making the query for infos that will be stored into the cookie
-		state_cookie := `SELECT UUID, Username, CreatedAt FROM User WHERE Email = ?`
-		err_cookie := db.QueryRow(state_cookie, email).Scan(&uuid, &username, &createdAt)
+		state_cookie := `SELECT UUID, Username, CreatedAt, Role FROM User WHERE Email = ?`
+		err_cookie := db.QueryRow(state_cookie, email).Scan(&uuid, &username, &createdAt, &role)
 		if err_cookie != nil {
 			lib.ErrorServer(w, "Error getting User informations")
 		}
@@ -67,7 +67,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		creation_hour = createdAt.Format("15:04:05")   // HH:MM:SS
 
 		// Attribute a session to an User
-		lib.CookieSession(uuid, username, creation_date, creation_hour, w, r)
+		lib.CookieSession(uuid, username, creation_date, creation_hour, email, role, w, r)
 
 	} else {
 		// If the User is already logged and tries to log-in
