@@ -1,0 +1,24 @@
+{{define "page/post"}}
+  <div>
+    categories
+  </div>
+  <div>
+  <!-- create a post -->
+  {{if ne .Role "Guest"}}
+  {{template "block/form/post-create" .}}
+  <hr>
+  {{ end }}
+  <!-- post -->
+  {{ range .Posts }}
+  {{template "block/content/post" .}}
+  <!-- list of comments -->
+    {{ range .Comments }}
+      {{ .Text }}
+      {{ .Like }}
+      {{ .Dislike }}
+      {{ .Creation_Date }}
+      {{ .Creation_Hour }}
+    {{ end }}
+  {{end }}
+  </div>
+{{end}}
