@@ -1,34 +1,30 @@
-  {{define "page/profile"}}
-  {{if eq .Role "DeletUser"}}
-  {{ template "block/deleteduser" . }}
-  {{else}}
-    <h2>Welcome, {{ .Username }}</h2>
-    <h3>Your Email: {{ .Email }}</h3>
-    <h3>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</h3>
-    <h3>Your role: {{ .Role }}</h3>
-    
-    {{if eq .Role "Admin"}}
-    {{template "block/admin/users" .}}
-    {{end}}
-    {{if eq .Role "User" }}
-    <ul>
-      <li>
-        Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
-        <form method="POST" action="/admin/delete-user">
-          <input type="hidden" name="userUUID" value="{{ .UUID }}">
-          <button type="submit">Delete my account</button>
-        </form>
-      </li>
-    </ul>
-    {{end}}
+{{define "page/profile"}}
+  <h2>Welcome, {{ .Username }}</h2>
+  <h3>Your Email: {{ .Email }}</h3>
+  <h3>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</h3>
+  <h3>Your role: {{ .Role }}</h3>
+  
+  {{if eq .Role "Admin"}}
+  {{template "block/admin/users" .}}
+  {{end}}
+  {{if eq .Role "User" }}
+  <ul>
+    <li>
+      Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
+      <form method="POST" action="/admin/delete-user">
+        <input type="hidden" name="userUUID" value="{{ .UUID }}">
+        <button type="submit">Delete my account</button>
+      </form>
+    </li>
+  </ul>
+  {{end}}
 
-    
-    {{ range .Posts }}
-    <div class="post">
-      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-      <p>Post text: {{ .Text }}</p>
-      <p>Created at: {{ .CreatedAt }}</p>
-    </div>
-    {{end}}
+  
+  {{ range .Posts }}
+  <div class="post">
+    <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+    <p>Post text: {{ .Text }}</p>
+    <p>Created at: {{ .CreatedAt }}</p>
+  </div>
   {{end}}
 {{end}}
