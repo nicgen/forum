@@ -12,17 +12,12 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 
 	if status == "logged" {
 
-		// Making the database request for the User role
-		var user_role, user_email string
-		state_email := `SELECT Email FROM User WHERE UUID = ?`
-		state_role := `SELECT Role FROM User WHERE UUID = ?`
-		err_email := db.QueryRow(state_email, uuid).Scan(&user_email)
-		err_role := db.QueryRow(state_role, uuid).Scan(&user_role)
-
 		// Getting the User infos from the cookies
 		cookie_username, err_username := r.Cookie("username")
 		cookie_date, err_date := r.Cookie("creation_date")
 		cookie_hour, err_hour := r.Cookie("creation_hour")
+		cookie_email, err_hour := r.Cookie("email")
+		cookie_role, err_hour := r.Cookie("role")
 
 		// Checking for database requests errors
 		if err_username != nil {
@@ -31,10 +26,6 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 			return nil, "Error getting Creation Date from the cookies"
 		} else if err_hour != nil {
 			return nil, "Error getting Creation Hour from the cookies"
-		} else if err_role != nil {
-			return nil, "Error getting User role from the database"
-		} else if err_email != nil {
-			return nil, "Error getting User email from the database"
 		}
 
 		// Posts Query based on page
@@ -43,6 +34,14 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
 		} else if page == "index" {
 			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts ORDER BY CreatedAt DESC`
+		}
+
+		data_post := map[string]interface{}{
+			"Username":     cookie_username.Value,
+			"Email":        cookie_email.Value,
+			"CreationDate": cookie_date.Value,
+			"CreationHour": cookie_hour.Value,
+			"Role":         cookie_role.Value,
 		}
 
 		// Users posts Request
@@ -73,6 +72,41 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 			if err_db != nil {
 				return nil, "Error getting User's Username"
 			}
+
+			state_comment := `SELECT ID, Text, Like, Dislike, CreatedAt, User_UUID FROM Comments WHERE Post_ID = ? ORDER BY CreatedAt DESC`
+			// Users posts Request
+			var comments []*models.Comment
+			var rows_comment *sql.Rows
+			rows_comment, err_comment := db.Query(state_comment, uuid)
+			if err_comment != nil {
+				return nil, "Error accessing user comments"
+			}
+
+			defer rows_comment.Close()
+
+			for rows_comment.Next() {
+				var comment models.Comment
+				if err := rows_comment.Scan(&comment.ID, &comment.Text, &comment.Like, &comment.Dislike, &comment.CreatedAt, &comment.User_UUID); err != nil {
+					return nil, "Error scanning posts comments"
+				}
+
+				// Getting the Username of the person who made the post
+				state_username := `SELECT Username FROM User WHERE UUID = ?`
+				err_db := db.QueryRow(state_username, post.User_UUID).Scan(&post.Username)
+				if err_db != nil {
+					return nil, "Error getting User's Username"
+				}
+
+				// post.Comments = data_post
+				comments = append(comments, &comment)
+			}
+
+			if err := rows.Err(); err != nil {
+				return nil, "Error iterating over user posts"
+			}
+
+			post.Comments = comments
+			post.Data = data_post
 			posts = append(posts, &post)
 		}
 
@@ -82,7 +116,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 
 		// Retrieve all users for admin view
 		var allUsers []models.User
-		if user_role == "Admin" {
+		if cookie_role.Value == "Admin" {
 			allUsersQuery := `SELECT UUID, Username, Email, Role FROM User`
 			rows, err := db.Query(allUsersQuery)
 			if err != nil {
@@ -106,15 +140,24 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 		// Storing the data into a map that can be sent into the html
 		data = map[string]interface{}{
 			"Username":     cookie_username.Value,
-			"Email":        user_email,
+			"Email":        cookie_email.Value,
 			"CreationDate": cookie_date.Value,
 			"CreationHour": cookie_hour.Value,
-			"Role":         user_role,
+			"Role":         cookie_role.Value,
 			"Posts":        posts,
 			"AllUsers":     allUsers,
 			"UUID":         uuid,
 		}
 	} else {
+
+		data_post := map[string]interface{}{
+			"Username":     nil,
+			"Email":        nil,
+			"CreationDate": nil,
+			"CreationHour": nil,
+			"Role":         "Guest",
+		}
+
 		// Not logged in - show all posts
 		state_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts ORDER BY CreatedAt DESC`
 		var posts []*models.Post
@@ -137,6 +180,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 				return nil, "Error getting User's Username"
 			}
 
+			post.Data = data_post
 			posts = append(posts, &post)
 		}
 

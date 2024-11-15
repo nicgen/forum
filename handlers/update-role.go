@@ -72,8 +72,16 @@ func AdminDeleteUser(w http.ResponseWriter, r *http.Request) {
 		lib.ErrorServer(w, "User UUID is required.")
 	}
 
-	query := `UPDATE User SET Role = 'DeletUser' WHERE UUID = ?`
-	_, err := db.Exec(query, userUUID)
+	// Génère un nom d'utilisateur anonyme unique
+	newUsername, err := getNextAnonymousUsername(db)
+	if err != nil {
+		lib.ErrorServer(w, "Failed to generate anonymous username.")
+		fmt.Println("Error generating anonymous username:", err)
+		return
+	}	
+
+	query := `UPDATE User SET Role = 'DeleteUser', username = ? WHERE UUID = ?`
+	_, err = db.Exec(query, newUsername, userUUID)
 	if err != nil {
 		lib.ErrorServer(w, "Failed to update user role.")
 		fmt.Println("Error updating user role:", err)
@@ -120,7 +128,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Met à jour le rôle et le nom de l'utilisateur avec un numéro incrémenté
-	query := `UPDATE User SET Role = 'DeletUser', username = ? WHERE UUID = ?`
+	query := `UPDATE User SET Role = 'DeleteUser', username = ? WHERE UUID = ?`
 	_, err = db.Exec(query, newUsername, userUUID)
 	if err != nil {
 		lib.ErrorServer(w, "Failed to update user role.")
@@ -140,5 +148,6 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	})
 
 	// Redirige ou envoie un message de succès
+	LogoutHandler(w, r)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

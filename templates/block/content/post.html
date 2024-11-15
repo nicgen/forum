@@ -23,5 +23,12 @@
   <div aria-label="Post content" role="contentinfo" id="post-content-1">
       {{ .Text }}
   </div>
+  {{ template "block/content/comment_add" . }}
+  {{ range .Comments }}
+    {{ .Text }}
+    {{ .Like }}
+    {{ .Dislike }}
+    {{ .CreatedAt }}
+  {{ end }}
 </article>  
 {{end}}

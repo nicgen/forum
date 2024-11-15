@@ -155,9 +155,10 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var userID int64
+	role := "User"
 
 	// Checking if the email user in google authentication is already in the database or not
-	err = db.QueryRow("SELECT ID FROM User WHERE OAuthID = ? OR Email = ?", googleID, email).Scan(&userID)
+	err = db.QueryRow("SELECT ID, Role FROM User WHERE OAuthID = ? OR Email = ?", googleID, email).Scan(&userID, &role)
 
 	// Checking if the user already exist in the database
 	if err == sql.ErrNoRows {
@@ -255,7 +256,7 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Attribute a session to an User
-	lib.CookieSession(user_uuid, username, creation_date, creation_hour, w, r)
+	lib.CookieSession(user_uuid, username, creation_date, creation_hour, email, role, w, r)
 
 	// Redirect the user to a success page or your main application
 
