@@ -1,0 +1,20 @@
+{{define "block/content/comment"}}
+<article aria-label="Forum post" role="article">
+
+  <header>
+    <h2 aria-label="Post title" role="heading" id="post-title-1">
+    <a href="#post-content-1" aria-label="Link to post content">
+      {{ .Username }}: {{ .Title }}
+    </a>
+    </h2>
+    <p aria-label="Post date" role="definition">
+    {{ .CreatedAt }}
+    </p>
+  </header>
+
+  <!-- post content -->
+  <div aria-label="Post content" role="contentinfo" id="post-content-1">
+      {{ .Text }}
+  </div>
+</article>  
+{{end}}
