@@ -8,7 +8,7 @@
 <html lang="en">
 
 {{if eq .UserContent.Role "DeletUser"}}
-{{template "block/deleteduser" .}}
+    {{template "block/deleteduser" .}}
 {{else}}
 
 {{ template "block/share/head" }}
@@ -30,18 +30,14 @@
                 <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
                 {{ .Content }}
             {{else}}
-            {{ if eq .UserContent.Role "Guest" }}
-            
-            <!-- todo, add condition for login/register -->
-
-            {{if eq .UserContent.NavLogin "show"}}{{ template "block/login" }}{{else}}{{end}}
-            {{if eq .UserContent.NavRegister "show"}}{{ template "block/register" }}{{else}}{{end}}
-            
-            {{ end }}
-            
+                {{ if eq .UserContent.Role "Guest" }}
+                    <!-- todo, add condition for login/register -->
+                    {{if eq .UserContent.NavLogin "show"}}{{ template "block/form/login" }}{{else}}{{end}}
+                    {{if eq .UserContent.NavRegister "show"}}{{ template "block/form/register" }}{{else}}{{end}}
+                    
+                {{ end }}
             <!-- page content -->
-            {{if .Content}}{{.Content}}{{else}}<p role="definition">no content</p>{{end}}
-
+            {{ if .Content }}{{ .Content }}{{ else }}<p role="definition">no content</p>{{ end }}
             {{end}}
             </div>
         </main>
