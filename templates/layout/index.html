@@ -7,6 +7,10 @@
 <!DOCTYPE html>
 <html lang="en">
 
+{{if eq .UserContent.Role "DeletUser"}}
+{{template "block/deleteduser" .}}
+{{else}}
+
 {{ template "block/share/head" }}
 
 <body>
@@ -57,4 +61,5 @@
 </body>
 
 </html>
+{{end}}
 {{end}}

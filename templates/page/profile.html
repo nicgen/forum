@@ -1,4 +1,7 @@
   {{define "page/profile"}}
+  {{if eq .Role "DeletUser"}}
+  {{ template "block/deleteduser" . }}
+  {{else}}
     <h2>Welcome, {{ .Username }}</h2>
     <h3>Your Email: {{ .Email }}</h3>
     <h3>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</h3>
@@ -28,3 +31,4 @@
     </div>
     {{end}}
   {{end}}
+{{end}}
