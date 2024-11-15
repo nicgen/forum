@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"forum/cmd/lib"
 	"net/http"
 	"time"
@@ -15,7 +16,9 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Storing the form values into variables
 	text := r.FormValue("comment_text")
-	post_id := r.FormValue("post_id")
+	post_id := r.URL.Query().Get("post_id")
+
+	fmt.Println("post_id: ", post_id)
 
 	var like_count, dislike_count int = 0, 0
 	// Storing those values into the database with a database request
