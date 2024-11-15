@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"forum/cmd/lib"
 	"net/http"
-	"strings"
 )
 
 func LikeHandler(w http.ResponseWriter, r *http.Request) {
@@ -15,7 +14,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, _ := r.Cookie("session_id")
 
 	// Getting the form values
-	id := strings.TrimSpace(r.URL.Query().Get("id"))
+	id := r.FormValue("id")
 	like_post := r.FormValue("like_post")
 	dislike_post := r.FormValue("dislike_post")
 	like_comment := r.FormValue("like_comment")

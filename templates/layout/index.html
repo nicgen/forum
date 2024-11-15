@@ -32,8 +32,8 @@
             {{else}}
                 {{ if eq .UserContent.Role "Guest" }}
                     <!-- todo, add condition for login/register -->
-                    {{if eq .UserContent.NavLogin "show"}}{{ template "block/form/login" }}{{else}}{{end}}
-                    {{if eq .UserContent.NavRegister "show"}}{{ template "block/form/register" }}{{else}}{{end}}
+                    {{if eq .UserContent.NavLogin "show"}}{{ template "block/form/login" .}}{{else}}{{end}}
+                    {{if eq .UserContent.NavRegister "show"}}{{ template "block/form/register" .}}{{else}}{{end}}
                     
                 {{ end }}
             <!-- page content -->
