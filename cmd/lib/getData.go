@@ -2,6 +2,7 @@ package lib
 
 import (
 	"database/sql"
+	"fmt"
 	"forum/models"
 	"net/http"
 )
@@ -70,14 +71,15 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 			state_username := `SELECT Username FROM User WHERE UUID = ?`
 			err_db := db.QueryRow(state_username, post.User_UUID).Scan(&post.Username)
 			if err_db != nil {
-				return nil, "Error getting User's Username"
+				return nil, "Error getting User's Username for the post"
 			}
 
-			state_comment := `SELECT ID, Text, Like, Dislike, CreatedAt, User_UUID FROM Comments WHERE Post_ID = ? ORDER BY CreatedAt DESC`
+			state_comment := `SELECT ID, Text, Like, Dislike, CreatedAt, User_UUID, Post_ID FROM Comments WHERE Post_ID = ? ORDER BY CreatedAt DESC`
+			fmt.Println("post_id getdata: ", post.ID)
 			// Users posts Request
 			var comments []*models.Comment
 			var rows_comment *sql.Rows
-			rows_comment, err_comment := db.Query(state_comment, uuid)
+			rows_comment, err_comment := db.Query(state_comment, post.ID)
 			if err_comment != nil {
 				return nil, "Error accessing user comments"
 			}
@@ -86,19 +88,23 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 
 			for rows_comment.Next() {
 				var comment models.Comment
-				if err := rows_comment.Scan(&comment.ID, &comment.Text, &comment.Like, &comment.Dislike, &comment.CreatedAt, &comment.User_UUID); err != nil {
+				if err := rows_comment.Scan(&comment.ID, &comment.Text, &comment.Like, &comment.Dislike, &comment.CreatedAt, &comment.User_UUID, &comment.Post_ID); err != nil {
 					return nil, "Error scanning posts comments"
 				}
 
-				// Getting the Username of the person who made the post
+				// Getting the Username of the person who made the comment
 				state_username := `SELECT Username FROM User WHERE UUID = ?`
-				err_db := db.QueryRow(state_username, post.User_UUID).Scan(&post.Username)
+				err_db := db.QueryRow(state_username, comment.User_UUID).Scan(&comment.Username)
 				if err_db != nil {
-					return nil, "Error getting User's Username"
+					return nil, "Error getting User's Username for the comment"
 				}
+
+				// comment.Post_ID = post.ID
 
 				// post.Comments = data_post
 				comments = append(comments, &comment)
+				fmt.Println("current struct: ", comment)
+				fmt.Println("comments struct: ", comments)
 			}
 
 			if err := rows.Err(); err != nil {

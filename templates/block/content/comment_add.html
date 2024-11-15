@@ -1,9 +1,9 @@
 {{define "block/content/comment_add"}}
 <!-- todo -->
 <div class="comments">
-  <form action="/comment?post_id={{.ID}}">
+  <form action="/comment">
     <textarea placeholder="Ajouter un commentaire" name="comment_text"></textarea>
-    <button>Ajouter</button>
+    <button name="post_id" value="{{ .ID }}">Ajouter</button>
   </form>
 </div>
 {{end}}
