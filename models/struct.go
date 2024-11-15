@@ -33,8 +33,8 @@ type User struct {
 
 type Comment struct {
 	ID        int
-	Post_ID   int
-	User_UUID int
+	Post_ID   string
+	User_UUID string
 	Username  string
 	Text      string
 	CreatedAt time.Time
