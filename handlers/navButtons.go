@@ -17,8 +17,9 @@ func NavLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	data["NavLogin"] = "show"
 
+	data = lib.ErrorMessage(w, data, "none")
 	// Redirect User to the home page
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	lib.RenderTemplate(w, "layout/index", "page/index", data)
 }
 
 // ? Function to show the register block on the index page
@@ -33,6 +34,7 @@ func NavRegister(w http.ResponseWriter, r *http.Request) {
 	}
 	data["NavRegister"] = "show"
 
+	data = lib.ErrorMessage(w, data, "none")
 	// Redirect User to the home page
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	lib.RenderTemplate(w, "layout/index", "page/index", data)
 }
