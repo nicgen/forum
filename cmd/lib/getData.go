@@ -2,7 +2,6 @@ package lib
 
 import (
 	"database/sql"
-	"fmt"
 	"forum/models"
 	"net/http"
 	"strings"
@@ -80,7 +79,6 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 			}
 
 			state_comment := `SELECT ID, Text, Like, Dislike, CreatedAt, User_UUID, Post_ID FROM Comments WHERE Post_ID = ? ORDER BY CreatedAt DESC`
-			fmt.Println("post_id getdata: ", post.ID)
 			// Users posts Request
 			var comments []*models.Comment
 			var rows_comment *sql.Rows
@@ -108,12 +106,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 					return nil, "Error getting User's Username for the comment"
 				}
 
-				// comment.Post_ID = post.ID
-
-				// post.Comments = data_post
 				comments = append(comments, &comment)
-				fmt.Println("current struct: ", comment)
-				fmt.Println("comments struct: ", comments)
 			}
 
 			if err := rows.Err(); err != nil {
@@ -162,6 +155,8 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 			"Posts":        posts,
 			"AllUsers":     allUsers,
 			"UUID":         uuid,
+			"NavLogin":     "hide",
+			"NavRegister":  "hide",
 		}
 	} else {
 
@@ -195,7 +190,6 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 				return nil, "Error getting User's Username"
 			}
 			state_comment := `SELECT ID, Text, Like, Dislike, CreatedAt, User_UUID, Post_ID FROM Comments WHERE Post_ID = ? ORDER BY CreatedAt DESC`
-			fmt.Println("post_id getdata: ", post.ID)
 			// Users posts Request
 			var comments []*models.Comment
 			var rows_comment *sql.Rows
@@ -223,12 +217,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 					return nil, "Error getting User's Username for the comment"
 				}
 
-				// comment.Post_ID = post.ID
-
-				// post.Comments = data_post
 				comments = append(comments, &comment)
-				fmt.Println("current struct: ", comment)
-				fmt.Println("comments struct: ", comments)
 			}
 
 			if err := rows.Err(); err != nil {
@@ -253,6 +242,8 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 			"CreationHour": nil,
 			"Role":         "Guest",
 			"Posts":        posts,
+			"NavLogin":     "hide",
+			"NavRegister":  "hide",
 		}
 	}
 
