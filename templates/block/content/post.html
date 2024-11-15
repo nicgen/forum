@@ -33,13 +33,15 @@
     <div>
       <h2>{{ .Like }}</h2>
       <h2>{{if .Like }}{{ .Like }}{{ else }}0{{end}}like</h2>
-      <form action="/like">
+      <form action="/like" method="POST">
+        <input type="hidden" name="id" value="{{ .ID }}">
         <button name="like_post" value="like_post">Like</button>
       </form>
     </div>
     <div>
       <h2>{{if .Dislike }}{{ .Dislike }}{{ else }}0{{end}}dislike</h2>
-      <form action="/like">
+      <form action="/like" method="POST">
+        <input type="hidden" name="id" value="{{ .ID }}">
         <button name="dislike_post" value="dislike_post">Like</button>
       </form>
     </div>
