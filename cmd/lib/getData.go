@@ -187,6 +187,10 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 				return nil, "Error scanning posts"
 			}
 
+			time_post := strings.Split(post.CreatedAt.Format("2006-01-02 15:04:05"), " ")
+			post.Creation_Date = time_post[0]
+			post.Creation_Hour = time_post[1]
+
 			// Getting the Username of the person who made the post
 			state_username := `SELECT Username FROM User WHERE UUID = ?`
 			err_db := db.QueryRow(state_username, post.User_UUID).Scan(&post.Username)
