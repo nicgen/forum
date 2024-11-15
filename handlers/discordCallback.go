@@ -86,9 +86,10 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var userID int64
+	role := "User"
 
 	// Checking if the email user in google authentication is already in the database or not
-	err_db_check := db.QueryRow("SELECT ID FROM User WHERE OAuthID = ? OR Email = ?", discordID, email).Scan(&userID)
+	err_db_check := db.QueryRow("SELECT ID, Role FROM User WHERE OAuthID = ? OR Email = ?", discordID, email).Scan(&userID, &role)
 
 	// Setting up the variables we are going to set into cookies
 	var username, creation_date, creation_hour string
@@ -156,7 +157,7 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Attribute a session to an User
-	lib.CookieSession(user_uuid, username, creation_date, creation_hour, w, r)
+	lib.CookieSession(user_uuid, username, creation_date, creation_hour, email, role, w, r)
 
 	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index", r)
 	if err_getdata != "OK" {
