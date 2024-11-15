@@ -2,49 +2,47 @@ package lib
 
 import (
 	"database/sql"
-	"fmt"
 	"forum/models"
-	"strings"
-	"time"
+	"net/http"
 )
 
-func GetData(db *sql.DB, uuid string, status string, page string) (map[string]interface{}, string) {
+func GetData(db *sql.DB, uuid string, status string, page string, r *http.Request) (map[string]interface{}, string) {
 	// Declaring the map we are going to return
 	data := map[string]interface{}{}
 
 	if status == "logged" {
-		// Setting up the variables of the User informations
-		var user_username, user_email, user_creation, user_role string
 
-		// Setting up the states for the database requests
-		state_uuid := `SELECT Username FROM User WHERE UUID = ?`
+		// Making the database request for the User role
+		var user_role, user_email string
 		state_email := `SELECT Email FROM User WHERE UUID = ?`
-		state_creation := `SELECT CreatedAt FROM User WHERE UUID = ?`
 		state_role := `SELECT Role FROM User WHERE UUID = ?`
-
-		// Making requests to the database
-		err_uuid := db.QueryRow(state_uuid, uuid).Scan(&user_username)
 		err_email := db.QueryRow(state_email, uuid).Scan(&user_email)
-		err_creation := db.QueryRow(state_creation, uuid).Scan(&user_creation)
 		err_role := db.QueryRow(state_role, uuid).Scan(&user_role)
 
+		// Getting the User infos from the cookies
+		cookie_username, err_username := r.Cookie("username")
+		cookie_date, err_date := r.Cookie("creation_date")
+		cookie_hour, err_hour := r.Cookie("creation_hour")
+
 		// Checking for database requests errors
-		if err_uuid != nil {
-			return nil, "Error accessing User UUID"
-		} else if err_email != nil {
-			return nil, "Error accessing User EMAIL"
-		} else if err_creation != nil {
-			return nil, "Error accessing User CREATION DATE"
+		if err_username != nil {
+			return nil, "Error getting Username from the cookies"
+		} else if err_date != nil {
+			return nil, "Error getting Creation Date from the cookies"
+		} else if err_hour != nil {
+			return nil, "Error getting Creation Hour from the cookies"
 		} else if err_role != nil {
-			return nil, "Error accessing User ROLE"
+			return nil, "Error getting User role from the database"
+		} else if err_email != nil {
+			return nil, "Error getting User email from the database"
 		}
 
 		// Posts Query based on page
 		var state_posts string
 		if page == "profile" {
-			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
+			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
 		} else if page == "index" {
-			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt FROM Posts ORDER BY CreatedAt DESC`
+			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts ORDER BY CreatedAt DESC`
 		}
 
 		// Users posts Request
@@ -65,25 +63,22 @@ func GetData(db *sql.DB, uuid string, status string, page string) (map[string]in
 
 		for rows.Next() {
 			var post models.Post
-			if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt); err != nil {
+			if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
 				return nil, "Error scanning user posts"
 			}
 
-			fmt.Println("---------------------------")
-			fmt.Println("Actual time: ", time.Now())
-			fmt.Println("post creation date: ", post.CreatedAt)
-			fmt.Println("---------------------------")
+			// Getting the Username of the person who made the post
+			state_username := `SELECT Username FROM User WHERE UUID = ?`
+			err_db := db.QueryRow(state_username, post.User_UUID).Scan(&post.Username)
+			if err_db != nil {
+				return nil, "Error getting User's Username"
+			}
 			posts = append(posts, &post)
 		}
 
 		if err := rows.Err(); err != nil {
 			return nil, "Error iterating over user posts"
 		}
-
-		// Spliting the creation date into 2 different values
-		creation := strings.Split(user_creation, "T")
-		creation_Date := creation[0]
-		creation_Hour := creation[1][:len(creation[1])-1]
 
 		// Retrieve all users for admin view
 		var allUsers []models.User
@@ -110,18 +105,18 @@ func GetData(db *sql.DB, uuid string, status string, page string) (map[string]in
 
 		// Storing the data into a map that can be sent into the html
 		data = map[string]interface{}{
-			"Username":     user_username,
+			"Username":     cookie_username.Value,
 			"Email":        user_email,
-			"CreationDate": creation_Date,
-			"CreationHour": creation_Hour,
+			"CreationDate": cookie_date.Value,
+			"CreationHour": cookie_hour.Value,
 			"Role":         user_role,
 			"Posts":        posts,
 			"AllUsers":     allUsers,
-			"UUID":			uuid,
+			"UUID":         uuid,
 		}
 	} else {
 		// Not logged in - show all posts
-		state_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt FROM Posts ORDER BY CreatedAt DESC`
+		state_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts ORDER BY CreatedAt DESC`
 		var posts []*models.Post
 		rows, err := db.Query(state_posts)
 		if err != nil {
@@ -131,9 +126,17 @@ func GetData(db *sql.DB, uuid string, status string, page string) (map[string]in
 
 		for rows.Next() {
 			var post models.Post
-			if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt); err != nil {
+			if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
 				return nil, "Error scanning posts"
 			}
+
+			// Getting the Username of the person who made the post
+			state_username := `SELECT Username FROM User WHERE UUID = ?`
+			err_db := db.QueryRow(state_username, post.User_UUID).Scan(&post.Username)
+			if err_db != nil {
+				return nil, "Error getting User's Username"
+			}
+
 			posts = append(posts, &post)
 		}
 

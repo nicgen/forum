@@ -4,6 +4,8 @@ import (
 	"forum/cmd/lib"
 	"log"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/gofrs/uuid/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -13,6 +15,12 @@ import (
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	// Storing database into a variable
 	db := lib.GetDB()
+
+	// Setting up the variables we are going to set into cookies
+	var username, creation_date, creation_hour string
+	actual_time := strings.Split(time.Now().Format("2006-01-02 15:04:05"), " ")
+	creation_date = actual_time[0]
+	creation_hour = actual_time[1]
 
 	if r.Method == "GET" {
 		http.ServeFile(w, r, "./templates/index.html")
@@ -29,7 +37,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// Getting form values
-			username := r.FormValue("UsernameForm")
+			username = r.FormValue("UsernameForm")
 			password := r.FormValue("PasswordForm")
 			confirmPassword := r.FormValue("ConfirmPasswordForm")
 			email := r.FormValue("EmailForm")
@@ -54,7 +62,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			// }
 			// Check if passwords match
 			if password != confirmPassword {
-				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+				data, err_getdata := lib.GetData(db, "null", "notlogged", "index", r)
 				if err_getdata != "OK" {
 					lib.ErrorServer(w, err_getdata)
 				}
@@ -90,7 +98,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 			// Check if the user already exists
 			if usernameExists {
-				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+				data, err_getdata := lib.GetData(db, "null", "notlogged", "index", r)
 				if err_getdata != "OK" {
 					lib.ErrorServer(w, err_getdata)
 				}
@@ -100,7 +108,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 			// Check if the email is already taken
 			if emailExists {
-				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
+				data, err_getdata := lib.GetData(db, "null", "notlogged", "index", r)
 				if err_getdata != "OK" {
 					lib.ErrorServer(w, err_getdata)
 				}
@@ -123,7 +131,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// Attribute a session to an User
-			lib.CookieSession(user_uuid, w, r)
+			lib.CookieSession(user_uuid, username, creation_date, creation_hour, w, r)
 
 			// Notify server new User as been added
 			log.Printf("User %s added successfully", username)

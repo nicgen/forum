@@ -21,16 +21,44 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		lib.ErrorServer(w, "Error logging out")
 	}
 
-	// Overwrite the cookie with one that expire instantly
-	http.SetCookie(w, &http.Cookie{
-		Name:     "session_id",
-		Value:    "",
+	// Common cookie settings
+	cookieBase := http.Cookie{
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
-		Expires:  time.Now().Add(-1 * time.Hour), // Expire immediately
-	})
+		Expires:  time.Now().Add(-1 * time.Hour),
+	}
+
+	// Define all cookies
+	cookies := []http.Cookie{
+		{
+			Name:  "session_id",
+			Value: "",
+		},
+		{
+			Name:  "username",
+			Value: "",
+		},
+		{
+			Name:  "creation_date",
+			Value: "",
+		},
+		{
+			Name:  "creation_hour",
+			Value: "",
+		},
+	}
+
+	// Set common properties and add cookies
+	for _, cookie := range cookies {
+		cookie.Path = cookieBase.Path
+		cookie.HttpOnly = cookieBase.HttpOnly
+		cookie.Secure = cookieBase.Secure
+		cookie.SameSite = cookieBase.SameSite
+		cookie.Expires = cookieBase.Expires
+		http.SetCookie(w, &cookie)
+	}
 
 	// Redirect User to the home page
 	http.Redirect(w, r, "/", http.StatusSeeOther)
