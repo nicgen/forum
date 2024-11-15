@@ -131,7 +131,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// Attribute a session to an User
-			lib.CookieSession(user_uuid, username, creation_date, creation_hour, w, r)
+			lib.CookieSession(user_uuid, username, creation_date, creation_hour, email, "User", w, r)
 
 			// Notify server new User as been added
 			log.Printf("User %s added successfully", username)
