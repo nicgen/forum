@@ -17,8 +17,8 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 		cookie_username, err_username := r.Cookie("username")
 		cookie_date, err_date := r.Cookie("creation_date")
 		cookie_hour, err_hour := r.Cookie("creation_hour")
-		cookie_email, err_hour := r.Cookie("email")
-		cookie_role, err_hour := r.Cookie("role")
+		cookie_email, err_email := r.Cookie("email")
+		cookie_role, err_role := r.Cookie("role")
 
 		// Checking for database requests errors
 		if err_username != nil {
@@ -27,6 +27,10 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 			return nil, "Error getting Creation Date from the cookies"
 		} else if err_hour != nil {
 			return nil, "Error getting Creation Hour from the cookies"
+		} else if err_email != nil {
+			return nil, "Error getting email from the cookies"
+		} else if err_role != nil {
+			return nil, "Error getting User role from the cookies"
 		}
 
 		// Posts Query based on page
