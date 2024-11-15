@@ -7,7 +7,8 @@
     </a>
     </h2>
     <p aria-label="Post date" role="definition">
-    {{ .CreatedAt }}
+      {{ .Creation_Date }}
+      {{ .Creation_Hour }}
     </p>
   </header>
   <!-- post image -->
@@ -28,7 +29,8 @@
     {{ .Text }}
     {{ .Like }}
     {{ .Dislike }}
-    {{ .CreatedAt }}
+    {{ .Creation_Date }}
+    {{ .Creation_Hour }}
   {{ end }}
 </article>  
 {{end}}
