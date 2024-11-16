@@ -127,15 +127,15 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 			}
 
 			// Checking if the post is liked by the User or not
-			var status string
+			var status_post string
 			state_status := `SELECT Status FROM Reaction WHERE User_UUID = ? AND Post_ID = ?`
-			err_status := db.QueryRow(state_status, post.User_UUID, post.ID).Scan(&status)
+			err_status := db.QueryRow(state_status, post.User_UUID, post.ID).Scan(&status_post)
 			if err_status == sql.ErrNoRows {
 				status = ""
 			} else if err_status != nil {
 				return nil, "Error checking post status"
 			}
-			post.Status = status
+			post.Status = status_post
 
 			state_comment := `SELECT ID, Text, Like, Dislike, CreatedAt, User_UUID, Post_ID FROM Comments WHERE Post_ID = ? ORDER BY CreatedAt DESC`
 			// Users posts Request
@@ -164,6 +164,17 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 				if err_db != nil {
 					return nil, "Error getting User's Username for the comment"
 				}
+
+				// Checking if the comment is liked by the User or not
+				var status_comment string
+				state_status := `SELECT Status FROM Reaction WHERE User_UUID = ? AND Comment_ID = ?`
+				err_status := db.QueryRow(state_status, comment.User_UUID, comment.ID).Scan(&status_comment)
+				if err_status == sql.ErrNoRows {
+					status = ""
+				} else if err_status != nil {
+					return nil, "Error checking post status"
+				}
+				comment.Status = status_comment
 
 				comments = append(comments, &comment)
 			}
