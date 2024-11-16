@@ -2,11 +2,10 @@
 
 <!-- /!\ default layout -->
 
-<!-- todo, add path condition?: `if /register` or `if /log` -->
-
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- todo: check if needed -->
 {{if eq .UserContent.Role "DeletUser"}}
     {{template "block/deleteduser" .}}
 {{else}}
@@ -14,7 +13,6 @@
 {{ template "block/share/head" }}
 
 <body>
-
     <div class="wrapper" role="document">
 
         <!-- dev banner (force error), not for production -->

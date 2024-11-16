@@ -1,11 +1,11 @@
 {{define "block/content/post"}}
 <article aria-label="Forum post" role="article">
   <header>
-    <h2 aria-label="Post title" role="heading" id="post-title-1">
-    <a href="#post-content-1" aria-label="Link to post content">
-      {{ .Username }}: {{ .Title }}
-    </a>
-    </h2>
+    <h2 aria-label="Post title" role="heading" id="post-title-1">{{ .Title }}</h2>
+    <h3>{{ .Username }}</h3>
+    
+    
+    <!-- todo, add list of category to the post -->
     <div>
     {{/* range .Category_ID */}}
       {{ .Category_ID }}
@@ -16,6 +16,7 @@
       {{ .Creation_Hour }}
     </p>
   </header>
+
   <!-- post image -->
   {{/* if .image_url */}}
   <figure aria-label="Post image" role="img">
@@ -25,39 +26,51 @@
   {{/* else */}}
   <p>no image (text for testing purpose only, delete on 'block/content/post.html')</p>
   {{/* end */}}
+
   <!-- post content -->
   <div aria-label="Post content" role="contentinfo" id="post-content-1">
-      {{ .Text }}
+    {{ if .Text }}{{ .Text }}{{else}}no text{{end}}
   </div>
+
+  <!-- action (like/dislike) -->
   <div>
     <div>
       <h2>{{ .Like }}</h2>
       <h2>{{if .Like }}{{ .Like }}{{ else }}0{{end}}like</h2>
       <form action="/like" method="POST">
         <input type="hidden" name="id" value="{{ .ID }}">
-        <button name="like_post" value="like_post">Like</button>
+        <button name="like_post" value="like_post" {{ if eq .Data.Role "Guest" }}disabled{{end}}>{{ if eq .Status "liked" }}Already Liked{{else}}Like{{end}}</button>
       </form>
     </div>
     <div>
       <h2>{{if .Dislike }}{{ .Dislike }}{{ else }}0{{end}}dislike</h2>
       <form action="/like" method="POST">
         <input type="hidden" name="id" value="{{ .ID }}">
-        <button name="dislike_post" value="dislike_post">Like</button>
+        <button name="dislike_post" value="dislike_post" {{ if eq .Data.Role "Guest" }}disabled{{end}}>Like</button>
       </form>
     </div>
   </div>
-  {{ if ne .Data.Role "Guest" }}
-    {{ template "block/content/comment_add" . }}
-  {{else}}
-  <div><hr><p>Your are a guest, you don't have the permission to post.</p></div>
-  {{end}}
+
+  <div>{{template "block/content/comment_add"}}</div>
+
   {{ if .Comments }}
+  <h2>Comments</h2>
+  <h3>{{.Post_ID}}</h3>
+  <ul>
     {{ range .Comments }}
-      <p>{{ .Text }}</p>
-      <p>{{if .Like }}{{ .Like }}{{ else }}0{{end}}like</p>
-      <p>{{if .Dislike }}{{ .Dislike }}{{ else }}0{{end}}dislike</p>
-      <p><span>{{ .Creation_Date }}</span><span>{{ .Creation_Hour }}</span></p>
+    <li>
+      {{template "block/content/comment" .}}
+      {{ .Text }}
+      {{ .Like }}
+      {{ .Dislike }}
+      {{ .Creation_Date }}
+      {{ .Creation_Hour }}
+    </li>
     {{ end }}
+  </ul>
+  {{else}}
+    Oh No! There's no comments...
   {{ end }}
+
 </article>  
 {{end}}
