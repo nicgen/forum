@@ -37,7 +37,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 		state_liked := `SELECT Post_ID FROM Reaction WHERE User_UUID = ?`
 		query, err_liked := db.Query(state_liked, uuid)
 		if err_liked != nil {
-			return nil, "Error accessing user Reactions"
+			return nil, "Error accessing user's Reactions"
 		}
 		defer query.Close()
 
@@ -48,31 +48,34 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 
 		for query.Next() {
 			if err := query.Scan(&reaction); err != nil {
-				return nil, "Error scanning user Reaction"
+				return nil, "Error scanning user's Reactions"
 			}
 
 			react_tab = append(react_tab, reaction)
 		}
 
 		// Ranging over the posts id to get all posts reactions
-		state_reacted_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE Post_ID = ? ORDER BY CreatedAt DESC`
+		state_reacted_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE ID = ? ORDER BY CreatedAt DESC`
 		for i := 0; i < len(react_tab); i++ {
 			row_post, err_react := db.Query(state_reacted_posts, react_tab[i])
 			if err_react != nil {
-				return nil, "Error accessing user Liked posts"
+				return nil, "Error accessing user's liked posts"
 			}
 			defer row_post.Close()
 
 			for row_post.Next() {
 				var post_liked models.Post
 				if err := row_post.Scan(&post_liked.ID, &post_liked.Category_ID, &post_liked.Title, &post_liked.Text, &post_liked.Like, &post_liked.Dislike, &post_liked.CreatedAt, &post_liked.User_UUID); err != nil {
-					return nil, "Error scanning posts comments"
+					return nil, "Error scanning posts data"
 				}
 
 				posts_liked = append(posts_liked, &post_liked)
 			}
+
+			if err := row_post.Err(); err != nil {
+				return nil, "Error iterating over user's liked posts"
+			}
 		}
-		data["LikedPosts"] = posts_liked
 
 		// Posts Query based on page
 		var state_posts string
@@ -123,6 +126,17 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 				return nil, "Error getting User's Username for the post"
 			}
 
+			// Checking if the post is liked by the User or not
+			var status string
+			state_status := `SELECT Status FROM Reaction WHERE User_UUID = ? AND Post_ID = ?`
+			err_status := db.QueryRow(state_status, post.User_UUID, post.ID).Scan(&status)
+			if err_status == sql.ErrNoRows {
+				status = ""
+			} else if err_status != nil {
+				return nil, "Error checking post status"
+			}
+			post.Status = status
+
 			state_comment := `SELECT ID, Text, Like, Dislike, CreatedAt, User_UUID, Post_ID FROM Comments WHERE Post_ID = ? ORDER BY CreatedAt DESC`
 			// Users posts Request
 			var comments []*models.Comment
@@ -154,8 +168,8 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 				comments = append(comments, &comment)
 			}
 
-			if err := rows.Err(); err != nil {
-				return nil, "Error iterating over user posts"
+			if err := rows_comment.Err(); err != nil {
+				return nil, "Error iterating over user comments"
 			}
 
 			post.Comments = comments
@@ -198,6 +212,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 			"CreationHour": cookie_hour.Value,
 			"Role":         cookie_role.Value,
 			"Posts":        posts,
+			"LikedPosts":   posts_liked,
 			"AllUsers":     allUsers,
 			"UUID":         uuid,
 			"NavLogin":     "hide",

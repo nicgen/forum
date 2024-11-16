@@ -11,6 +11,7 @@ type Post struct {
 	Username      string
 	Title         string
 	Text          string
+	Status        string
 	Like          int
 	Dislike       int
 	Data          map[string]interface{}
