@@ -11,6 +11,25 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 	// Declaring the map we are going to return
 	data := map[string]interface{}{}
 
+	// Getting the Categories from the database
+	var categories []*models.Category
+	state_categories := `SELECT ID, Name FROM Categories`
+	query_category, err_liked := db.Query(state_categories, uuid)
+	if err_liked != nil {
+		return nil, "Error accessing Categories"
+	}
+	defer query_category.Close()
+
+	for query_category.Next() {
+		var category models.Category
+		if err := query_category.Scan(&category.ID, &category.Name); err != nil {
+			return nil, "Error scanning Categories"
+		}
+
+		categories = append(categories, &category)
+	}
+	data["Categories"] = categories
+
 	if status == "logged" {
 
 		// Getting the User infos from the cookies
@@ -42,7 +61,6 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 		defer query.Close()
 
 		// Variables that will store the reaction's post id
-		var posts_liked []*models.Post
 		react_tab := []string{}
 		reaction := ""
 
@@ -55,6 +73,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 		}
 
 		// Ranging over the posts id to get all posts reactions
+		var posts_liked []*models.Post
 		state_reacted_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE ID = ? ORDER BY CreatedAt DESC`
 		for i := 0; i < len(react_tab); i++ {
 			row_post, err_react := db.Query(state_reacted_posts, react_tab[i])
