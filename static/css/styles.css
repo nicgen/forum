@@ -192,6 +192,10 @@ header {
   display: flex;
 }
 
+.container>.logo>a{
+  text-decoration: none;
+}
+
 .profil_thumb{
   width: 48px;
   height: 48px;
@@ -207,13 +211,13 @@ header {
 /* user thumbnail (username's first letter) */
 .profil_thumb>span{
   font-size: 0;
-  margin-top: 1.5rem;
+  margin-top: 1.3rem;
   user-select: none;
   font-weight: bold;
 }
 
 .profil_thumb>span:first-letter {
-  font-size: 72px;
+  font-size: 60px;
   text-transform: uppercase;
 }
 
