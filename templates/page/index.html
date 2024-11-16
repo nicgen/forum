@@ -1,20 +1,41 @@
 {{define "page/index"}}
-  <div>
-    categories
-  </div>
-  <div>
 
+<!-- left menu, categories -->
+
+<div>
+  <h2>Categories</h2>
+  {{if .Categories }}
+  <ul>
+    {{range .Categories}}
+    <li><a href="filter?id={{.ID}}">{{.Name}}</a></li>
+    {{end}}
+  </ul>
+  {{else}}
+  There's no categories
+  {{end}}
+</div>
+
+<!-- main (posts and comments) -->
+<div>
   <!-- create a post -->
   {{if ne .Role "Guest"}}
-  {{template "block/form/post-create" .}}
-  <hr>
-  {{ end }}
-  
-  <!-- list of posts -->
-  {{ if .Posts }}
-    {{ range .Posts }}
-      {{ template "block/content/post" . }}
-    {{ end }}
-  {{ end }}
+  <h2>Create a new post</h2>
+  <div>
+    {{template "block/form/post-create" .}}{{else}}You're a guest, if you want to post, please <a href="/nav-register">Sign Up</a> or <a href="/nav-login">Login</a>.
   </div>
+  {{ end }}
+  <!-- list of posts & comments -->
+  {{ if .Posts }}
+  <ul>
+    {{ range .Posts }}
+    <li>
+      {{ template "block/content/post" . }}
+    </li>
+    {{ end }}
+  </ul>
+  {{else}}
+  <div><h2>Strange! There's no posts.</h2></div>
+  {{ end }}
+</div>
+
 {{end}}

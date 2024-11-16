@@ -8,19 +8,40 @@
 {{ template "block/share/head" }}
 
 <body>
-    <div>
-    </div>
-    <div class="wrapper">
-        {{template "blocks/debug/banner_error" .}}
-        {{template "block/nav" .}}
-        <main role="main">
-            <div class="container">
-                {{if .Content}}{{.Content}}{{else}}<p>no content</p>{{end}}
+
+    <div class="wrapper" role="document">
+
+        <!-- dev banner (force error), not for production -->
+        {{ template "block/dev/force-error" . }}
+
+        <!-- main nav -->
+        {{ template "block/nav/main" . }}
+
+        <main role="main" aria-label="Main content">
+            <div class="container" role="region" aria-label="Page content container">
+            {{if .Data.IsError}}
+            <!-- if error -->
+                <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
+                {{ .Content }}
+            {{else}}
+            {{ if eq .UserContent.Role "Guest" }}
+            
+                <!-- todo, add condition for login/register -->
+                {{ template "block/login" . }}
+                {{ template "block/register" . }}
+            
+            {{ end }}
+            
+            <!-- page content -->
+            {{if .Content}}{{.Content}}{{else}}<p role="definition">no content</p>{{end}}
+
+            {{end}}
             </div>
         </main>
-        {{template "block/nav/footer" .}}
-        <script src="/static/js/theme.js"></script>
+
+        {{/* template "block/nav/footer" . */}} <!-- not for production (no use) -->
+
+        <script src="/static/js/theme.js"></script> <!-- import for the js (theme) -->
     </div>
 </body>
-</html>
-{{end}}
+{{ end }}
