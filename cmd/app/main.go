@@ -74,7 +74,7 @@ func setupMux() *http.ServeMux {
 	// Authentication
 	mux.HandleFunc("/register", handlers.RegisterHandler)
 	mux.HandleFunc("/login", handlers.LoginHandler)
-	mux.HandleFunc("/logout", handlers.LogoutHandler)
+	mux.HandleFunc("/logout", lib.LogoutHandler)
 	mux.HandleFunc("/nav-register", handlers.NavRegister)
 	mux.HandleFunc("/nav-login", handlers.NavLogin)
 

@@ -78,7 +78,7 @@ func AdminDeleteUser(w http.ResponseWriter, r *http.Request) {
 		lib.ErrorServer(w, "Failed to generate anonymous username.")
 		fmt.Println("Error generating anonymous username:", err)
 		return
-	}	
+	}
 
 	query := `UPDATE User SET Role = 'DeleteUser', username = ? WHERE UUID = ?`
 	_, err = db.Exec(query, newUsername, userUUID)
@@ -148,6 +148,6 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	})
 
 	// Redirige ou envoie un message de succès
-	LogoutHandler(w, r)
+	lib.LogoutHandler(w, r)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
