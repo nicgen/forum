@@ -1,15 +1,15 @@
 {{define "block/form/post-create"}}
   <form action="/create-post">
-    <select name="post_category">
-      <option value="">--Please choose an option--</option>
-      {{ range .Category_ID }}
-      <option value="{{ .Category_ID }}">{{ .Category_ID }}</option>
-      {{ end }}
-      <option value="cat">cat</option>
-      <option value="dog">dog</option>
+    <select name="post_category" multiple>
+      <option value="">--Please choose one or more option(s)--</option>
+      {{range .Categories}}
+        <option value="{{.ID}}">{{.Name}}</option>
+      {{end}}
     </select>
-    <a>Title</a><textarea name="post_title"></textarea>
-    <a>Text</a><textarea name="post_text"></textarea>
-    <button>Post</button>
+    <label for="post-title">Title</label>
+    <textarea id="post-title" name="post_title" required></textarea>
+    <label for="post-content">Content</label>
+    <textarea id="post-content" name="post_text" required></textarea>
+    <button>Post!</button>
   </form>
 {{end}}
