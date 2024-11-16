@@ -45,6 +45,7 @@ type Comment struct {
 	Creation_Hour string
 	Like          int
 	Dislike       int
+	Status        string
 }
 
 type TemplateSetting struct {
