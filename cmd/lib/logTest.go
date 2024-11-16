@@ -15,7 +15,7 @@ func DataTest(w http.ResponseWriter, r *http.Request) map[string]interface{} {
 	if err_cookie == http.ErrNoCookie {
 		data, err_data = GetData(db, "not logged", "not logged", "index", r)
 		if err_data != "OK" {
-			ErrorServer(w, "Error getting data (in DataTest)")
+			ErrorServer(w, err_data)
 		}
 	} else {
 		var id int
@@ -30,7 +30,7 @@ func DataTest(w http.ResponseWriter, r *http.Request) map[string]interface{} {
 			// Else, we show the User the index page of Logged User
 			data, err_data = GetData(db, cookie.Value, "logged", "index", r)
 			if err_data != "OK" {
-				ErrorServer(w, "Error getting Data (in DataTest 2)")
+				ErrorServer(w, err_data)
 			}
 		}
 	}
