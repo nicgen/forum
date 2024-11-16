@@ -1,7 +1,6 @@
-package handlers
+package lib
 
 import (
-	"forum/cmd/lib"
 	"net/http"
 	"time"
 )
@@ -9,7 +8,7 @@ import (
 // ? Handler that will delete the cookie of the User logged
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	// Storing Db data into a variable
-	db := lib.GetDB()
+	db := GetDB()
 
 	// Checking the cookie values
 	cookie, _ := r.Cookie("session_id")
@@ -18,7 +17,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	state := `UPDATE User SET IsLogged = ? WHERE UUID = ?`
 	_, err_db := db.Exec(state, false, cookie.Value)
 	if err_db != nil {
-		lib.ErrorServer(w, "Error logging out")
+		ErrorServer(w, "Error logging out")
 	}
 
 	// Common cookie settings

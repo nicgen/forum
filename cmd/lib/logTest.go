@@ -25,7 +25,7 @@ func DataTest(w http.ResponseWriter, r *http.Request) map[string]interface{} {
 
 		// If the UUID is not contained in db, get rid of that cookie and redirect to homepage
 		if err_check == sql.ErrNoRows {
-			// handlers.LogoutHandler(w, r)
+			LogoutHandler(w, r)
 		} else {
 			// Else, we show the User the index page of Logged User
 			data, err_data = GetData(db, cookie.Value, "logged", "index", r)
