@@ -28,7 +28,6 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 
 		categories = append(categories, &category)
 	}
-	data["Categories"] = categories
 
 	if status == "logged" {
 
@@ -247,6 +246,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 			"UUID":         uuid,
 			"NavLogin":     "hide",
 			"NavRegister":  "hide",
+			"Categories":   categories,
 		}
 	} else {
 
@@ -338,6 +338,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 			"Posts":        posts,
 			"NavLogin":     "hide",
 			"NavRegister":  "hide",
+			"Categories":   categories,
 		}
 	}
 
