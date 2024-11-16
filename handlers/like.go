@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// ? Function to retrieve like/dislike infos and handler them
 func LikeHandler(w http.ResponseWriter, r *http.Request) {
 	// Storing Db data into a variable
 	db := lib.GetDB()
