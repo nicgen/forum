@@ -28,7 +28,7 @@
 
   <!-- post content -->
   <div aria-label="Post content" role="contentinfo" id="post-content-1">
-    {{ if .Text }}{{ .Text }}{{else}}no text{{end}}
+      {{ .Text }}
   </div>
 
   <!-- action (like/dislike) -->
@@ -50,8 +50,10 @@
     </div>
   </div>
 
+  <!-- add comment -->
   <div>{{template "block/content/comment_add" .}}</div>
 
+  <!-- show comments -->
   {{ if .Comments }}
   <h2>Comments</h2>
   <h3>{{.Post_ID}}</h3>
@@ -71,5 +73,5 @@
     Oh No! There's no comments...
   {{ end }}
 
-</article>  
+</article>
 {{end}}
