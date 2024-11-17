@@ -11,7 +11,7 @@ func NavLogin(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 
 	// Getting the data map
-	data, err_data := lib.GetData(db, "empty", "not logged", "index", r)
+	data, err_data := lib.GetData(db, "empty", "not logged", "index", w, r)
 	if err_data != "OK" {
 		lib.ErrorServer(w, "Error getting data (in Navlogin)")
 	}
@@ -28,7 +28,7 @@ func NavRegister(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 
 	// Getting the data map
-	data, err_data := lib.GetData(db, "empty", "not logged", "index", r)
+	data, err_data := lib.GetData(db, "empty", "not logged", "index", w, r)
 	if err_data != "OK" {
 		lib.ErrorServer(w, "Error getting data (in NavRegister)")
 	}

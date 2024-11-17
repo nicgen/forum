@@ -22,7 +22,7 @@ type Post struct {
 }
 
 type User struct {
-	Id           int
+	Id           string
 	UUID         string
 	Username     string
 	Email        string
@@ -35,7 +35,7 @@ type User struct {
 }
 
 type Comment struct {
-	ID            int
+	ID            string
 	Post_ID       string
 	User_UUID     string
 	Username      string
