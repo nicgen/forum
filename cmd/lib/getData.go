@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func GetData(db *sql.DB, uuid string, status string, page string, r *http.Request) (map[string]interface{}, string) {
+func GetData(db *sql.DB, uuid string, status string, page string, w http.ResponseWriter, r *http.Request) (map[string]interface{}, string) {
 	// Declaring the map we are going to return
 	data := map[string]interface{}{}
 
@@ -138,22 +138,10 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 			post.Creation_Hour = time_post[1]
 
 			// Getting the Username of the person who made the post
-			state_username := `SELECT Username FROM User WHERE UUID = ?`
-			err_db := db.QueryRow(state_username, post.User_UUID).Scan(&post.Username)
-			if err_db != nil {
-				return nil, "Error getting User's Username for the post"
-			}
+			post.Username = CheckUsername(w, post.User_UUID)
 
-			// Checking if the post is liked by the User or not
-			var status_post string
-			state_status := `SELECT Status FROM Reaction WHERE User_UUID = ? AND Post_ID = ?`
-			err_status := db.QueryRow(state_status, post.User_UUID, post.ID).Scan(&status_post)
-			if err_status == sql.ErrNoRows {
-				status = ""
-			} else if err_status != nil {
-				return nil, "Error checking post status"
-			}
-			post.Status = status_post
+			// Check the post status with user's uuid and post id
+			post.Status = CheckStatus(w, post.User_UUID, post.ID, "post")
 
 			state_comment := `SELECT ID, Text, Like, Dislike, CreatedAt, User_UUID, Post_ID FROM Comments WHERE Post_ID = ? ORDER BY CreatedAt DESC`
 			// Users posts Request
@@ -177,22 +165,10 @@ func GetData(db *sql.DB, uuid string, status string, page string, r *http.Reques
 				comment.Creation_Hour = time_comment[1]
 
 				// Getting the Username of the person who made the comment
-				state_username := `SELECT Username FROM User WHERE UUID = ?`
-				err_db := db.QueryRow(state_username, comment.User_UUID).Scan(&comment.Username)
-				if err_db != nil {
-					return nil, "Error getting User's Username for the comment"
-				}
+				comment.Username = CheckUsername(w, comment.User_UUID)
 
-				// Checking if the comment is liked by the User or not
-				var status_comment string
-				state_status := `SELECT Status FROM Reaction WHERE User_UUID = ? AND Comment_ID = ?`
-				err_status := db.QueryRow(state_status, comment.User_UUID, comment.ID).Scan(&status_comment)
-				if err_status == sql.ErrNoRows {
-					status = ""
-				} else if err_status != nil {
-					return nil, "Error checking post status"
-				}
-				comment.Status = status_comment
+				// Check the comment status with user's uuid and comment id
+				comment.Status = CheckStatus(w, comment.User_UUID, comment.ID, "comment")
 
 				comments = append(comments, &comment)
 			}

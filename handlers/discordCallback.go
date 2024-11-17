@@ -159,7 +159,7 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	// Attribute a session to an User
 	lib.CookieSession(user_uuid, username, creation_date, creation_hour, email, role, w, r)
 
-	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index", r)
+	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index", w, r)
 	if err_getdata != "OK" {
 		lib.ErrorServer(w, err_getdata)
 	}
