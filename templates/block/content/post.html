@@ -56,11 +56,11 @@
   <!-- show comments -->
   {{ if .Comments }}
   <h2>Comments</h2>
-  <h3>{{.Post_ID}}</h3>
+  <h3>{{.ID}}</h3>
   <ul>
     {{ range .Comments }}
     <li>
-      {{/* template "block/content/comment" .*/}}
+      {{ template "block/content/comment" . }}
       {{ .Text }}
       {{ .Like }}
       {{ .Dislike }}
