@@ -1,63 +1,67 @@
 {{define "block/form/register"}}
 
-<!-- todo implement in go -->
-<!-- Hidden checkbox for modal control -->
-<!-- <input type="checkbox" id="registerToggle" aria-hidden="true" /> -->
+<!-- Register container with role and aria-labelledby -->
+<div id="registerForm" class="form__container" role="form" aria-labelledby="form-container">
+  <div class="form__content">
 
-<div class="modal" role="dialog" aria-modal="true" aria-labelledby="register-heading" id="registerModal">
-    <div class="modal-content">
-        <div class="modal-body">
+    <!-- Form title -->
+    <h2 class="form__title">Register</h2>
 
-            <!-- Left side: registration form -->
-            <div class="form-container">
-                <h2 id="register-heading">Register</h2>
-                <form action="/register" aria-label="Register form" method="POST">
-                    <label for="register-username">Username</label>
-                    <input type="text" name="UsernameForm" id="register-username" placeholder="Username" required aria-required="true">
-                    {{ if ne .UserContent.Error.RegisterUsername "null" }}
-                        <span style="color: red;">{{ .UserContent.Error.RegisterUsername }}</span>
-                    {{ end }}
+    <!-- Left side: registration form -->
+    <form class="form form__register" action="/register" aria-label="Register form" method="POST">
+        <label for="register-username">Username</label>
+        <input type="text" name="UsernameForm" id="register-username" placeholder="Username" required aria-required="true" required>
+        {{ if ne .UserContent.Error.RegisterUsername "null" }}
+            <span class="form__error">{{ .UserContent.Error.RegisterUsername }}</span>
+        {{ end }}
 
-                    <label for="register-email">Email</label>
-                    <input type="text" name="EmailForm" id="register-email" placeholder="Email" required aria-required="true">
-                    {{ if ne .UserContent.Error.RegisterEmail "null" }}
-                        <span style="color: red;">{{ .UserContent.Error.RegisterEmail }}</span>
-                    {{ end }}
-                    {{ if ne .UserContent.Error.EmailFormat "null" }}
-                        <span style="color: red;">{{ .UserContent.Error.EmailFormat }}</span>
-                    {{ end }}                        
+        <label for="register-email">Email</label>
+        <input type="text" name="EmailForm" id="register-email" placeholder="Email" required aria-required="true" required>
+        {{ if ne .UserContent.Error.RegisterEmail "null" }}
+            <span class="form__error">{{ .UserContent.Error.RegisterEmail }}</span>
+        {{ end }}
+        {{ if ne .UserContent.Error.EmailFormat "null" }}
+            <span class="form__error">{{ .UserContent.Error.EmailFormat }}</span>
+        {{ end }}                        
 
-                    <label for="register-password">Password</label>
-                    <input type="password" name="PasswordForm" id="register-password" placeholder="Password" required aria-required="true">
-                    {{ if ne .UserContent.Error.RegisterPassword "null" }}
-                        <span style="color: red;">{{ .UserContent.Error.RegisterPassword }}</span>
-                    {{ end }}                        
+        <label for="register-password">Password</label>
+        <input type="password" name="PasswordForm" id="register-password" placeholder="Password" required aria-required="true" required>
+        {{ if ne .UserContent.Error.RegisterPassword "null" }}
+            <span class="form__error">{{ .UserContent.Error.RegisterPassword }}</span>
+        {{ end }}                        
 
-                    <label for="confirm-password">Confirm Password</label>
-                    <input type="password" name="ConfirmPasswordForm" id="confirm-password" placeholder="Confirm Password" required aria-required="true">
-                    {{ if ne .UserContent.Error.PasswordMatch "null" }}
-                        <span style="color: red;">{{ .UserContent.Error.PasswordMatch }}</span>
-                    {{ end }}
+        <label for="confirm-password">Confirm Password</label>
+        <input type="password" name="ConfirmPasswordForm" id="confirm-password" placeholder="Confirm Password" required aria-required="true" required>
+        {{ if ne .UserContent.Error.PasswordMatch "null" }}
+            <span class="form__error">{{ .UserContent.Error.PasswordMatch }}</span>
+        {{ end }}
 
-                    <div class="form-buttons">
-                        <button type="submit" aria-label="Register button">Register</button>
-                    </div>
+        <button type="submit" aria-label="Register button">Register</button>
+        <!-- <div class="form-buttons">
+        </div> -->
 
-                    <!-- "Already have an account?" link below the Register button -->
-                    <div class="login-link">
-                        <p>Already have an account? <a href="login.html">Login</a></p>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Right side: social login buttons -->
-            <div class="social-buttons" role="complementary" aria-label="Social login options">
-                <h3>Or register with:</h3>
-                <button class="Google" onclick="window.location.href='https://localhost:8080/google';" aria-label="Register with Google">Google</button>
-                <button class="Github" onclick="window.location.href='https://localhost:8080/github';" aria-label="Register with GitHub">Github</button>
-                <button class="Discord" onclick="window.location.href='https://localhost:8080/discord';" aria-label="Register with Discord">Discord</button>
-            </div>
+        <!-- "Already have an account?" link below the Register button -->
+        <div class="register-link">
+            <p>Already have an account?<a href="/nav-login" class="link" role="button" aria-controls="loginForm">Login</a></p>
         </div>
+
+    </form>
+  </div>
+
+  <!-- Right side: social login buttons -->
+  <div class="form__content form__socials" role="complementary" aria-label="Social register options">
+    
+    <h3 class="form__title">Register with:</h3>
+
+    <div class="form form-socials">   
+      <button class="button__socials" onclick="window.location.href='https://localhost:8080/google';" aria-label="Register with Google">{{template "ico_google"}}Register with Google</button>
+      <button class="button__socials" onclick="window.location.href='https://localhost:8080/github';" aria-label="Register with GitHub">{{template "ico_github"}}Register with Github</button>
+      <button class="button__socials" onclick="window.location.href='https://localhost:8080/discord';" aria-label="Register with Discord">{{template "ico_discord"}}Register with Discord</button>
     </div>
+
+  </div>
+
+  <button class="form__close" onclick="window.location.href='/';" aria-label="Close the login form">{{template "ico_close"}}</button>
+
 </div>
 {{end}}

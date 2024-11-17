@@ -1,41 +1,60 @@
 {{define "page/index"}}
-
-<!-- left menu, categories -->
-
-<div>
-  <h2>Categories</h2>
-  {{if .Categories }}
-  <ul>
-    {{range .Categories}}
-    <li><a href="filter?id={{.ID}}">{{.Name}}</a></li>
+<div class="post__container">
+  <!-- left menu, categories -->
+  <div class="post__content post__categories" role="region" aria-label="Categories">
+    <h2 aria-label="Categories Title">Categories</h2>
+    {{if .Categories }}
+    <ul role="list" aria-label="Categories List">
+      {{range .Categories}}
+      <li role="listitem">
+        <a href="filter?id={{.ID}}" aria-label="{{.Name}}">{{.Name}}</a>
+      </li>
+      {{end}}
+    </ul>
+    <ul role="list" aria-label="Sub-menu List">
+      <li><a href="/about">About</a></li>
+    </ul>
+    {{else}}
+    <p aria-label="No categories message">There's no categories</p>
     {{end}}
-  </ul>
-  {{else}}
-  There's no categories
-  {{end}}
-</div>
-
-<!-- main (posts and comments) -->
-<div>
-  <!-- create a post -->
-  {{if ne .Role "Guest"}}
-  <h2>Create a new post</h2>
-  <div>
-    {{template "block/form/post-create" .}}{{else}}You're a guest, if you want to post, please <a href="/nav-register">Sign Up</a> or <a href="/nav-login">Login</a>.
   </div>
-  {{ end }}
-  <!-- list of posts & comments -->
-  {{ if .Posts }}
-  <ul>
-    {{ range .Posts }}
-    <li>
-      {{ template "block/content/post" . }}
-    </li>
-    {{ end }}
-  </ul>
-  {{else}}
-  <div><h2>Strange! There's no posts.</h2></div>
-  {{ end }}
-</div>
 
+  <!-- main (posts and comments) -->
+  <div class="post__content post__main" role="region" aria-label="Main Content">
+  
+    <!-- FORM Create a post -->
+    {{if ne .Role "Guest"}}
+    <div>
+      <h2 aria-label="Create a new post title">Create a new post</h2>
+      <div role="form" aria-label="Create a new post form">
+        {{template "block/form/post-create" .}}
+      </div>
+    </div>
+    {{else}}
+    <div>
+      <div class="alert__guest__post">
+        <p>You're a guest, if you want to post, please <a href="/nav-register" class="link" aria-label="Sign Up">Sign Up</a> or <a href="/nav-login" class="link" aria-label="Login">Login</a>.</p>
+      </div>
+    </div>
+    {{ end }}
+
+    <!-- POSTS -->
+    {{ if .Posts }}
+    <div class="posts">
+      <!-- list of posts & comments -->
+      <ul role="list" aria-label="Posts List">
+        {{ range .Posts }}
+        <li role="listitem">
+          {{ template "block/content/post" . }}
+        </li>
+        {{ end }}
+      </ul>
+    </div>
+    {{else}}
+    <div role="alert" aria-label="No posts message">
+      <h2 aria-label="No posts title">Strange! There's no posts.</h2>
+    </div>
+    {{ end }}
+  </div>
+</div>
 {{end}}
