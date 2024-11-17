@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// TODO test if we want post and comments to be outside of index
 func PostHandler(w http.ResponseWriter, r *http.Request) {
 	// Getting database data into a variable
 	db := lib.GetDB()

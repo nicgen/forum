@@ -7,27 +7,13 @@ import (
 	"strings"
 )
 
+// ? Function to generate a map containing the informations to show on the html
 func GetData(db *sql.DB, uuid string, status string, page string, w http.ResponseWriter, r *http.Request) map[string]interface{} {
 	// Declaring the map we are going to return
 	data := map[string]interface{}{}
 
-	// Getting the Categories from the database
-	var categories []*models.Category
-	state_categories := `SELECT ID, Name FROM Categories`
-	query_category, err_liked := db.Query(state_categories, uuid)
-	if err_liked != nil {
-		ErrorServer(w, "Error accessing Categories")
-	}
-	defer query_category.Close()
-
-	for query_category.Next() {
-		var category models.Category
-		if err := query_category.Scan(&category.ID, &category.Name); err != nil {
-			ErrorServer(w, "Error scanning Categories")
-		}
-
-		categories = append(categories, &category)
-	}
+	// Getting categories info on the data map
+	data = GetCategories(w, data)
 
 	if status == "logged" {
 
@@ -51,49 +37,11 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 			ErrorServer(w, "Error getting User role from the cookies")
 		}
 
-		// Making query for the posts liked by the User
-		state_liked := `SELECT Post_ID FROM Reaction WHERE User_UUID = ?`
-		query, err_liked := db.Query(state_liked, uuid)
-		if err_liked != nil {
-			ErrorServer(w, "Error accessing user's Reactions")
-		}
-		defer query.Close()
+		// Storing the post liked into the data map
+		data = GetLikedPosts(w, uuid, data)
 
-		// Variables that will store the reaction's post id
-		react_tab := []string{}
-		reaction := ""
-
-		for query.Next() {
-			if err := query.Scan(&reaction); err != nil {
-				ErrorServer(w, "Error scanning user's Reactions")
-			}
-
-			react_tab = append(react_tab, reaction)
-		}
-
-		// Ranging over the posts id to get all posts reactions
-		var posts_liked []*models.Post
-		state_reacted_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE ID = ? ORDER BY CreatedAt DESC`
-		for i := 0; i < len(react_tab); i++ {
-			row_post, err_react := db.Query(state_reacted_posts, react_tab[i])
-			if err_react != nil {
-				ErrorServer(w, "Error accessing user's liked posts")
-			}
-			defer row_post.Close()
-
-			for row_post.Next() {
-				var post_liked models.Post
-				if err := row_post.Scan(&post_liked.ID, &post_liked.Category_ID, &post_liked.Title, &post_liked.Text, &post_liked.Like, &post_liked.Dislike, &post_liked.CreatedAt, &post_liked.User_UUID); err != nil {
-					ErrorServer(w, "Error scanning posts data")
-				}
-
-				posts_liked = append(posts_liked, &post_liked)
-			}
-
-			if err := row_post.Err(); err != nil {
-				ErrorServer(w, "Error iterating over user's liked posts")
-			}
-		}
+		// Storing the list of Users into the data map if the role is Admin
+		data = GetListOfUsers(w, cookie_role.Value, data)
 
 		// Posts Query based on page
 		var state_posts string
@@ -186,44 +134,17 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 			ErrorServer(w, "Error iterating over user posts")
 		}
 
-		// Retrieve all users for admin view
-		var allUsers []models.User
-		if cookie_role.Value == "Admin" {
-			allUsersQuery := `SELECT UUID, Username, Email, Role FROM User`
-			rows, err := db.Query(allUsersQuery)
-			if err != nil {
-				ErrorServer(w, "Error accessing user list")
-			}
-			defer rows.Close()
-
-			for rows.Next() {
-				var user models.User
-				if err := rows.Scan(&user.UUID, &user.Username, &user.Email, &user.Role); err != nil {
-					ErrorServer(w, "Error scanning users")
-				}
-				allUsers = append(allUsers, user)
-			}
-
-			if err := rows.Err(); err != nil {
-				ErrorServer(w, "Error iterating over users")
-			}
-		}
-
 		// Storing the data into a map that can be sent into the html
-		data = map[string]interface{}{
-			"Username":     cookie_username.Value,
-			"Email":        cookie_email.Value,
-			"CreationDate": cookie_date.Value,
-			"CreationHour": cookie_hour.Value,
-			"Role":         cookie_role.Value,
-			"Posts":        posts,
-			"LikedPosts":   posts_liked,
-			"AllUsers":     allUsers,
-			"UUID":         uuid,
-			"NavLogin":     "hide",
-			"NavRegister":  "hide",
-			"Categories":   categories,
-		}
+		data["Username"] = cookie_username.Value
+		data["Email"] = cookie_email.Value
+		data["CreationDate"] = cookie_date.Value
+		data["CreationHour"] = cookie_hour.Value
+		data["Role"] = cookie_role.Value
+		data["Posts"] = posts
+		data["UUID"] = uuid
+		data["NavLogin"] = "hide"
+		data["NavRegister"] = "hide"
+
 	} else {
 
 		data_post := map[string]interface{}{
@@ -305,17 +226,14 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 			ErrorServer(w, "Error iterating over posts")
 		}
 
-		data = map[string]interface{}{
-			"Username":     nil,
-			"Email":        nil,
-			"CreationDate": nil,
-			"CreationHour": nil,
-			"Role":         "Guest",
-			"Posts":        posts,
-			"NavLogin":     "hide",
-			"NavRegister":  "hide",
-			"Categories":   categories,
-		}
+		data["Username"] = nil
+		data["Email"] = nil
+		data["CreationDate"] = nil
+		data["CreationHour"] = nil
+		data["Role"] = "Guest"
+		data["Posts"] = posts
+		data["NavLogin"] = "hide"
+		data["NavRegister"] = "hide"
 	}
 
 	return data
