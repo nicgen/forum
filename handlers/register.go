@@ -45,29 +45,20 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			log.Printf("Received registration request: Username=%s, Email=%s", username, email)
 
 			// if !lib.IsValidPassword(password) {
-			// 	data, err_getdata := lib.GetData(db, "null", "notlogged", "index", w, r)
-			// 	if err_getdata != "OK" {
-			// 		lib.ErrorServer(w, err_getdata)
-			// 	}
+			// 	data := lib.GetData(db, "null", "notlogged", "index", w, r)
 			// 	data = lib.ErrorMessage(w, data, "RegisterPassword")
 			// 	data["NavRegister"] = "show"
 			// 	lib.RenderTemplate(w, "layout/index", "page/index", data)
 			// }
 			// if !lib.IsValidEmail(email) {
-			// 	data, err_getdata := lib.GetData(db, "null", "notlogged", "index", w, r)
-			// 	if err_getdata != "OK" {
-			// 		lib.ErrorServer(w, err_getdata)
-			// 	}
+			// 	data := lib.GetData(db, "null", "notlogged", "index", w, r)
 			// 	data = lib.ErrorMessage(w, data, "EmailFormat")
 			// 	data["NavRegister"] = "show"
 			// 	lib.RenderTemplate(w, "layout/index", "page/index", data)
 			// }
 			// Check if passwords match
 			if password != confirmPassword {
-				data, err_getdata := lib.GetData(db, "null", "notlogged", "index", w, r)
-				if err_getdata != "OK" {
-					lib.ErrorServer(w, err_getdata)
-				}
+				data := lib.GetData(db, "null", "notlogged", "index", w, r)
 				data = lib.ErrorMessage(w, data, "PasswordMatch")
 				data["NavRegister"] = "show"
 				lib.RenderTemplate(w, "layout/index", "page/index", data)
@@ -101,10 +92,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 			// Check if the user already exists
 			if usernameExists {
-				data, err_getdata := lib.GetData(db, "null", "notlogged", "index", w, r)
-				if err_getdata != "OK" {
-					lib.ErrorServer(w, err_getdata)
-				}
+				data := lib.GetData(db, "null", "notlogged", "index", w, r)
 				data = lib.ErrorMessage(w, data, "RegisterUsername")
 				data["NavRegister"] = "show"
 				lib.RenderTemplate(w, "layout/index", "page/index", data)
@@ -112,10 +100,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 			// Check if the email is already taken
 			if emailExists {
-				data, err_getdata := lib.GetData(db, "null", "notlogged", "index", w, r)
-				if err_getdata != "OK" {
-					lib.ErrorServer(w, err_getdata)
-				}
+				data := lib.GetData(db, "null", "notlogged", "index", w, r)
 				data = lib.ErrorMessage(w, data, "RegisterEmail")
 				data["NavRegister"] = "show"
 				lib.RenderTemplate(w, "layout/index", "page/index", data)

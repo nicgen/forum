@@ -32,10 +32,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		err = stmt.QueryRow(email).Scan(&hashedPassword)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				data, err_getdata := lib.GetData(db, "null", "notlogged", "index", w, r)
-				if err_getdata != "OK" {
-					lib.ErrorServer(w, err_getdata)
-				}
+				data := lib.GetData(db, "null", "notlogged", "index", w, r)
 				data = lib.ErrorMessage(w, data, "LoginMail")
 				data["NavLogin"] = "show"
 				lib.RenderTemplate(w, "layout/index", "page/index", data)
@@ -47,10 +44,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Verify password
 		if !CheckPassword(hashedPassword, password) {
-			data, err_getdata := lib.GetData(db, "null", "notlogged", "index", w, r)
-			if err_getdata != "OK" {
-				lib.ErrorServer(w, err_getdata)
-			}
+			data := lib.GetData(db, "null", "notlogged", "index", w, r)
 			data = lib.ErrorMessage(w, data, "LoginPassword")
 			data["NavLogin"] = "show"
 			lib.RenderTemplate(w, "layout/index", "page/index", data)

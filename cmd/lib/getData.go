@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func GetData(db *sql.DB, uuid string, status string, page string, w http.ResponseWriter, r *http.Request) (map[string]interface{}, string) {
+func GetData(db *sql.DB, uuid string, status string, page string, w http.ResponseWriter, r *http.Request) map[string]interface{} {
 	// Declaring the map we are going to return
 	data := map[string]interface{}{}
 
@@ -16,14 +16,14 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 	state_categories := `SELECT ID, Name FROM Categories`
 	query_category, err_liked := db.Query(state_categories, uuid)
 	if err_liked != nil {
-		return nil, "Error accessing Categories"
+		ErrorServer(w, "Error accessing Categories")
 	}
 	defer query_category.Close()
 
 	for query_category.Next() {
 		var category models.Category
 		if err := query_category.Scan(&category.ID, &category.Name); err != nil {
-			return nil, "Error scanning Categories"
+			ErrorServer(w, "Error scanning Categories")
 		}
 
 		categories = append(categories, &category)
@@ -40,22 +40,22 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 
 		// Checking for database requests errors
 		if err_username != nil {
-			return nil, "Error getting Username from the cookies"
+			ErrorServer(w, "Error getting Username from the cookies")
 		} else if err_date != nil {
-			return nil, "Error getting Creation Date from the cookies"
+			ErrorServer(w, "Error getting Creation Date from the cookies")
 		} else if err_hour != nil {
-			return nil, "Error getting Creation Hour from the cookies"
+			ErrorServer(w, "Error getting Creation Hour from the cookies")
 		} else if err_email != nil {
-			return nil, "Error getting email from the cookies"
+			ErrorServer(w, "Error getting email from the cookies")
 		} else if err_role != nil {
-			return nil, "Error getting User role from the cookies"
+			ErrorServer(w, "Error getting User role from the cookies")
 		}
 
 		// Making query for the posts liked by the User
 		state_liked := `SELECT Post_ID FROM Reaction WHERE User_UUID = ?`
 		query, err_liked := db.Query(state_liked, uuid)
 		if err_liked != nil {
-			return nil, "Error accessing user's Reactions"
+			ErrorServer(w, "Error accessing user's Reactions")
 		}
 		defer query.Close()
 
@@ -65,7 +65,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 
 		for query.Next() {
 			if err := query.Scan(&reaction); err != nil {
-				return nil, "Error scanning user's Reactions"
+				ErrorServer(w, "Error scanning user's Reactions")
 			}
 
 			react_tab = append(react_tab, reaction)
@@ -77,21 +77,21 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 		for i := 0; i < len(react_tab); i++ {
 			row_post, err_react := db.Query(state_reacted_posts, react_tab[i])
 			if err_react != nil {
-				return nil, "Error accessing user's liked posts"
+				ErrorServer(w, "Error accessing user's liked posts")
 			}
 			defer row_post.Close()
 
 			for row_post.Next() {
 				var post_liked models.Post
 				if err := row_post.Scan(&post_liked.ID, &post_liked.Category_ID, &post_liked.Title, &post_liked.Text, &post_liked.Like, &post_liked.Dislike, &post_liked.CreatedAt, &post_liked.User_UUID); err != nil {
-					return nil, "Error scanning posts data"
+					ErrorServer(w, "Error scanning posts data")
 				}
 
 				posts_liked = append(posts_liked, &post_liked)
 			}
 
 			if err := row_post.Err(); err != nil {
-				return nil, "Error iterating over user's liked posts"
+				ErrorServer(w, "Error iterating over user's liked posts")
 			}
 		}
 
@@ -123,14 +123,14 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 		}
 
 		if err_post != nil {
-			return nil, "Error accessing user posts"
+			ErrorServer(w, "Error accessing user posts")
 		}
 		defer rows.Close()
 
 		for rows.Next() {
 			var post models.Post
 			if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
-				return nil, "Error scanning user posts"
+				ErrorServer(w, "Error scanning user posts")
 			}
 
 			time_post := strings.Split(post.CreatedAt.Format("2006-01-02 15:04:05"), " ")
@@ -149,7 +149,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 			var rows_comment *sql.Rows
 			rows_comment, err_comment := db.Query(state_comment, post.ID)
 			if err_comment != nil {
-				return nil, "Error accessing user comments"
+				ErrorServer(w, "Error accessing user comments")
 			}
 
 			defer rows_comment.Close()
@@ -157,7 +157,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 			for rows_comment.Next() {
 				var comment models.Comment
 				if err := rows_comment.Scan(&comment.ID, &comment.Text, &comment.Like, &comment.Dislike, &comment.CreatedAt, &comment.User_UUID, &comment.Post_ID); err != nil {
-					return nil, "Error scanning posts comments"
+					ErrorServer(w, "Error scanning posts comments")
 				}
 
 				time_comment := strings.Split(comment.CreatedAt.Format("2006-01-02 15:04:05"), " ")
@@ -174,7 +174,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 			}
 
 			if err := rows_comment.Err(); err != nil {
-				return nil, "Error iterating over user comments"
+				ErrorServer(w, "Error iterating over user comments")
 			}
 
 			post.Comments = comments
@@ -183,7 +183,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 		}
 
 		if err := rows.Err(); err != nil {
-			return nil, "Error iterating over user posts"
+			ErrorServer(w, "Error iterating over user posts")
 		}
 
 		// Retrieve all users for admin view
@@ -192,20 +192,20 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 			allUsersQuery := `SELECT UUID, Username, Email, Role FROM User`
 			rows, err := db.Query(allUsersQuery)
 			if err != nil {
-				return nil, "Error accessing user list"
+				ErrorServer(w, "Error accessing user list")
 			}
 			defer rows.Close()
 
 			for rows.Next() {
 				var user models.User
 				if err := rows.Scan(&user.UUID, &user.Username, &user.Email, &user.Role); err != nil {
-					return nil, "Error scanning users"
+					ErrorServer(w, "Error scanning users")
 				}
 				allUsers = append(allUsers, user)
 			}
 
 			if err := rows.Err(); err != nil {
-				return nil, "Error iterating over users"
+				ErrorServer(w, "Error iterating over users")
 			}
 		}
 
@@ -239,14 +239,14 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 		var posts []*models.Post
 		rows, err := db.Query(state_posts)
 		if err != nil {
-			return nil, "Error accessing posts"
+			ErrorServer(w, "Error accessing posts")
 		}
 		defer rows.Close()
 
 		for rows.Next() {
 			var post models.Post
 			if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
-				return nil, "Error scanning posts"
+				ErrorServer(w, "Error scanning posts")
 			}
 
 			time_post := strings.Split(post.CreatedAt.Format("2006-01-02 15:04:05"), " ")
@@ -257,7 +257,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 			state_username := `SELECT Username FROM User WHERE UUID = ?`
 			err_db := db.QueryRow(state_username, post.User_UUID).Scan(&post.Username)
 			if err_db != nil {
-				return nil, "Error getting User's Username"
+				ErrorServer(w, "Error getting User's Username")
 			}
 			state_comment := `SELECT ID, Text, Like, Dislike, CreatedAt, User_UUID, Post_ID FROM Comments WHERE Post_ID = ? ORDER BY CreatedAt DESC`
 			// Users posts Request
@@ -265,7 +265,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 			var rows_comment *sql.Rows
 			rows_comment, err_comment := db.Query(state_comment, post.ID)
 			if err_comment != nil {
-				return nil, "Error accessing user comments"
+				ErrorServer(w, "Error accessing user comments")
 			}
 
 			defer rows_comment.Close()
@@ -273,7 +273,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 			for rows_comment.Next() {
 				var comment models.Comment
 				if err := rows_comment.Scan(&comment.ID, &comment.Text, &comment.Like, &comment.Dislike, &comment.CreatedAt, &comment.User_UUID, &comment.Post_ID); err != nil {
-					return nil, "Error scanning posts comments"
+					ErrorServer(w, "Error scanning posts comments")
 				}
 
 				time_comment := strings.Split(comment.CreatedAt.Format("2006-01-02 15:04:05"), " ")
@@ -284,14 +284,14 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 				state_username := `SELECT Username FROM User WHERE UUID = ?`
 				err_db := db.QueryRow(state_username, comment.User_UUID).Scan(&comment.Username)
 				if err_db != nil {
-					return nil, "Error getting User's Username for the comment"
+					ErrorServer(w, "Error getting User's Username for the comment")
 				}
 
 				comments = append(comments, &comment)
 			}
 
 			if err := rows.Err(); err != nil {
-				return nil, "Error iterating over user posts"
+				ErrorServer(w, "Error iterating over user posts")
 			}
 
 			post.Comments = comments
@@ -302,7 +302,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 		}
 
 		if err := rows.Err(); err != nil {
-			return nil, "Error iterating over posts"
+			ErrorServer(w, "Error iterating over posts")
 		}
 
 		data = map[string]interface{}{
@@ -318,5 +318,5 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 		}
 	}
 
-	return data, "OK"
+	return data
 }

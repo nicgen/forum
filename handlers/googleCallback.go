@@ -260,16 +260,7 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Redirect the user to a success page or your main application
 
-	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index", w, r)
-	if err_getdata != "OK" {
-		// Erreur critique : Error retrieving user data
-		err := &models.CustomError{
-			StatusCode: http.StatusInternalServerError,
-			Message:    "Error retrieving user data",
-		}
-		HandleError(w, err.StatusCode, err.Message)
-		return
-	}
+	data := lib.GetData(db, user_uuid, "logged", "index", w, r)
 
 	// Redirect the user to a success page or your main application
 	lib.RenderTemplate(w, "layout/index", "page/index", data)

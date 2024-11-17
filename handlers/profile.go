@@ -13,10 +13,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, _ := r.Cookie("session_id")
 
 	// Getting the User Data
-	data, err := lib.GetData(db, cookie.Value, "logged", "profile", w, r)
-	if err != "OK" {
-		lib.ErrorServer(w, err)
-	}
+	data := lib.GetData(db, cookie.Value, "logged", "profile", w, r)
 
 	// Redirect User to the profile html page and sending the data to it
 	lib.RenderTemplate(w, "layout/index", "page/profile", data)
