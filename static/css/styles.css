@@ -304,20 +304,22 @@ header {
   width: 48px;
   height: 48px;
   border-radius: 24px;
-  background-color: red;
+  background-color: var(--text-color);
   overflow: hidden;
   align-items: center;
   display: flex;
   align-content: stretch;
   justify-content: center;
+  border: 1px solid var(--text-color);
 }
 
 /* user thumbnail (username's first letter) */
-.profil_thumb>span{
+.profil_thumb>span {
   font-size: 0;
   margin-top: 1.3rem;
   user-select: none;
   font-weight: bold;
+  color: var(--bkg-color);
 }
 
 .profil_thumb>span:first-letter {
@@ -349,6 +351,10 @@ header {
   align-items: center;
   align-content: stretch;
   justify-content: center;
+}
+
+.link{
+  text-decoration: underline;
 }
 
 .notification-number{
@@ -390,6 +396,136 @@ nav ul li a:hover {
   color: var(--hover-text);
   background-color: var(--hover-bg);
 } */
+
+/* 
+------------------------------------------
+POSTS & FORMS
+------------------------------------------
+*/
+
+.post__main{
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.post__container, .form__container{
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  padding: 1em;
+  border: 1px solid var(--text-color);
+  position: relative; /* important for the close button */
+}
+
+.post__content, .form__content{
+  flex-grow: 1;
+  padding: 1em;
+  border: 1px dashed var(--text-color);
+}
+
+.post__content article {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  border-bottom: 1px dashed var(--text-color);
+  padding-bottom: 1em;
+}
+
+/* ACTIONS (Like/Dislike) */
+
+.like__container {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  gap: 0.5em;
+}
+
+.like__content {
+  display: flex;
+  flex-direction: row;
+  gap: 0.25em;
+}
+
+.form__socials{
+  min-width: 30%;
+  flex-grow: 0;
+}
+
+.form__title{
+  font-size: var(--font-size-h2);
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25em;
+}
+
+.form > input {
+	margin-bottom: 0.6em;
+	padding: 0.5em;
+}
+
+.form > button {
+	padding: 1em;
+}
+
+.form__close {
+	position: absolute;
+	right: 1.5em;
+	top: 1.5em;
+}
+
+.form__login{
+
+}
+
+.form__register{
+
+}
+
+.form__error{
+  color: red;
+}
+
+.button__socials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5em 1em;
+}
+
+button.button__socials>svg {
+  margin-right: 1em;
+}
+
+.button__socials>.ico{
+  margin-right: 0.5empx;
+}
+
+.icon {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+/* MSG, NOTIFICATION & ALERTS */
+
+.alert__guest__post {
+  padding: 1em;
+  background-color: var(--text-color);
+  color: var(--bkg-color);
+}
+
+.alert__guest__post>p {
+  margin-bottom: 0px;
+}
+
+/* BUTTONS */
+
+.liked {
+  color: red;
+}
 
 /* THEME button ------------------------------------------*/
 
@@ -433,10 +569,6 @@ button#theme-toggle.theme-toggle.auto>.theme-toggle__dark {
   display: none;
 }
 
-/* .theme-toggle.auto { background-image: var(--icon-theme-auto); }
-.theme-toggle.dark { background-image: var(--icon-theme-dark); }
-.theme-toggle.light { background-image: var(--icon-theme-light); } */
-
 /* FOOTER ------------------------------------------*/
 
 footer {
@@ -466,6 +598,19 @@ main {
 .wrapper {
   width: 100%;
   grid-column: unset;
+}
+
+/* MEDIA queries */
+/* Desktop */
+@media only screen and (max-width: 1024px) {
+
+}
+
+/* Tablets and smartphone */
+@media only screen and (max-width: 768px) {
+  .post__container, .form__container{
+    flex-direction: column;
+  }
 }
 
 /* TEST */

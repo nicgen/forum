@@ -32,20 +32,19 @@
   </div>
 
   <!-- action (like/dislike) -->
-  <div>
-    <div>
-      <h2>{{ .Like }}</h2>
-      <h2>{{if .Like }}{{ .Like }}{{ else }}0{{end}}like</h2>
+  <div class="like__container">
+    <div class="like__content">
+      <h2 class="like__number">{{if .Like }}{{ .Like }}{{ else }}0{{end}}</h2>
       <form action="/like" method="POST">
         <input type="hidden" name="id" value="{{ .ID }}">
-        <button name="like_post" value="like_post" {{ if or (eq .Data.Role "Guest") (eq .Status "liked") }}disabled{{end}}>{{ if eq .Status "liked" }}Already Liked{{else}}Like{{end}}</button>
+        <button name="like_post" value="like_post" class="ico__like {{ if eq .Status "liked" }}liked{{end}}" {{ if or (eq .Data.Role "Guest") (eq .Status "liked") }}disabled{{end}}>{{ template "ico_thumb-up"}}</button>
       </form>
     </div>
-    <div>
-      <h2>{{if .Dislike }}{{ .Dislike }}{{ else }}0{{end}}dislike</h2>
+    <div class="like__content">
+      <h2 class="like__number">{{if .Dislike }}{{ .Dislike }}{{ else }}0{{end}}</h2>
       <form action="/like" method="POST">
         <input type="hidden" name="id" value="{{ .ID }}">
-        <button name="dislike_post" value="dislike_post" {{ if eq .Data.Role "Guest" }}disabled{{end}}>Like</button>
+        <button name="dislike_post" value="dislike_post" {{ if eq .Data.Role "Guest" }}disabled{{end}}>{{ template "ico_thumb-down"}}</button>
       </form>
     </div>
   </div>
