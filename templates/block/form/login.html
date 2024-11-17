@@ -1,48 +1,46 @@
 {{define "block/form/login"}}
 
-<!-- todo, use blocks, separate login / register -->
-
 <!-- Login container with role and aria-labelledby -->
-<div class="login-container" role="form" aria-labelledby="login-heading">
+<div id="loginForm" class="form__container" role="form" aria-labelledby="form-container">
 
-  <h2 id="login-heading">Login</h2>
+  <div class="form__content">
 
-  <form action="/login" aria-label="Login form">
-    <!-- Adds aria-label for the form -->
-    <label for="username">Email</label>
-    <input type="text" name="EmailForm" placeholder="Email" required aria-required="true" />
-    {{ if ne .UserContent.Error.LoginMail "null" }}
-        <span style="color: red;">{{ .UserContent.Error.LoginMail }}</span>
-    {{ end }}
-    <label for="password">Password</label>
-    <input type="password" name="PasswordForm" placeholder="Password" required aria-required="true" />
-    {{ if ne .UserContent.Error.LoginPassword "null" }}
-        <span style="color: red;">{{ .UserContent.Error.LoginPassword }}</span>
-    {{ end }}
-    <button type="submit" aria-label="Login button">Login</button>
-  </form>
+    <!-- Form title -->
+    <h2 class="form__title" id="form__title">Login</h2>
 
-  <!-- Register link -->
-  <div class="register-link">
-    <p>
-      Don't have an account?
-      <label class="open-modal" for="registerToggle" role="button" aria-controls="registerModal"
-        aria-expanded="false">Register</label>
-    </p>
+    <!-- Form login -->
+    <form class="form form-login__mail" action="/login" aria-label="Login form">
+      <label for="username">Email</label>
+      <input type="text" name="EmailForm" placeholder="Email" required aria-required="true" />
+      {{ if ne .UserContent.Error.LoginMail "null" }}
+          <span style="color: red;">{{ .UserContent.Error.LoginMail }}</span>
+      {{ end }}
+      <label for="password">Password</label>
+      <input type="password" name="PasswordForm" placeholder="Password" required aria-required="true" />
+      {{ if ne .UserContent.Error.LoginPassword "null" }}
+          <span style="color: red;">{{ .UserContent.Error.LoginPassword }}</span>
+      {{ end }}
+      <button type="submit" aria-label="Login button">Login</button>
+    </form>
+
+    <!-- Register link -->
+    <div class="register-link">
+      <p>Don't have an account?<a href="/nav-register" class="link" role="button" aria-controls="registerForm">Register</a></p>
+    </div>
+
   </div>
 
-</div>
+  <!-- Social login section with roles and aria-labels -->
+  <div class="form__content form__socials" role="complementary" aria-label="Social login options">
+      <div class="form form__socials">
+          <h3 class="form__title">Sign in with :</h3>
+          <button class="button__socials" onclick="window.location.href='https://localhost:8080/google';" aria-label="Sign in with Google">{{template "ico_google"}}Sign in with Google</button>
+          <button class="button__socials" onclick="window.location.href='https://localhost:8080/github';" aria-label="Login with Github">{{template "ico_github"}}Login with Github</button>
+          <button class="button__socials" onclick="window.location.href='https://localhost:8080/discord';" aria-label="Login with Discord">{{template "ico_discord"}}Login with Discord</button>
+      </div>
+  </div>
 
-<!-- Social login section with roles and aria-labels -->
-<div class="socials" role="complementary" aria-label="Social login options">
-    <div>
-        <h3>Sign in with :</h3>
-        <button class="Google" onclick="window.location.href='https://localhost:8080/google';" aria-label="Sign in with Google">Google</button>
-        <button class="Github" onclick="window.location.href='https://localhost:8080/github';" aria-label="Sign in with Github">Github</button>
-        <button class="Discord" onclick="window.location.href='https://localhost:8080/discord';" aria-label="Sign in with Discord">Discord</button>
-    </div>
-</div>
+  <button class="form__close" onclick="window.location.href='/';" aria-label="Close the login form">{{template "ico_close"}}</button>
 
-</body>
-</html> 
+</div>
 {{end}}
