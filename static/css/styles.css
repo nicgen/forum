@@ -1,3 +1,22 @@
+/* TODO, add these notes to the doc
+BEM is a naming convention that helps to create a consistent and maintainable CSS codebase. It's based on the idea of breaking down a component into three main parts:
+
+Block: The main component, such as a header, footer, or navigation.
+Element: A part of the block, such as a title, button, or link.
+Modifier: A variation of the block or element, such as a different color, size, or state.
+Here's an example of how BEM can be used to name CSS classes:
+
+Block: .header
+Element: .header__title
+Modifier: .header--dark or .header__title--large
+*/
+
+/*
+------------------------------------------
+ROOT VARIABLES
+------------------------------------------
+*/
+
 :root {
   color-scheme: light dark;
 
@@ -30,11 +49,13 @@
   --hover-text-dark:#191919;
   --hover-bg-dark:#a58c71;
 
-  /* icons (SVG) */
-  --icon-theme-auto: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' class='icon'%3E%3Cpath stroke='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M6 6h3.5L12 3.5 14.5 6H18v3.5l2.5 2.5-2.5 2.5V18h-3.5L12 20.5 9.5 18H6v-3.5L3.5 12 6 9.5z'/%3E%3Cpath d='M10 14.5V11a2 2 0 1 1 4 0v3.5M10 13h4'/%3E%3C/svg%3E");
-  --icon-theme-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' class='icon'%3E%3Cpath stroke='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M8 12a4 4 0 1 0 8 0 4 4 0 1 0-8 0M3 12h1m8-9v1m8 8h1m-9 8v1M5.6 5.6l.7.7m12.1-.7-.7.7m0 11.4.7.7m-12.1-.7-.7.7'/%3E%3C/svg%3E");
-  --icon-theme-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' class='icon'%3E%3Cpath stroke='none' d='M0 0h24v24H0z'/%3E%3Cpath d='m3 3 18 18M16 12a4 4 0 0 0-4-4M9.166 9.177a4 4 0 0 0 5.66 5.654M3 12h1m8-9v1m8 8h1m-9 8v1M5.6 5.6l.7.7m12.1-.7-.7.7m0 11.4.7.7m-12.1-.7-.7.7'/%3E%3C/svg%3E");
 }
+
+/*
+------------------------------------------
+DARK/LIGHT VARIABLES
+------------------------------------------
+*/
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -46,10 +67,7 @@
     --hover-text:var(--bkg-color-dark);
     --hover-bg:var(--text-color-dark);
   }
-  .theme-toggle {
-    /* filter: invert(1) opacity(0.8); */
-    filter: brightness(0) saturate(100%) invert(59%) sepia(10%) saturate(1000%) hue-rotate(351deg) brightness(94%) contrast(88%);
-  }
+  /* add filter for the images in the dark mode */
   img {
     filter: brightness(.8) contrast(1.2);
   }
@@ -78,11 +96,6 @@
   --hover-bg:var(--text-color-dark);
 }
 
-:root.dark-theme .theme-toggle {
-  /* filter: invert(1) opacity(0.8); */
-  filter: brightness(0) saturate(100%) invert(59%) sepia(10%) saturate(1000%) hue-rotate(351deg) brightness(94%) contrast(88%);
-}
-
 :root.light-theme {
   --text-color: var(--text-color-light);
   --bkg-color: var(--bkg-color-light);
@@ -93,11 +106,104 @@
   --hover-bg:var(--text-color-light);
 }
 
-:root.light-theme .theme-toggle {
-  filter: unset;
+/*
+------------------------------------------
+RESET (minimal)
+------------------------------------------
+*/
+
+/*
+## minimal CSS reset system:
+- Resets the box model to use border-box for all elements
+- Sets the font family, size, and line height for the body element
+- Removes text decoration and sets the color to inherit for links
+- Sets the maximum width and height for images
+- Removes list styles and padding/margin for lists
+- Sets the border collapse and spacing for tables
+- Resets the font family, size, and padding/margin for form elements
+- Sets the font weight and margin bottom for headings
+- Sets the margin bottom for paragraphs
+*/
+
+/* Box model */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-/* STYLES ------------------------------------------*/
+/* Typography */
+body {
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Links */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Images */
+img {
+  max-width: 100%;
+  height: auto;
+  border: none;
+}
+
+/* Lists */
+ul, ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Forms */
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
+/* Other */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+p {
+  margin-bottom: 1em;
+}
+
+
+/*
+------------------------------------------
+DEBUG
+! for testing purpose
+------------------------------------------
+*/
+
+.wrapper{
+  /* border: 2px dashed red; */
+}
+.container{
+  /* border: 2px dashed green; */
+}
+
+/*
+------------------------------------------
+STYLES
+------------------------------------------
+*/
 
 html, body {
   height: 100%;
@@ -115,7 +221,11 @@ body {
   background-color: var(--bkg-color);
 }
 
-/* CONTENT ------------------------------------------*/
+/*
+------------------------------------------
+CONTENT
+------------------------------------------
+*/
 
 main {
   flex: 1; /* Take remaining space */
@@ -146,14 +256,6 @@ main .container{
   padding: 1rem;
 }
 
-/* ! for testing purpose */
-.wrapper{
-  /* border: 2px dashed red; */
-}
-.container{
-  border: 2px dashed green;
-}
-
 /* Components */
 
 .icon{
@@ -167,7 +269,9 @@ main .container{
   justify-content: center;
 }
 
-/* NAV BAR ------------------------------------------*/
+/* NAV BAR
+------------------------------------------
+*/
 
 header {
   background-color: var(--nav-bg-color);
@@ -299,19 +403,39 @@ nav ul li a:hover {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  background-color: var(--background-color);
-  color: red;
+  /* background-color: var(--background-color);
+  color: red; */
 }
 
 .theme-toggle svg {
   width: 24px;
   height: 24px;
-  fill: var(--text-color);
+  /* fill: var(--text-color); */
+  stroke: var(--text-color);
 }
 
-.theme-toggle.auto { background-image: var(--icon-theme-auto); }
+button#theme-toggle.theme-toggle.light>.theme-toggle__dark {
+  display: none;
+}
+button#theme-toggle.theme-toggle.light>.theme-toggle__auto {
+  display: none;
+}
+button#theme-toggle.theme-toggle.dark>.theme-toggle__light {
+  display: none;
+}
+button#theme-toggle.theme-toggle.dark>.theme-toggle__auto {
+  display: none;
+}
+button#theme-toggle.theme-toggle.auto>.theme-toggle__light {
+  display: none;
+}
+button#theme-toggle.theme-toggle.auto>.theme-toggle__dark {
+  display: none;
+}
+
+/* .theme-toggle.auto { background-image: var(--icon-theme-auto); }
 .theme-toggle.dark { background-image: var(--icon-theme-dark); }
-.theme-toggle.light { background-image: var(--icon-theme-light); }
+.theme-toggle.light { background-image: var(--icon-theme-light); } */
 
 /* FOOTER ------------------------------------------*/
 
