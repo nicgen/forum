@@ -60,7 +60,7 @@
   <ul>
     {{ range .Comments }}
     <li>
-      {{/* template "block/content/comment" .*/}}
+      {{ template "block/content/comment" . }}
       {{ .Text }}
       {{ .Like }}
       {{ .Dislike }}
