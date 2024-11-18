@@ -5,6 +5,11 @@
           <li>
             Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
             {{ if and (ne .Role "Admin") (ne .Role "Moderator") (ne .Role "DeleteUser")}}
+            {{ if  .IsRequest }}
+            <span style="color: green;">Request Mod</span>
+          {{ else }}
+            <span style="color: red;">No Request</span>
+          {{ end }}
             <form method="POST" action="/admin/update-role">
               <input type="hidden" name="userUUID" value="{{ .UUID }}">
               <button type="submit">Promote to Moderator</button>
