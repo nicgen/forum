@@ -35,8 +35,9 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 			ErrorServer(w, "Error getting User role from the cookies")
 		}
 
-		// Storing the post liked into the data map
+		// Storing the post and comments liked into the data map
 		data = GetLikedPosts(w, uuid, data)
+		data = GetLikedComments(w, uuid, data)
 
 		// Storing the list of Users into the data map if the role is Admin
 		data = GetListOfUsers(w, cookie_role.Value, data)
