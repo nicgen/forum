@@ -35,11 +35,17 @@
   <div class="like__container">
     <div class="like__content">
       <h2 class="like__number">{{if .Like }}{{ .Like }}{{ else }}0{{end}}</h2>
+  <div class="like__container">
+    <div class="like__content">
+      <h2 class="like__number">{{if .Like }}{{ .Like }}{{ else }}0{{end}}</h2>
       <form action="/like" method="POST">
         <input type="hidden" name="id" value="{{ .ID }}">
         <button name="like_post" value="like_post" class="ico__like {{ if eq .Status "liked" }}liked{{end}}" {{ if or (eq .Data.Role "Guest") (eq .Status "liked") }}disabled{{end}}>{{ template "ico_thumb-up"}}</button>
+        <button name="like_post" value="like_post" class="ico__like {{ if eq .Status "liked" }}liked{{end}}" {{ if or (eq .Data.Role "Guest") (eq .Status "liked") }}disabled{{end}}>{{ template "ico_thumb-up"}}</button>
       </form>
     </div>
+    <div class="like__content">
+      <h2 class="like__number">{{if .Dislike }}{{ .Dislike }}{{ else }}0{{end}}</h2>
     <div class="like__content">
       <h2 class="like__number">{{if .Dislike }}{{ .Dislike }}{{ else }}0{{end}}</h2>
       <form action="/like" method="POST">
