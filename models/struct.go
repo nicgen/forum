@@ -43,6 +43,7 @@ type Comment struct {
 	CreatedAt     time.Time
 	Creation_Date string
 	Creation_Hour string
+	Data          map[string]interface{}
 	Like          int
 	Dislike       int
 	Status        string
