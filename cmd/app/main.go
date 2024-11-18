@@ -97,7 +97,7 @@ func setupMux() *http.ServeMux {
 	mux.HandleFunc("/admin/delete-user", handlers.AuthMiddleware(handlers.DeleteUser))
 	mux.HandleFunc("/admin/admindelete-user", handlers.AuthMiddleware(handlers.AdminDeleteUser))
 	mux.HandleFunc("/create-category", handlers.AuthMiddleware(handlers.CategoriesHandler))
-	mux.HandleFunc("/request-mod", handlers.AuthMiddleware(handlers.RequestHandler))
+	mux.HandleFunc("/update-request", handlers.AuthMiddleware(handlers.RequestHandler))
 
 	// Basic Web handlers
 	mux.HandleFunc("/about", handlers.AboutHandler)
