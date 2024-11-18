@@ -17,22 +17,22 @@ func GetLikedComments(w http.ResponseWriter, uuid string, data map[string]interf
 	defer query.Close()
 
 	// Variables that will store the reaction's post id
-	react_tab := []string{}
-	reaction := ""
+	react_map := map[string]string{}
+	var id, status string
 
 	for query.Next() {
-		if err := query.Scan(&reaction); err != nil {
+		if err := query.Scan(&id, &status); err != nil {
 			ErrorServer(w, "Error scanning user's Reactions")
 		}
 
-		react_tab = append(react_tab, reaction)
+		react_map[id] = status
 	}
 
 	// Ranging over the posts id to get all posts reactions
 	var comments_liked []*models.Comment
 	state_reacted_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE ID = ? ORDER BY CreatedAt DESC`
-	for i := 0; i < len(react_tab); i++ {
-		row_post, err_react := db.Query(state_reacted_posts, react_tab[i])
+	for key, value := range react_map {
+		row_post, err_react := db.Query(state_reacted_posts, key)
 		if err_react != nil {
 			ErrorServer(w, "Error accessing user's liked comments")
 		}
@@ -48,6 +48,7 @@ func GetLikedComments(w http.ResponseWriter, uuid string, data map[string]interf
 			comment_liked.Creation_Date = time_comment[0]
 			comment_liked.Creation_Hour = time_comment[1]
 
+			comment_liked.Status = value
 			comments_liked = append(comments_liked, &comment_liked)
 		}
 

@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"database/sql"
 	"forum/models"
 	"net/http"
 	"strings"
@@ -10,7 +9,7 @@ import (
 // ? Function to get liked comments from an User to store it into a data map
 func GetLikedPosts(w http.ResponseWriter, uuid string, data map[string]interface{}) map[string]interface{} {
 	// Making query for the posts liked by the User
-	state_liked := `SELECT Post_ID FROM Reaction WHERE User_UUID = ? AND Post_ID IS NOT NULL`
+	state_liked := `SELECT Post_ID, Status FROM Reaction WHERE User_UUID = ? AND Post_ID IS NOT NULL`
 	query, err_liked := db.Query(state_liked, uuid)
 	if err_liked != nil {
 		ErrorServer(w, "Error accessing user's Reactions")
@@ -18,22 +17,22 @@ func GetLikedPosts(w http.ResponseWriter, uuid string, data map[string]interface
 	defer query.Close()
 
 	// Variables that will store the reaction's post id
-	react_tab := []string{}
-	reaction := ""
+	react_map := map[string]string{}
+	var id, status string
 
 	for query.Next() {
-		if err := query.Scan(&reaction); err != nil && err != sql.ErrNoRows {
+		if err := query.Scan(&id, &status); err != nil {
 			ErrorServer(w, "Error scanning user's Reactions")
 		}
 
-		react_tab = append(react_tab, reaction)
+		react_map[id] = status
 	}
 
 	// Ranging over the posts id to get all posts reactions
 	var posts_liked []*models.Post
 	state_reacted_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE ID = ? ORDER BY CreatedAt DESC`
-	for i := 0; i < len(react_tab); i++ {
-		row_post, err_react := db.Query(state_reacted_posts, react_tab[i])
+	for key, value := range react_map {
+		row_post, err_react := db.Query(state_reacted_posts, key)
 		if err_react != nil {
 			ErrorServer(w, "Error accessing user's liked posts")
 		}
@@ -49,6 +48,7 @@ func GetLikedPosts(w http.ResponseWriter, uuid string, data map[string]interface
 			post_liked.Creation_Date = time_comment[0]
 			post_liked.Creation_Hour = time_comment[1]
 
+			post_liked.Status = value
 			posts_liked = append(posts_liked, &post_liked)
 		}
 
