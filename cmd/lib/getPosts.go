@@ -69,7 +69,7 @@ func GetPosts(w http.ResponseWriter, uuid, state string, rows *sql.Rows, data, d
 		}
 
 		if err := rows.Err(); err != nil {
-			ErrorServer(w, "Error iterating over user posts")
+			ErrorServer(w, "Error iterating over user comments")
 		}
 
 		post.Comments = comments
