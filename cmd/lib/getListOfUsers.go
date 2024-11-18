@@ -10,7 +10,7 @@ func GetListOfUsers(w http.ResponseWriter, role string, data map[string]interfac
 	// Retrieve all users for admin view
 	var allUsers []models.User
 	if role == "Admin" {
-		allUsersQuery := `SELECT UUID, Username, Email, Role FROM User`
+		allUsersQuery := `SELECT UUID, Username, Email, Role, IsRequest FROM User`
 		rows, err := db.Query(allUsersQuery)
 		if err != nil {
 			ErrorServer(w, "Error accessing user list")
@@ -19,7 +19,7 @@ func GetListOfUsers(w http.ResponseWriter, role string, data map[string]interfac
 
 		for rows.Next() {
 			var user models.User
-			if err := rows.Scan(&user.UUID, &user.Username, &user.Email, &user.Role); err != nil {
+			if err := rows.Scan(&user.UUID, &user.Username, &user.Email, &user.Role, &user.IsRequest); err != nil {
 				ErrorServer(w, "Error scanning users")
 			}
 			allUsers = append(allUsers, user)
