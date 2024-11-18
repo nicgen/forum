@@ -188,22 +188,4 @@ func CreateTables() {
 	}
 	fmt.Println("Tables created successfully.")
 
-	InsertCategories(db)
-}
-
-func InsertCategories(db *sql.DB) error {
-	categories := []string{"Test 1", "Test 2", "Test 3"}
-
-	// Correct SQL syntax: need parentheses and INTO keyword
-	insertQuery := `INSERT OR IGNORE INTO Categories (Name) VALUES (?)`
-
-	for _, category := range categories {
-		_, err := db.Exec(insertQuery, category)
-		if err != nil {
-			return fmt.Errorf("error inserting category %s: %v", category, err)
-		}
-		fmt.Printf("Category '%s' inserted successfully or already exists.\n", category)
-	}
-
-	return nil
 }
