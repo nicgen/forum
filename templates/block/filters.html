@@ -1,19 +1,29 @@
 {{define "filters"}}
-{{ if and (ne .Role "Admin") (ne .Role "User") (ne .Role "Moderator") }}
     <div class="filtre">
     <h2>Filters</h2>
         <form action="/filters" method="GET">
+            <div class="category">
+                <label for="category">categories</label>
+                <select id="Category" name="Category">
+                    <option></option>
+                    {{range .Categories}}
+                    <option value="{{.ID}}">{{.Name}}</option>
+                    {{end}}
+                </select>
+            </div>
             <div class="date-publication">
                 <label for="Period">Date de publication :</label>
                 <select id="Period" name="Period">
+                    <option>Tous les périodes</option>
                     <option value="week">Cette semaine</option>
                     <option value="month">Ce mois</option>
-                    <option value="year">Ce mois</option>
+                    <option value="year">Cette année</option>
                 </select>
             </div>
             <div class="nombre-like">
                 <label for="Like">Nombre de like :</label>
                 <select id="Like" name="Like">
+                    <option>tous les likes</option>
                     <option value="1-10">1-10 like</option>
                     <option value="11-50">11-50 like</option>
                     <option value="51-100">51-100 like</option>
@@ -21,8 +31,9 @@
                 </select>
             </div>
             <div class="nombre-dislike">
-              <label for="Dislike">Nombre de like :</label>
+              <label for="Dislike">Nombre de dislike :</label>
               <select id="Dislike" name="Dislike">
+                <option>tous les dislikes</option>
                   <option value="1-10">1-10 dislike</option>
                   <option value="11-50">11-50 dislike</option>
                   <option value="51-100">51-100 dislike</option>
@@ -32,5 +43,4 @@
             <button type="submit">Filtrer</button>
         </form>
 </div>
-{{end}}
 {{end}}
