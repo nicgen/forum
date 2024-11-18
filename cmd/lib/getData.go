@@ -89,7 +89,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 			post.Username = CheckUsername(w, post.User_UUID)
 
 			// Check the post status with user's uuid and post id
-			post.Status = CheckStatus(w, post.User_UUID, post.ID, "post")
+			post.Status = CheckStatus(w, uuid, post.ID, "post")
 
 			state_comment := `SELECT ID, Text, Like, Dislike, CreatedAt, User_UUID, Post_ID FROM Comments WHERE Post_ID = ? ORDER BY CreatedAt DESC`
 			// Users posts Request
@@ -116,7 +116,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 				comment.Username = CheckUsername(w, comment.User_UUID)
 
 				// Check the comment status with user's uuid and comment id
-				comment.Status = CheckStatus(w, comment.User_UUID, comment.ID, "comment")
+				comment.Status = CheckStatus(w, uuid, comment.ID, "comment")
 
 				comments = append(comments, &comment)
 			}
