@@ -6,6 +6,7 @@
   
   {{if eq .Role "Admin"}}
   {{template "block/admin/users" .}}
+  {{template "block/admin/categories" .}}
   {{end}}
   {{if eq .Role "User" }}
   <ul>
@@ -19,7 +20,6 @@
   </ul>
   {{end}}
 
-  
   {{ range .Posts }}
   <div class="post">
     <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
