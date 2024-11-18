@@ -1,0 +1,8 @@
+{{define "block/admin/categories"}}
+<h1>Create a new Category</h1>
+<form method="POST" action="/create-category">
+  <label for="categoryName">Category Name:</label>
+  <input type="text" id="categoryName" name="categoryName" required>
+  <button type="submit">Create</button>
+</form>
+{{end}}
