@@ -317,7 +317,6 @@ header {
 
 /* user thumbnail (username's first letter) */
 .profil_thumb>span {
-.profil_thumb>span {
   font-size: 0;
   margin-top: 1.3rem;
   user-select: none;
