@@ -24,6 +24,7 @@ func UpdateUserToModerator(w http.ResponseWriter, r *http.Request) {
 
 	// Update the user's role to "Moderator"
 	query := `UPDATE User SET Role = 'Moderator' WHERE UUID = ?`
+	fmt.Println("ModRequest")
 	_, err := db.Exec(query, userUUID)
 	if err != nil {
 		lib.ErrorServer(w, "Failed to update user role.")

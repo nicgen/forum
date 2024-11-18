@@ -30,8 +30,7 @@ type User struct {
 	CreatedAt    time.Time
 	StrCreatedAt string
 	Role         string
-	// IsMod        bool
-	// IsAdmin      bool
+	IsRequest    bool
 }
 
 type Comment struct {
