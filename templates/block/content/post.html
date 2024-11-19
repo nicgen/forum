@@ -14,8 +14,9 @@
     <!-- Check if it's the Author of the post -->
     {{ if eq .IsAuthor "yes"}}
     <div>
-      <form method="POST" action="/delete-post">
-        <input type="hidden" name="userUUID" value="">
+      <form method="GET" action="/delete">
+        <input type="hidden" name="delete" value="post">
+        <input type="hidden" name="id" value="{{ .ID }}">
         <button type="submit">Delete my post</button>
       </form>
     </div>
@@ -69,6 +70,16 @@
   <h3>{{.ID}}</h3>
   <ul>
     {{ range .Comments }}
+        <!-- Check if it's the Author of the post -->
+        {{ if eq .IsAuthor "yes"}}
+        <div>
+          <form method="GET" action="/delete">
+            <input type="hidden" name="delete" value="comment">
+            <input type="hidden" name="id" value="{{ .ID }}">
+            <button type="submit">Delete my post</button>
+          </form>
+        </div>
+        {{end}}
     <li>
       {{ template "block/content/comment" . }}
       {{ .Text }}
