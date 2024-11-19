@@ -20,7 +20,14 @@
         <button type="submit">Delete my post</button>
       </form>
     </div>
+    <form method="GET" action="/modify">
+      <input type="hidden" name="delete" value="post">
+      <input type="hidden" name="id" value="{{ .ID }}">
+      <textarea type="hidden" name="content"></textarea>
+      <button type="submit">Modify my post</button>
+    </form>
     {{end}}
+
 
     <p aria-label="Post date" role="definition">
       {{ .Creation_Date }}
@@ -89,6 +96,17 @@
       {{ .Creation_Hour }}
     </li>
     {{ end }}
+            <!-- Check if it's the Author of the post -->
+            {{ if eq .IsAuthor "yes"}}
+            <div>
+              <form method="GET" action="/modify">
+                <input type="hidden" name="delete" value="comment">
+                <input type="hidden" name="id" value="{{ .ID }}">
+                <textarea type="hidden" name="content"></textarea>
+                <button type="submit">Modify my comment</button>
+              </form>
+            </div>
+            {{end}}
   </ul>
   {{else}}
     Oh No! There's no comments...
