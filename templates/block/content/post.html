@@ -10,6 +10,17 @@
       {{ .Category_ID }}
     {{/* end */}}
     </div>
+
+    <!-- Check if it's the Author of the post -->
+    {{ if eq .IsAuthor "yes"}}
+    <div>
+      <form method="POST" action="/delete-post">
+        <input type="hidden" name="userUUID" value="">
+        <button type="submit">Delete my post</button>
+      </form>
+    </div>
+    {{end}}
+
     <p aria-label="Post date" role="definition">
       {{ .Creation_Date }}
       {{/* .Creation_Hour */}}
