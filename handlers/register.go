@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"forum/cmd/lib"
+	"forum/models"
 	"log"
 	"net/http"
 
@@ -25,7 +26,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			// Parsing form values
 			err1 := r.ParseForm()
 			if err1 != nil {
+				// Erreur non critique : Problème lors de l'analyse des données du formulaire
 				lib.ErrorServer(w, "Error parsing form data")
+				return
 			}
 
 			// Getting form values
@@ -65,7 +68,13 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			// Generate UUID
 			userUUID, errUUID := uuid.NewV4()
 			if errUUID != nil {
-				lib.ErrorServer(w, "Error generating user UUID on register")
+				// Erreur critique : Problème de génération de l'UUID de l'utilisateur
+				err := &models.CustomError{
+					StatusCode: http.StatusInternalServerError,
+					Message:    "Error generating user UUID on register",
+				}
+				HandleError(w, err.StatusCode, err.Message)
+				return
 			}
 
 			var usernameExists bool
@@ -75,9 +84,22 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			err_email := db.QueryRow("SELECT EXISTS(SELECT 1 FROM User WHERE Email=?)", email).Scan(&emailExists)
 
 			if err_user != nil {
-				lib.ErrorServer(w, "Error checking username in database")
-			} else if err_email != nil {
-				lib.ErrorServer(w, "Error checking email in database")
+				// Erreur critique : Problème lors de la vérification du nom d'utilisateur dans la base de données
+				err := &models.CustomError{
+					StatusCode: http.StatusInternalServerError,
+					Message:    "Error checking username in database",
+				}
+				HandleError(w, err.StatusCode, err.Message)
+				return
+			}
+			if err_email != nil {
+				// Erreur critique : Problème lors de la vérification de l'email dans la base de données
+				err := &models.CustomError{
+					StatusCode: http.StatusInternalServerError,
+					Message:    "Error checking email in database",
+				}
+				HandleError(w, err.StatusCode, err.Message)
+				return
 			}
 
 			log.Printf("Username exists: %v, Email exists: %v", usernameExists, emailExists)
@@ -85,14 +107,20 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			// Hash password
 			hashedPassword, err_password := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 			if err_password != nil {
-				lib.ErrorServer(w, "Error hashing the password")
+				// Erreur critique : Problème de hachage du mot de passe
+				err := &models.CustomError{
+					StatusCode: http.StatusInternalServerError,
+					Message:    "Error hashing the password",
+				}
+				HandleError(w, err.StatusCode, err.Message)
+				return
 			}
-
 			// Check if the user already exists
 			if usernameExists {
 				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
 				if err_getdata != "OK" {
 					lib.ErrorServer(w, err_getdata)
+					return
 				}
 				data = lib.ErrorMessage(w, data, "RegisterUsername")
 				lib.RenderTemplate(w, "layout/index", "page/index", data)
@@ -103,6 +131,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
 				if err_getdata != "OK" {
 					lib.ErrorServer(w, err_getdata)
+					return
 				}
 				data = lib.ErrorMessage(w, data, "RegisterEmail")
 				lib.RenderTemplate(w, "layout/index", "page/index", data)
@@ -111,7 +140,13 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			// Insert the new user into the database as a User
 			_, err_db := db.Exec("INSERT INTO User (UUID, Username, Password, Email, Role) VALUES (?, ?, ?, ?, ?)", userUUID, username, hashedPassword, email, "User")
 			if err_db != nil {
-				lib.ErrorServer(w, "Error adding user to the database")
+				// Erreur critique : Problème lors de l'ajout de l'utilisateur dans la base de données
+				err := &models.CustomError{
+					StatusCode: http.StatusInternalServerError,
+					Message:    "Error adding user to the database",
+				}
+				HandleError(w, err.StatusCode, err.Message)
+				return
 			}
 
 			// Getting the UUID from the database
@@ -119,7 +154,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			state := `SELECT UUID FROM User WHERE Email = ?`
 			err_user = db.QueryRow(state, email).Scan(&user_uuid)
 			if err_user != nil {
+				// Erreur non critique : Problème d'accès à l'UUID de l'utilisateur
 				lib.ErrorServer(w, "Error accessing User UUID")
+				return
 			}
 
 			// Attribute a session to an User
