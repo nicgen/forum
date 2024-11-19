@@ -27,7 +27,18 @@
   </form>
   {{end}}
   {{ range .Posts }}
+  <h2>Mes Posts</h2>
   <div class="post">
+    <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+    <p>Post text: {{ .Text }}</p>
+    <!-- todo modify the date -->
+    <p>Created at: {{ .CreatedAt }}</p>
+  </div>
+  {{end}}
+
+  {{range .LikedPosts}}
+  <div class="post">
+    <h2>Mes Posts likés</h2>
     <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
     <p>Post text: {{ .Text }}</p>
     <!-- todo modify the date -->
