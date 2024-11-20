@@ -33,9 +33,58 @@ ROOT VARIABLES
   --letter-spacing-default: 0.03em;
   --letter-spacing-title: 0.05em;
 
+  /* GRUVBOX */
+  /* GRUVBOX dark */
+  --dark0_hard: #1d2021;
+  --dark0: #282828;       /* bg dark */
+  --dark0_soft: #32302f;
+  --dark1: #3c3836;       /* fg light */
+  --dark2: #504945;
+  --dark3: #665c54;
+  --dark4: #7c6f64;
+  --dark4_256: #7c6f64;
+
+  --gray_245: #928374;
+  --gray_244: #928374;
+
+  /* GRUVBOX light */
+  --light0_hard: #f9f5d7;
+  --light0: #fbf1c7;      /* bg light */
+  --light0_soft: #f2e5bc;
+  --light1: #ebdbb2;      /* fg dark */
+  --light2: #d5c4a1;
+  --light3: #bdae93;
+  --light4: #a89984;
+  --light4_256: #a89984;
+
+  --bright_red: #fb4934;
+  --bright_green: #b8bb26;
+  --bright_yellow: #fabd2f;
+  --bright_blue: #83a598;
+  --bright_purple: #d3869b;
+  --bright_aqua: #8ec07c;
+  --bright_orange: #fe8019;
+
+  --neutral_red: #cc241d;
+  --neutral_green: #98971a;
+  --neutral_yellow: #d79921;
+  --neutral_blue: #458588;
+  --neutral_purple: #b16286;
+  --neutral_aqua: #689d6a;
+  --neutral_orange: #d65d0e;
+
+  --faded_red: #9d0006;
+  --faded_green: #79740e;
+  --faded_yellow: #b57614;
+  --faded_blue: #076678;
+  --faded_purple: #8f3f71;
+  --faded_aqua: #427b58;
+  --faded_orange: #af3a03;
+
   /* light */
   --text-color-light: #F9B872;
   --bkg-color-light: #EFEFFF;
+  --bkg-color-highlight-light: #191919;
   --nav-bg-color-light: #5960CB;
   --foot-bg-color-light: #5960CB;
   --hover-text-light:#FAE7A5;
@@ -44,6 +93,7 @@ ROOT VARIABLES
   /* dark */
   --text-color-dark: #a58c71;
   --bkg-color-dark: #191919;
+  --bkg-color-highlight-dark: #313131;
   --nav-bg-color-dark: #0e0e0e;
   --foot-bg-color-dark:#0e0e0e;
   --hover-text-dark:#191919;
@@ -57,10 +107,13 @@ DARK/LIGHT VARIABLES
 ------------------------------------------
 */
 
+/* for browser prefs */
+
 @media (prefers-color-scheme: dark) {
   :root {
-    --text-color: var(--text-color-dark);
-    --bkg-color: var(--bkg-color-dark);
+    --text-color: var(--light1);
+    --bkg-color: var(--dark0);
+    --bkg-color-highlight: var(--bkg-color-highlight-dark);
     --alert-color: var(--alert-color-dark);
     --nav-bg-color: var(--nav-bg-color-dark);
     --foot-bg-color: var(--foot-bg-color-dark);
@@ -75,8 +128,9 @@ DARK/LIGHT VARIABLES
 
 @media (prefers-color-scheme: light) {
   :root {
-    --text-color: var(--text-color-light);
-    --bkg-color: var(--bkg-color-light);
+    --text-color: var(--dark1);
+    --bkg-color: var(--light0);
+    --bkg-color-highlight: var(--bkg-color-highlight-light);
     --alert-color: var(--alert-color-light);
     --nav-bg-color: var(--nav-bg-color-light);
     --foot-bg-color: var(--foot-bg-color-light);
@@ -84,6 +138,8 @@ DARK/LIGHT VARIABLES
     --hover-bg:var(--text-color-light);
   }
 }
+
+/* for manual prefs */
 
 :root.dark-theme {
   --text-color: var(--text-color-dark);
@@ -135,7 +191,7 @@ RESET (minimal)
 /* Typography */
 body {
   font-family: sans-serif;
-  font-size: 16px;
+  font-size: var(--font-size-default);
   line-height: 1.5;
 }
 
@@ -456,6 +512,8 @@ POSTS & FORMS
   gap: 0.25em;
 }
 
+/* FORM */
+
 .form__socials{
   min-width: 30%;
   flex-grow: 0;
@@ -471,12 +529,14 @@ POSTS & FORMS
 	gap: 0.25em;
 }
 
-.form > input {
+.form > textarea, .form > input {
+  color: var(--bkg-color);
+  background-color: var(--text-color);
 	margin-bottom: 0.6em;
 	padding: 0.5em;
 }
 
-.form > button {
+.button__big {
 	padding: 1em;
 }
 
@@ -546,6 +606,12 @@ button.button__socials>svg {
 
 /* BUTTONS */
 
+button {
+  background-color: green;
+  border: none;
+  border-radius: 0.25em;
+}
+
 .liked {
   color: red;
 }
@@ -573,6 +639,7 @@ button.button__socials>svg {
   stroke: var(--text-color);
 }
 
+/* svg icons theme */
 button#theme-toggle.theme-toggle.light>.theme-toggle__dark {
   display: none;
 }
@@ -651,6 +718,6 @@ main {
 
 /* TEST */
 
-.notification-alert {
+.alert__notification {
   color : orange;
 }
