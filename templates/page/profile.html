@@ -36,13 +36,23 @@
   </div>
   {{end}}
 
+  <h2>Mes Posts likés</h2>
   {{range .LikedPosts}}
   <div class="post">
-    <h2>Mes Posts likés</h2>
     <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
     <p>Post text: {{ .Text }}</p>
     <!-- todo modify the date -->
     <p>Created at: {{ .CreatedAt }}</p>
+  </div>
+  {{end}}
+
+  <h2>Everything User commented</p>
+  {{range .ProfileComments }}
+  <div class="post">
+    <h3>Post commented: Title: {{ .Data.PostInfo.Title }} Text: {{ .Data.PostInfo.Text }}</p>
+    <p>Comment text: {{ .Text }}</p>
+    <p>Comment like: {{ .Like }}</p>
+    <p>Comment dislike: {{ .Dislike }}</p>
   </div>
   {{end}}
 
