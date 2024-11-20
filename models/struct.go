@@ -22,6 +22,15 @@ type Post struct {
 	Creation_Hour string
 }
 
+type Notification struct {
+	ID         string
+	ReactionID string
+	PostID     string
+	CommentID  string
+	CreatedAt  time.Time
+	IsRead     bool
+}
+
 type User struct {
 	Id           string
 	UUID         string
