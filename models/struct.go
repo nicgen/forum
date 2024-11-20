@@ -63,3 +63,12 @@ type Category struct {
 	ID   int
 	Name string
 }
+
+type Reports struct {
+	ID              string
+	User_UUID       string
+	Username        string
+	Post_ID         string
+	Reported_Reason string
+	Response_Text   string
+}

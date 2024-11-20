@@ -1,0 +1,6 @@
+{{define "block/moderator/report"}}
+<form action="/report" method="GET">
+<input type="hidden" name="Report_post" value="{{ .ID }}">
+<button href="/" class="report">Report</button>
+</form>
+{{end}}
