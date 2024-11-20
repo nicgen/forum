@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"forum/cmd/lib"
+	"forum/models"
 	"net/http"
 	"strings"
 )
@@ -16,18 +17,27 @@ func CategoriesHandler(w http.ResponseWriter, r *http.Request) {
 		categoryName := strings.TrimSpace(r.FormValue("categoryName"))
 
 		if categoryName == "" {
-			http.Error(w, "Category name cannot be empty", http.StatusBadRequest)
-			return
+			//Erreur critique : nom de catégorie ne peut pas etre vide
+			err := &models.CustomError{
+				StatusCode: http.StatusBadRequest,
+				Message:    "Veuillez remplir le champ 'nom de catégorie'",
+			}
+			HandleError(w, err.StatusCode, err.Message)
 		}
 
 		insertQuery := `INSERT INTO Categories (Name) VALUES (?)`
 		_, err := db.Exec(insertQuery, categoryName)
 		if err != nil {
-
 			if strings.Contains(err.Error(), "UNIQUE constraint failed") {
-				http.Error(w, "Category already exists", http.StatusConflict)
+				//Erreur critique : Category already exist
+				err := &models.CustomError{
+					StatusCode: http.StatusConflict,
+					Message:    "Category Already exist",
+				}
+				HandleError(w, err.StatusCode, err.Message)
 			} else {
-				http.Error(w, "Failed to create category", http.StatusInternalServerError)
+				// Erreur non critique : Echec de la création de la catégorie
+				lib.ErrorServer(w, "Échec de la création de la catégorie, veuillez réessayer plus tard.")
 				fmt.Println("Database error:", err)
 			}
 			return
