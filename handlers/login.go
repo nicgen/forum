@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"forum/cmd/lib"
 	"net/http"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -31,11 +32,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		err = stmt.QueryRow(email).Scan(&hashedPassword)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
-				if err_getdata != "OK" {
-					lib.ErrorServer(w, err_getdata)
-				}
+				data := lib.GetData(db, "null", "notlogged", "index", w, r)
 				data = lib.ErrorMessage(w, data, "LoginMail")
+				data["NavLogin"] = "show"
 				lib.RenderTemplate(w, "layout/index", "page/index", data)
 			} else {
 				lib.ErrorServer(w, "Error retrieving user data")
@@ -45,24 +44,26 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Verify password
 		if !CheckPassword(hashedPassword, password) {
-			data, err_getdata := lib.GetData(db, "null", "notlogged", "index")
-			if err_getdata != "OK" {
-				lib.ErrorServer(w, err_getdata)
-			}
+			data := lib.GetData(db, "null", "notlogged", "index", w, r)
 			data = lib.ErrorMessage(w, data, "LoginPassword")
+			data["NavLogin"] = "show"
 			lib.RenderTemplate(w, "layout/index", "page/index", data)
 		}
 
-		// Getting the UUID from the database
-		var user_uuid string
-		state := `SELECT UUID FROM User WHERE Email = ?`
-		err_user := db.QueryRow(state, email).Scan(&user_uuid)
-		if err_user != nil {
-			lib.ErrorServer(w, "Error accessing User UUID in the database")
+		var uuid, username, creation_date, creation_hour, role string
+		createdAt := time.Now()
+
+		// Making the query for infos that will be stored into the cookie
+		state_cookie := `SELECT UUID, Username, CreatedAt, Role FROM User WHERE Email = ?`
+		err_cookie := db.QueryRow(state_cookie, email).Scan(&uuid, &username, &createdAt, &role)
+		if err_cookie != nil {
+			lib.ErrorServer(w, "Error getting User informations")
 		}
+		creation_date = createdAt.Format("2006-01-02") // YYYY-MM-DD
+		creation_hour = createdAt.Format("15:04:05")   // HH:MM:SS
 
 		// Attribute a session to an User
-		lib.CookieSession(user_uuid, w, r)
+		lib.CookieSession(uuid, username, creation_date, creation_hour, email, role, w, r)
 
 	} else {
 		// If the User is already logged and tries to log-in

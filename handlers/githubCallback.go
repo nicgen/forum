@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gofrs/uuid/v5"
 	_ "github.com/mattn/go-sqlite3"
@@ -146,9 +147,14 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Setting up the variables we are going to set into cookies
+	var creation_date, creation_hour string
 	githubID, id_error := userInfo["id"].(float64)
 	email, email_error := userInfo["email"].(string)
 	username, username_error := userInfo["login"].(string)
+	actual_time := strings.Split(time.Now().Format("2006-01-02 15:04:05"), " ")
+	creation_date = actual_time[0]
+	creation_hour = actual_time[1]
 
 	if !id_error {
 		// Erreur critique : Unable to get GitHub ID
@@ -178,9 +184,10 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var userID int64
+	role := "User"
 
 	// Checking if the user is already in the database
-	err_db := db.QueryRow("SELECT ID FROM User WHERE OAuthID = ? OR Email = ?", int64(githubID), email).Scan(&userID)
+	err_db := db.QueryRow("SELECT ID, Role FROM User WHERE OAuthID = ? OR Email = ?", int64(githubID), email).Scan(&userID, &role)
 
 	// If the user doesn't exist, create a new one
 	if err_db == sql.ErrNoRows {
@@ -257,10 +264,10 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Checking if we got the user informations
-	print("-------------------------------")
-	print("User email: ", email)
-	print("Github ID: ", githubID)
-	print("-------------------------------")
+	println("-------------------------------")
+	println("User email: ", email)
+	println("Github ID: ", githubID)
+	println("-------------------------------")
 
 	// Getting the UUID from the database
 	var user_uuid string
@@ -272,18 +279,9 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Attribute a session to an User
-	lib.CookieSession(user_uuid, w, r)
+	lib.CookieSession(user_uuid, username, creation_date, creation_hour, email, role, w, r)
 
-	data, err_getdata := lib.GetData(db, user_uuid, "logged", "index")
-	if err_getdata != "OK" {
-		// Erreur critique : Error retrieving user data
-		err := &models.CustomError{
-			StatusCode: http.StatusInternalServerError,
-			Message:    "Error retrieving user data",
-		}
-		HandleError(w, err.StatusCode, err.Message)
-		return
-	}
+	data := lib.GetData(db, user_uuid, "logged", "index", w, r)
 
 	// Redirect the user to a success page or your main application
 	lib.RenderTemplate(w, "layout/index", "page/index", data)

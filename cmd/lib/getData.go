@@ -2,53 +2,59 @@ package lib
 
 import (
 	"database/sql"
-	"fmt"
-	"forum/models"
-	"strings"
-	"time"
+	"net/http"
 )
 
-func GetData(db *sql.DB, uuid string, status string, page string) (map[string]interface{}, string) {
+// ? Function to generate a map containing the informations to show on the html
+func GetData(db *sql.DB, uuid string, status string, page string, w http.ResponseWriter, r *http.Request) map[string]interface{} {
 	// Declaring the map we are going to return
 	data := map[string]interface{}{}
 
+	// Getting categories info on the data map
+	data = GetCategories(w, data)
+
 	if status == "logged" {
-		// Setting up the variables of the User informations
-		var user_username, user_email, user_creation, user_role string
 
-		// Setting up the states for the database requests
-		state_uuid := `SELECT Username FROM User WHERE UUID = ?`
-		state_email := `SELECT Email FROM User WHERE UUID = ?`
-		state_creation := `SELECT CreatedAt FROM User WHERE UUID = ?`
-		state_role := `SELECT Role FROM User WHERE UUID = ?`
-
-		// Making requests to the database
-		err_uuid := db.QueryRow(state_uuid, uuid).Scan(&user_username)
-		err_email := db.QueryRow(state_email, uuid).Scan(&user_email)
-		err_creation := db.QueryRow(state_creation, uuid).Scan(&user_creation)
-		err_role := db.QueryRow(state_role, uuid).Scan(&user_role)
+		// Getting the User infos from the cookies
+		cookie_username, err_username := r.Cookie("username")
+		cookie_date, err_date := r.Cookie("creation_date")
+		cookie_hour, err_hour := r.Cookie("creation_hour")
+		cookie_email, err_email := r.Cookie("email")
+		cookie_role, err_role := r.Cookie("role")
 
 		// Checking for database requests errors
-		if err_uuid != nil {
-			return nil, "Error accessing User UUID"
+		if err_username != nil {
+			ErrorServer(w, "Error getting Username from the cookies")
+		} else if err_date != nil {
+			ErrorServer(w, "Error getting Creation Date from the cookies")
+		} else if err_hour != nil {
+			ErrorServer(w, "Error getting Creation Hour from the cookies")
 		} else if err_email != nil {
-			return nil, "Error accessing User EMAIL"
-		} else if err_creation != nil {
-			return nil, "Error accessing User CREATION DATE"
+			ErrorServer(w, "Error getting email from the cookies")
 		} else if err_role != nil {
-			return nil, "Error accessing User ROLE"
+			ErrorServer(w, "Error getting User role from the cookies")
 		}
+
+		// Storing the post and comments liked into the data map
+		data = GetLikedPosts(w, uuid, data)
+		data = GetLikedComments(w, uuid, data)
+
+		// Storing the list of Users into the data map if the role is Admin
+		data = GetListOfUsers(w, cookie_role.Value, data)
 
 		// Posts Query based on page
 		var state_posts string
 		if page == "profile" {
-			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
+			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
 		} else if page == "index" {
-			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt FROM Posts ORDER BY CreatedAt DESC`
+			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts ORDER BY CreatedAt DESC`
+		}
+
+		data_post := map[string]interface{}{
+			"Role": cookie_role.Value,
 		}
 
 		// Users posts Request
-		var posts []*models.Post
 		var rows *sql.Rows
 		var err_post error
 
@@ -58,97 +64,42 @@ func GetData(db *sql.DB, uuid string, status string, page string) (map[string]in
 			rows, err_post = db.Query(state_posts)
 		}
 
+		data = GetPosts(w, uuid, state_posts, rows, data, data_post)
+
 		if err_post != nil {
-			return nil, "Error accessing user posts"
-		}
-		defer rows.Close()
-
-		for rows.Next() {
-			var post models.Post
-			if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt); err != nil {
-				return nil, "Error scanning user posts"
-			}
-
-			fmt.Println("---------------------------")
-			fmt.Println("Actual time: ", time.Now())
-			fmt.Println("post creation date: ", post.CreatedAt)
-			fmt.Println("---------------------------")
-			posts = append(posts, &post)
-		}
-
-		if err := rows.Err(); err != nil {
-			return nil, "Error iterating over user posts"
-		}
-
-		// Spliting the creation date into 2 different values
-		creation := strings.Split(user_creation, "T")
-		creation_Date := creation[0]
-		creation_Hour := creation[1][:len(creation[1])-1]
-
-		// Retrieve all users for admin view
-		var allUsers []models.User
-		if user_role == "Admin" {
-			allUsersQuery := `SELECT UUID, Username, Email, Role FROM User`
-			rows, err := db.Query(allUsersQuery)
-			if err != nil {
-				return nil, "Error accessing user list"
-			}
-			defer rows.Close()
-
-			for rows.Next() {
-				var user models.User
-				if err := rows.Scan(&user.UUID, &user.Username, &user.Email, &user.Role); err != nil {
-					return nil, "Error scanning users"
-				}
-				allUsers = append(allUsers, user)
-			}
-
-			if err := rows.Err(); err != nil {
-				return nil, "Error iterating over users"
-			}
+			ErrorServer(w, "Error ranging over posts")
 		}
 
 		// Storing the data into a map that can be sent into the html
-		data = map[string]interface{}{
-			"Username":     user_username,
-			"Email":        user_email,
-			"CreationDate": creation_Date,
-			"CreationHour": creation_Hour,
-			"Role":         user_role,
-			"Posts":        posts,
-			"AllUsers":     allUsers,
-		}
+		data["Username"] = cookie_username.Value
+		data["Email"] = cookie_email.Value
+		data["CreationDate"] = cookie_date.Value
+		data["CreationHour"] = cookie_hour.Value
+		data["Role"] = cookie_role.Value
+		data["UUID"] = uuid
+		data["NavLogin"] = "hide"
+		data["NavRegister"] = "hide"
+
 	} else {
+
+		// Map to send to the posts map
+		data_post := map[string]interface{}{
+			"Role": "Guest",
+		}
+
 		// Not logged in - show all posts
-		state_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt FROM Posts ORDER BY CreatedAt DESC`
-		var posts []*models.Post
+		state_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts ORDER BY CreatedAt DESC`
 		rows, err := db.Query(state_posts)
 		if err != nil {
-			return nil, "Error accessing posts"
-		}
-		defer rows.Close()
-
-		for rows.Next() {
-			var post models.Post
-			if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt); err != nil {
-				return nil, "Error scanning posts"
-			}
-			posts = append(posts, &post)
+			ErrorServer(w, "Error accessing posts")
 		}
 
-		if err := rows.Err(); err != nil {
-			return nil, "Error iterating over posts"
-		}
-
-		data = map[string]interface{}{
-			"Username":     nil,
-			"Email":        nil,
-			"CreationDate": nil,
-			"CreationHour": nil,
-			"Role":         "Guest",
-			"Posts":        posts,
-		}
+		// Setting up the map
+		data = GetPosts(w, "", state_posts, rows, data, data_post)
+		data["Role"] = "Guest"
+		data["NavLogin"] = "hide"
+		data["NavRegister"] = "hide"
 	}
 
-	return data, "OK"
+	return data
 }

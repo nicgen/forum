@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"fmt"
 	"forum/cmd/lib"
 	"forum/models"
@@ -28,6 +29,7 @@ func UpdateUserToModerator(w http.ResponseWriter, r *http.Request) {
 
 	// Update the user's role to "Moderator"
 	query := `UPDATE User SET Role = 'Moderator' WHERE UUID = ?`
+	fmt.Println("ModRequest")
 	_, err := db.Exec(query, userUUID)
 	if err != nil {
 		// Erreur critique : Échec de la mise à jour du rôle de l'utilisateur
@@ -94,8 +96,16 @@ func AdminDeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := `UPDATE User SET Role = 'DeletUser' WHERE UUID = ?`
-	_, err := db.Exec(query, userUUID)
+	// Génère un nom d'utilisateur anonyme unique
+	newUsername, err := getNextAnonymousUsername(db)
+	if err != nil {
+		lib.ErrorServer(w, "Failed to generate anonymous username.")
+		fmt.Println("Error generating anonymous username:", err)
+		return
+	}
+
+	query := `UPDATE User SET Role = 'DeleteUser', username = ? WHERE UUID = ?`
+	_, err = db.Exec(query, newUsername, userUUID)
 	if err != nil {
 		// Erreur critique : Échec de la mise à jour du rôle de l'utilisateur
 		err := &models.CustomError{
@@ -109,16 +119,28 @@ func AdminDeleteUser(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
 
+func getNextAnonymousUsername(db *sql.DB) (string, error) {
+	var lastNumber int
+	query := `SELECT COALESCE(MAX(CAST(SUBSTRING(username, 8) AS UNSIGNED)), 0) FROM User WHERE username LIKE 'Anonyme%'`
+	err := db.QueryRow(query).Scan(&lastNumber)
+	if err != nil {
+		return "", err
+	}
+	nextNumber := lastNumber + 1
+	return fmt.Sprintf("Anonyme%d", nextNumber), nil
+}
+
+// Fonction pour supprimer un utilisateur en le rendant anonyme
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
-	// Check if the request method is POST
+	// Vérifie que la méthode de requête est POST
 	if r.Method != http.MethodPost {
 		// Erreur non critique : Méthode de requête invalide
 		lib.ErrorServer(w, "Invalid request method.")
 		return
 	}
 
-	// Retrieve the user's UUID from the form
+	// Récupère l'UUID de l'utilisateur depuis le formulaire
 	userUUID := r.FormValue("userUUID")
 	fmt.Println("Received userUUID:", userUUID)
 	if userUUID == "" {
@@ -127,8 +149,17 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := `UPDATE User SET Role = 'DeletUser' WHERE UUID = ?`
-	_, err := db.Exec(query, userUUID)
+	// Génère un nom d'utilisateur anonyme unique
+	newUsername, err := getNextAnonymousUsername(db)
+	if err != nil {
+		lib.ErrorServer(w, "Failed to generate anonymous username.")
+		fmt.Println("Error generating anonymous username:", err)
+		return
+	}
+
+	// Met à jour le rôle et le nom de l'utilisateur avec un numéro incrémenté
+	query := `UPDATE User SET Role = 'DeleteUser', username = ? WHERE UUID = ?`
+	_, err = db.Exec(query, newUsername, userUUID)
 	if err != nil {
 		// Erreur critique : Échec de la mise à jour du rôle de l'utilisateur
 		err := &models.CustomError{
@@ -139,6 +170,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Supprime le cookie de session
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_id",
 		Value:    "",
@@ -146,9 +178,10 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
-		Expires:  time.Now().Add(-1 * time.Hour), // Expire immediately
+		Expires:  time.Now().Add(-1 * time.Hour), // Expire immédiatement
 	})
 
-	// Redirect or send a success message
+	// Redirige ou envoie un message de succès
+	lib.LogoutHandler(w, r)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

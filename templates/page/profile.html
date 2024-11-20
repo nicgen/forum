@@ -1,30 +1,49 @@
-  {{define "page/profile"}}
-    <h2>Welcome, {{ .Username }}</h2>
-    <h3>Your Email: {{ .Email }}</h3>
-    <h3>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</h3>
-    <h3>Your role: {{ .Role }}</h3>
-    
-    {{if eq .Role "Admin"}}
-    {{template "block/admin/users" .}}
-    {{end}}
-    {{if eq .Role "User" }}
-    <ul>
-      <li>
-        Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
-        <form method="POST" action="/admin/delete-user">
-          <input type="hidden" name="userUUID" value="{{ .UUID }}">
-          <button type="submit">Delete my account</button>
-        </form>
-      </li>
-    </ul>
-    {{end}}
-
-    
-    {{ range .Posts }}
-    <div class="post">
-      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-      <p>Post text: {{ .Text }}</p>
-      <p>Created at: {{ .CreatedAt }}</p>
-    </div>
-    {{end}}
+{{define "page/profile"}}
+  <h2>Welcome, {{ .Username }}</h2>
+  <h3>Your Email: {{ .Email }}</h3>
+  <h3>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</h3>
+  <h3>Your role: {{ .Role }}</h3>
+  
+  
+  {{if eq .Role "Admin"}}
+  {{template "block/admin/users" .}}
+  {{template "block/admin/categories" .}}
   {{end}}
+  {{if eq .Role "User" }}
+  <ul>
+    <li>
+      Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
+      <form method="POST" action="/admin/delete-user">
+        <input type="hidden" name="userUUID" value="{{ .UUID }}">
+        <button type="submit">Delete my account</button>
+      </form>
+    </li>
+  </ul>
+  {{end}}
+  {{if eq .Role "User"}}
+  <form method="POST" action="/update-request">
+    <input type="hidden" name="userUUID" value="{{ .UUID }}">
+    <button type="submit">Request Mod</button>
+  </form>
+  {{end}}
+  {{ range .Posts }}
+  <h2>Mes Posts</h2>
+  <div class="post">
+    <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+    <p>Post text: {{ .Text }}</p>
+    <!-- todo modify the date -->
+    <p>Created at: {{ .CreatedAt }}</p>
+  </div>
+  {{end}}
+
+  {{range .LikedPosts}}
+  <div class="post">
+    <h2>Mes Posts likés</h2>
+    <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+    <p>Post text: {{ .Text }}</p>
+    <!-- todo modify the date -->
+    <p>Created at: {{ .CreatedAt }}</p>
+  </div>
+  {{end}}
+
+{{end}}
