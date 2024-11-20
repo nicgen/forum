@@ -1,15 +1,21 @@
 {{define "block/content/post"}}
 <article aria-label="Forum post" role="article">
   <header>
-    <h2 aria-label="Post title" role="heading" id="post-title-1">
-    <a href="#post-content-1" aria-label="Link to post content">
-      {{ .Title }}
-    </a>
-    </h2>
+    <h2 aria-label="Post title" role="heading" id="post-title-1">{{ .Title }}</h2>
+    <h3>{{ .Username }}</h3>
+    
+    <!-- todo, add list of category to the post -->
+    <div>
+    {{/* range .Category_ID */}}
+      {{ .Category_ID }}
+    {{/* end */}}
+    </div>
     <p aria-label="Post date" role="definition">
-    {{ .CreatedAt }}
+      {{ .Creation_Date }}
+      {{/* .Creation_Hour */}}
     </p>
   </header>
+
   <!-- post image -->
   {{/* if .image_url */}}
   <figure aria-label="Post image" role="img">
@@ -19,9 +25,52 @@
   {{/* else */}}
   <p>no image (text for testing purpose only, delete on 'block/content/post.html')</p>
   {{/* end */}}
+
   <!-- post content -->
   <div aria-label="Post content" role="contentinfo" id="post-content-1">
       {{ .Text }}
   </div>
-</article>  
+
+  <!-- action (like/dislike) -->
+  <div class="like__container">
+    <div class="like__content">
+      <h2 class="like__number">{{if .Like }}{{ .Like }}{{ else }}0{{end}}</h2>
+      <form action="/like" method="POST">
+        <input type="hidden" name="id" value="{{ .ID }}">
+        <button name="like_post" value="like_post" class="ico__like {{ if eq .Status "liked" }}liked{{end}}" {{ if eq .Data.Role "Guest" }}disabled{{end}}>{{ template "ico_thumb-up"}}</button>
+      </form>
+    </div>
+    <div class="like__content">
+      <h2 class="like__number">{{if .Dislike }}{{ .Dislike }}{{ else }}0{{end}}</h2>
+      <form action="/like" method="POST">
+        <input type="hidden" name="id" value="{{ .ID }}">
+        <button name="dislike_post" value="dislike_post" class="ico__like {{ if eq .Status "disliked" }}liked{{end}}" {{ if eq .Data.Role "Guest" }}disabled{{end}}>{{ template "ico_thumb-down"}}</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- add comment -->
+  <div>{{template "block/content/comment_add" .}}</div>
+
+  <!-- show comments -->
+  {{ if .Comments }}
+  <h2>Comments</h2>
+  <h3>{{.ID}}</h3>
+  <ul>
+    {{ range .Comments }}
+    <li>
+      {{ template "block/content/comment" . }}
+      {{ .Text }}
+      {{ .Like }}
+      {{ .Dislike }}
+      {{ .Creation_Date }}
+      {{ .Creation_Hour }}
+    </li>
+    {{ end }}
+  </ul>
+  {{else}}
+    Oh No! There's no comments...
+  {{ end }}
+
+</article>
 {{end}}

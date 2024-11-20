@@ -74,7 +74,9 @@ func setupMux() *http.ServeMux {
 	// Authentication
 	mux.HandleFunc("/register", handlers.RegisterHandler)
 	mux.HandleFunc("/login", handlers.LoginHandler)
-	mux.HandleFunc("/logout", handlers.LogoutHandler)
+	mux.HandleFunc("/logout", lib.LogoutHandler)
+	mux.HandleFunc("/nav-register", handlers.NavRegister)
+	mux.HandleFunc("/nav-login", handlers.NavLogin)
 
 	// Tier Authentication
 	mux.HandleFunc("/google", handlers.GoogleOAuthHandler)
@@ -87,11 +89,15 @@ func setupMux() *http.ServeMux {
 	// DB Requests
 	mux.HandleFunc("/profile", handlers.AuthMiddleware(handlers.ProfileHandler))
 	mux.HandleFunc("/post", handlers.AuthMiddleware(handlers.PostHandler))
+	mux.HandleFunc("/create-post", handlers.AuthMiddleware(handlers.CreatePostHandler))
+	mux.HandleFunc("/comment", handlers.AuthMiddleware(handlers.CommentHandler))
 	mux.HandleFunc("/like", handlers.AuthMiddleware(handlers.LikeHandler))
 	mux.HandleFunc("/admin/update-role", handlers.AuthMiddleware(handlers.UpdateUserToModerator))
 	mux.HandleFunc("/admin/remove-role", handlers.AuthMiddleware(handlers.RemoveModerator))
 	mux.HandleFunc("/admin/delete-user", handlers.AuthMiddleware(handlers.DeleteUser))
 	mux.HandleFunc("/admin/admindelete-user", handlers.AuthMiddleware(handlers.AdminDeleteUser))
+	mux.HandleFunc("/create-category", handlers.AuthMiddleware(handlers.CategoriesHandler))
+	mux.HandleFunc("/update-request", handlers.AuthMiddleware(handlers.RequestHandler))
 
 	// Basic Web handlers
 	mux.HandleFunc("/about", handlers.AboutHandler)

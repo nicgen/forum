@@ -1,4 +1,3 @@
-{{define "requests-liste"}}
-{{ if or (eq .Role "Admin") (eq .Role "Moderator") }}
-{{end}}
+{{define "requests-list"}}
+    {{ if or (eq .Role "Admin") (eq .Role "Moderator") }}{{end}}
 {{end}}

@@ -2,27 +2,33 @@
 {{ if and (ne .Role "Admin") (ne .Role "User") (ne .Role "Moderator") }}
     <div class="filtre">
     <h2>Filters</h2>
-        <form>
+        <form action="/filters" method="GET">
             <div class="date-publication">
-                <label for="date-publication">Date de publication :</label>
-                <select id="date-publication" name="date-publication">
-                    <option value="toutes">Toutes les dates</option>
-                    <option value="aujourd-hui">Aujourd'hui</option>
-                    <option value="hier">Hier</option>
-                    <option value="cette-semaine">Cette semaine</option>
-                    <option value="ce-mois">Ce mois</option>
+                <label for="Period">Date de publication :</label>
+                <select id="Period" name="Period">
+                    <option value="week">Cette semaine</option>
+                    <option value="month">Ce mois</option>
+                    <option value="year">Ce mois</option>
                 </select>
             </div>
             <div class="nombre-like">
-                <label for="nombre-like">Nombre de like :</label>
-                <select id="nombre-like" name="nombre-like">
-                    <option value="tous">Tous les like</option>
+                <label for="Like">Nombre de like :</label>
+                <select id="Like" name="Like">
                     <option value="1-10">1-10 like</option>
                     <option value="11-50">11-50 like</option>
                     <option value="51-100">51-100 like</option>
                     <option value="plus-de-100">Plus de 100 like</option>
                 </select>
             </div>
+            <div class="nombre-dislike">
+              <label for="Dislike">Nombre de like :</label>
+              <select id="Dislike" name="Dislike">
+                  <option value="1-10">1-10 dislike</option>
+                  <option value="11-50">11-50 dislike</option>
+                  <option value="51-100">51-100 dislike</option>
+                  <option value="plus-de-100">Plus de 100 dislike</option>
+              </select>
+          </div>
             <button type="submit">Filtrer</button>
         </form>
 </div>

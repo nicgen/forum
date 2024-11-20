@@ -4,6 +4,7 @@
     <span aria-label="Number of comments" role="definition">{{/* comments_count */}}</span>
     <a href="#comments" aria-label="Link to comments" role="button">Comments</a>
   </div>
+
   <div aria-label="Likes" role="definition">
     <span aria-label="Number of likes" role="definition">{{/* likes_count */}}</span>
     <button aria-label="Like button" role="button" aria-pressed="{{/* liked */}}" {{ if eq .Role "Guest" }}'disabled'{{ else }}''{{ end }} >
@@ -11,6 +12,7 @@
       Like
     </button>
   </div>
+  
   <div aria-label="Dislikes" role="definition">
     <span aria-label="Number of dislikes" role="definition">{{/* dislikes_count */}}</span>
     <button aria-label="Dislike button" role="button" aria-pressed="{{/* disliked */}}" {{ if eq .Role "Guest" }}'disabled'{{ else }}''{{ end }}>
