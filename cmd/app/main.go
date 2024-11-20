@@ -92,17 +92,20 @@ func setupMux() *http.ServeMux {
 	mux.HandleFunc("/create-post", handlers.AuthMiddleware(handlers.CreatePostHandler))
 	mux.HandleFunc("/comment", handlers.AuthMiddleware(handlers.CommentHandler))
 	mux.HandleFunc("/like", handlers.AuthMiddleware(handlers.LikeHandler))
+	mux.HandleFunc("/delete", handlers.AuthMiddleware(handlers.DeletePostComment))
+	mux.HandleFunc("/modify", handlers.AuthMiddleware(handlers.ModifyPostComment))
 	mux.HandleFunc("/admin/update-role", handlers.AuthMiddleware(handlers.UpdateUserToModerator))
 	mux.HandleFunc("/admin/remove-role", handlers.AuthMiddleware(handlers.RemoveModerator))
 	mux.HandleFunc("/admin/delete-user", handlers.AuthMiddleware(handlers.DeleteUser))
 	mux.HandleFunc("/admin/admindelete-user", handlers.AuthMiddleware(handlers.AdminDeleteUser))
 	mux.HandleFunc("/create-category", handlers.AuthMiddleware(handlers.CategoriesHandler))
 	mux.HandleFunc("/filters", handlers.FiltersHandler)
+	mux.HandleFunc("/update-request", handlers.AuthMiddleware(handlers.RequestHandler))
 
 	// Basic Web handlers
 	mux.HandleFunc("/about", handlers.AboutHandler)
-	mux.HandleFunc("/error", handlers.ForceDirectError) // !for testing purpose only (not for production)
-	mux.HandleFunc("/500", handlers.Force500Handler)    // !for testing purpose only (not for production)
+	//mux.HandleFunc("/error", handlers.ForceDirectError) // !for testing purpose only (not for production)
+	//mux.HandleFunc("/500", handlers.Force500Handler)    // !for testing purpose only (not for production)
 
 	return mux
 }

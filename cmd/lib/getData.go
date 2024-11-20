@@ -60,11 +60,11 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 
 		if page == "profile" {
 			rows, err_post = db.Query(state_posts, uuid)
-			data = GetPosts(w, uuid, state_posts, rows, data, data_post)
 		} else {
 			rows, err_post = db.Query(state_posts)
-			data = GetPosts(w, uuid, state_posts, rows, data, data_post)
 		}
+
+		data = GetPosts(w, uuid, state_posts, rows, data, data_post)
 
 		if err_post != nil {
 			ErrorServer(w, "Error ranging over posts")
