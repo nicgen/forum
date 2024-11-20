@@ -273,6 +273,75 @@ main .container{
 ------------------------------------------
 */
 
+/*Create post area style */
+  /* it maybe still a bit buggy, need some more work */
+form {
+  max-width: 600px; /* Set a max width for the form */
+  margin: 20px auto; /* Center the form */
+  padding: 20px; /* Add padding */
+  border: 1px solid #ccc; /* Add a border */
+  border-radius: 8px; /* Rounded corners */
+  background-color: (--bkg-color); /* Light background color */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Style for select dropdown */
+select {
+  width: 100%; /* Full width */
+  padding: 10px; /* Padding inside the dropdown */
+  margin-bottom: 20px; /* Space below the dropdown */
+  border: 1px solid #ccc; /* Border for the dropdown */
+  border-radius: 4px; /* Rounded corners */
+  font-size: 16px; /* Font size */
+}
+
+/* Style for labels */
+label {
+  display: block; /* Make labels block elements */
+  margin-bottom: 5px; /* Space below labels */
+  font-weight: bold; /* Bold text */
+}
+
+/* Style for textareas */
+.post-title-area {
+  height: 40px;
+  width: 100%; /* Full width */
+  padding: 10px; /* Padding inside the textarea */
+  margin-bottom: 20px; /* Space below textareas */
+  border: 1px solid #ccc; /* Border for the textarea */
+  border-radius: 4px; /* Rounded corners */
+  font-size: 16px; /* Font size */
+  resize: none; /* Allow vertical resizing only */
+}
+.post-content-area{
+  width: 100%; /* Full width */
+  height: 130px; /* Set a height */
+  padding: 10px; /* Padding inside the textarea */
+  margin-bottom: 20px; /* Space below textareas */
+  border: 1px solid #ccc; /* Border for the textarea */
+  border-radius: 4px; /* Rounded corners */
+  font-size: 16px; /* Font size */
+  resize: none; /* Allow vertical resizing only */
+}
+
+/* General Style for all the button */
+button {
+  font-family: 'Courier New', Courier, monospace;
+  display: inline-block; /* Make links block elements */
+  padding: 10px 10px 10px 10px;; /* Padding for links */
+  margin: 7px;
+
+  border: none;
+  border-radius: 10px;
+  text-decoration: none; /* Remove underline from links */
+  justify-content: space-between;
+
+  color: var(--text-color); /* Text color */
+  cursor: pointer;
+}
+
+/*-------------------------------------*/
+
 header {
   background-color: var(--nav-bg-color);
   /* padding: 10px 20px; */
@@ -355,21 +424,7 @@ header {
   width: auto;
 
 }
-/* Style for links in the profile dropdown */
-.profile-dropdown>button {
-  font-family: 'Courier New', Courier, monospace;
-  display: inline-block; /* Make links block elements */
-  padding: 10px 10px 10px 10px;; /* Padding for links */
-  margin: 7px;
 
-  border: none;
-  border-radius: 10px;
-  text-decoration: none; /* Remove underline from links */
-  justify-content: space-between;
-
-  color: var(--text-color); /* Text color */
-  cursor: pointer;
-}
 @keyframes fadeIn {
   from {
       opacity: 0;
