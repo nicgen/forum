@@ -129,10 +129,11 @@ func CreateTables() {
 
 		`CREATE TABLE IF NOT EXISTS Report (
   ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  Reported_ID INTEGER NOT NULL, 
   User_UUID VARCHAR(255) NOT NULL,
-  Reported_Reason INTEGER NOT NULL,
-  Reported_Text TEXT,
+  Username VARCHAR(255) NOT NULL,
+  Post_ID INTEGER NOT NULL,
+  
+  Respons_Text TEXT,
   FOREIGN KEY (User_UUID) REFERENCES User(UUID)
 );`,
 
