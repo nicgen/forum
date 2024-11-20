@@ -1,60 +1,135 @@
 package handlers
 
 import (
-	"database/sql"
 	"forum/cmd/lib"
 	"forum/models"
+	"log"
 	"net/http"
-	"strings"
+	"strconv"
+	"time"
 )
 
-// TODO test if we want post and comments to be outside of index
 func PostHandler(w http.ResponseWriter, r *http.Request) {
-	// Getting database data into a variable
 	db := lib.GetDB()
-
-	// Getting the id of the post selected
 	post_id := r.URL.Query().Get("id")
 
-	// Getting User data and posts
-	data := lib.DataTest(w, r)
-	data = lib.ErrorMessage(w, data, "none")
+	var post models.Post
+	query := `
+        SELECT 
+            p.ID, 
+            c.Name, 
+            p.Title, 
+            p.Text, 
+            p.Like, 
+            p.Dislike, 
+            p.CreatedAt, 
+            u.Username, 
+            p.ImagePath,
+            p.User_UUID,
+            u.Role
+        FROM Posts p
+        JOIN Categories c ON p.Category_ID = c.ID
+        JOIN User u ON p.User_UUID = u.UUID
+        WHERE p.ID = ?
+    `
+	err := db.QueryRow(query, post_id).Scan(
+		&post.ID,
+		&post.Category_ID,
+		&post.Title,
+		&post.Text,
+		&post.Like,
+		&post.Dislike,
+		&post.CreatedAt,
+		&post.Username,
+		&post.ImagePath,
+		&post.User_UUID,
+		&post.Role,
+	)
+	if err != nil {
+		log.Printf("Debug - Post Details: ID=%d, Title=%s, ImagePath=%s", post.ID, post.Title, post.ImagePath)
+		log.Printf("Error fetching post details: %v", err)
+		lib.ErrorServer(w, "Error fetching post details")
+		return
+	}
 
-	state_comment := `SELECT ID, Text, Like, Dislike, CreatedAt, User_UUID, Post_ID FROM Comments WHERE Post_ID = ? ORDER BY CreatedAt DESC`
-	// Users posts Request
-	var comments []*models.Comment
-	var rows_comment *sql.Rows
+	// Récupération des commentaires
+	state_comment := `
+        SELECT 
+            c.ID, 
+            c.Text, 
+            c.Like, 
+            c.Dislike, 
+            c.CreatedAt, 
+            u.Username,
+            c.User_UUID
+        FROM Comments c
+        JOIN User u ON c.User_UUID = u.UUID
+        WHERE c.Post_ID = ?
+        ORDER BY c.CreatedAt DESC
+    `
+
 	rows_comment, err_comment := db.Query(state_comment, post_id)
 	if err_comment != nil {
+		log.Printf("Error querying comments: %v", err_comment)
 		lib.ErrorServer(w, "Error accessing user comments")
+		return
 	}
-
 	defer rows_comment.Close()
 
+	var comments []*models.Comment
 	for rows_comment.Next() {
 		var comment models.Comment
-		if err := rows_comment.Scan(&comment.ID, &comment.Text, &comment.Like, &comment.Dislike, &comment.CreatedAt, &comment.User_UUID, &comment.Post_ID); err != nil {
+		var createdAt time.Time
+
+		err := rows_comment.Scan(
+			&comment.ID,
+			&comment.Text,
+			&comment.Like,
+			&comment.Dislike,
+			&createdAt,
+			&comment.Username,
+			&comment.User_UUID,
+		)
+
+		if err != nil {
+			log.Printf("Error scanning comment: %v", err)
 			lib.ErrorServer(w, "Error scanning posts comments")
+			return
 		}
 
-		time_comment := strings.Split(comment.CreatedAt.Format("2006-01-02 15:04:05"), " ")
-		comment.Creation_Date = time_comment[0]
-		comment.Creation_Hour = time_comment[1]
-
-		// Getting the Username of the person who made the comment
-		state_username := `SELECT Username FROM User WHERE UUID = ?`
-		err_db := db.QueryRow(state_username, comment.User_UUID).Scan(&comment.Username)
-		if err_db != nil {
-			// Erreur critique : Échec de l'insertion du post
-			err := &models.CustomError{
-				StatusCode: http.StatusInternalServerError,
-				Message:    "Error inserting new post, please try again later.",
-			}
-			HandleError(w, err.StatusCode, err.Message)
-
-			comments = append(comments, &comment)
-		}
-
-		lib.RenderTemplate(w, "layout/index", "page/post", data)
+		comment.CreatedAt = createdAt
+		comments = append(comments, &comment)
 	}
+
+	post.Comments = comments
+
+	// Préparation des données pour le template
+	data := lib.DataTest(w, r)
+
+	if post.ImagePath != "" {
+		log.Printf("Image path is not empty: %s", post.ImagePath)
+	} else {
+		log.Printf("Warning: Image path is empty for post %d", post.ID)
+	}
+
+	// Vérification du statut de like/dislike
+	cookie, _ := r.Cookie("session_id")
+	if cookie != nil {
+		// Convertissez post.ID en string
+		post.Status = lib.CheckStatus(w, cookie.Value, strconv.Itoa(post.ID), "post")
+
+		// Vérifier si l'utilisateur est l'auteur
+		if post.User_UUID == cookie.Value {
+			post.IsAuthor = "yes"
+		} else {
+			post.IsAuthor = "no"
+		}
+
+		// Récupérer les données utilisateur
+		post.Data = data
+	}
+
+	data["Post"] = post
+	log.Printf("Rendering post with ImagePath: %s", post.ImagePath)
+	lib.RenderTemplate(w, "layout/index", "page/post", data)
 }

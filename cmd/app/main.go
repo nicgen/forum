@@ -68,6 +68,9 @@ func setupMux() *http.ServeMux {
 	// Servir des fichiers statiques
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
+	// upload pictures
+	//mux.Handle("/static/uploads/", http.StripPrefix("/static/uploads/", http.FileServer(http.Dir("./static/uploads/"))))
+
 	// Set up routes
 	mux.HandleFunc("/", handlers.IndexHandler)
 
@@ -100,7 +103,6 @@ func setupMux() *http.ServeMux {
 	mux.HandleFunc("/admin/admindelete-user", handlers.AuthMiddleware(handlers.AdminDeleteUser))
 	mux.HandleFunc("/create-category", handlers.AuthMiddleware(handlers.CategoriesHandler))
 	mux.HandleFunc("/update-request", handlers.AuthMiddleware(handlers.RequestHandler))
-
 	// Basic Web handlers
 	mux.HandleFunc("/about", handlers.AboutHandler)
 	//mux.HandleFunc("/error", handlers.ForceDirectError) // !for testing purpose only (not for production)
