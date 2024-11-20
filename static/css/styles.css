@@ -313,7 +313,7 @@ label {
   font-size: 16px; /* Font size */
   resize: none; /* Allow vertical resizing only */
 }
-.post-content-area{
+.post-content-area, .comment-area, .modify-area{
   width: 100%; /* Full width */
   height: 130px; /* Set a height */
   padding: 10px; /* Padding inside the textarea */
