@@ -68,6 +68,9 @@ func WithErrorHandling(next http.Handler) http.Handler {
 					case "Unauthorized":
 						statusCode = http.StatusUnauthorized
 						message = "Status Unauthorized"
+					case "StatusConflict":
+						statusCode = http.StatusConflict
+						message = "Status Conflict"
 					default:
 						// fmt.Println(">>>>>>>>>>STRING:Internal<<<<<<<<<<")
 						statusCode = http.StatusInternalServerError
