@@ -11,6 +11,7 @@ type Post struct {
 	Username      string
 	Title         string
 	Text          string
+	IsAuthor      string
 	Status        string
 	Like          int
 	Dislike       int
@@ -30,8 +31,7 @@ type User struct {
 	CreatedAt    time.Time
 	StrCreatedAt string
 	Role         string
-	// IsMod        bool
-	// IsAdmin      bool
+	IsRequest    bool
 }
 
 type Comment struct {
@@ -47,6 +47,7 @@ type Comment struct {
 	Like          int
 	Dislike       int
 	Status        string
+	IsAuthor      string
 }
 
 type Category struct {

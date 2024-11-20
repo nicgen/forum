@@ -29,6 +29,13 @@ func GetPosts(w http.ResponseWriter, uuid, state string, rows *sql.Rows, data, d
 		if data_user["Role"] != "Guest" {
 			// Check the post status with user's uuid and post id
 			post.Status = CheckStatus(w, uuid, post.ID, "post")
+
+			// Check if the post is from the User making the request
+			if post.User_UUID == uuid {
+				post.IsAuthor = "yes"
+			} else {
+				post.IsAuthor = "no"
+			}
 		}
 
 		state_comment := `SELECT ID, Text, Like, Dislike, CreatedAt, User_UUID, Post_ID FROM Comments WHERE Post_ID = ? ORDER BY CreatedAt DESC`
@@ -58,6 +65,13 @@ func GetPosts(w http.ResponseWriter, uuid, state string, rows *sql.Rows, data, d
 			if data_user["Role"] != "Guest" {
 				// Check the post status with user's uuid and post id
 				post.Status = CheckStatus(w, uuid, post.ID, "comment")
+
+				// Check if the post is from the User making the request
+				if post.User_UUID == uuid {
+					comment.IsAuthor = "yes"
+				} else {
+					comment.IsAuthor = "no"
+				}
 			}
 
 			data_comment := map[string]interface{}{

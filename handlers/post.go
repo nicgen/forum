@@ -45,11 +45,16 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 		state_username := `SELECT Username FROM User WHERE UUID = ?`
 		err_db := db.QueryRow(state_username, comment.User_UUID).Scan(&comment.Username)
 		if err_db != nil {
-			lib.ErrorServer(w, "Error getting User's Username for the comment")
+			// Erreur critique : Échec de l'insertion du post
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error inserting new post, please try again later.",
+			}
+			HandleError(w, err.StatusCode, err.Message)
+
+			comments = append(comments, &comment)
 		}
 
-		comments = append(comments, &comment)
+		lib.RenderTemplate(w, "layout/index", "page/post", data)
 	}
-
-	lib.RenderTemplate(w, "layout/index", "page/post", data)
 }

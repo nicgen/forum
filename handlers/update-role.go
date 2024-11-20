@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"forum/cmd/lib"
+	"forum/models"
 	"net/http"
 	"time"
 )
@@ -13,21 +14,31 @@ func UpdateUserToModerator(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 	// Check if the request method is POST
 	if r.Method != http.MethodPost {
+		// Erreur non critique : Méthode de requête invalide
 		lib.ErrorServer(w, "Invalid request method.")
+		return
 	}
 
 	// Retrieve the user's UUID from the form
 	userUUID := r.FormValue("userUUID")
 	if userUUID == "" {
-		lib.ErrorServer(w, "User UUID is required.")
+		// Erreur non critique : UUID de l'utilisateur requis
+		lib.ErrorServer(w, "User  UUID is required.")
+		return
 	}
 
 	// Update the user's role to "Moderator"
 	query := `UPDATE User SET Role = 'Moderator' WHERE UUID = ?`
+	fmt.Println("ModRequest")
 	_, err := db.Exec(query, userUUID)
 	if err != nil {
-		lib.ErrorServer(w, "Failed to update user role.")
-		fmt.Println("Error updating user role:", err)
+		// Erreur critique : Échec de la mise à jour du rôle de l'utilisateur
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Failed to update user role to Moderator",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	// Redirect or send a success message
@@ -38,20 +49,29 @@ func RemoveModerator(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 	// Check if the request method is POST
 	if r.Method != http.MethodPost {
+		// Erreur non critique : Méthode de requête invalide
 		lib.ErrorServer(w, "Invalid request method.")
+		return
 	}
 
 	// Retrieve the user's UUID from the form
 	userUUID := r.FormValue("userUUID")
 	if userUUID == "" {
-		lib.ErrorServer(w, "User UUID is required.")
+		// Erreur non critique : UUID de l'utilisateur requis
+		lib.ErrorServer(w, "User  UUID is required.")
+		return
 	}
 
 	query := `UPDATE User SET Role = 'User' WHERE UUID = ?`
 	_, err := db.Exec(query, userUUID)
 	if err != nil {
-		lib.ErrorServer(w, "Failed to update user role.")
-		fmt.Println("Error updating user role:", err)
+		// Erreur critique : Échec de la mise à jour du rôle de l'utilisateur
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Failed to update user role to User",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	// Redirect or send a success message
@@ -62,14 +82,18 @@ func AdminDeleteUser(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 	// Check if the request method is POST
 	if r.Method != http.MethodPost {
+		// Erreur non critique : Méthode de requête invalide
 		lib.ErrorServer(w, "Invalid request method.")
+		return
 	}
 
 	// Retrieve the user's UUID from the form
 	userUUID := r.FormValue("userUUID")
 	fmt.Println("Received userUUID:", userUUID)
 	if userUUID == "" {
-		lib.ErrorServer(w, "User UUID is required.")
+		// Erreur non critique : UUID de l'utilisateur requis
+		lib.ErrorServer(w, "User  UUID is required.")
+		return
 	}
 
 	// Génère un nom d'utilisateur anonyme unique
@@ -83,10 +107,14 @@ func AdminDeleteUser(w http.ResponseWriter, r *http.Request) {
 	query := `UPDATE User SET Role = 'DeleteUser', username = ? WHERE UUID = ?`
 	_, err = db.Exec(query, newUsername, userUUID)
 	if err != nil {
-		lib.ErrorServer(w, "Failed to update user role.")
-		fmt.Println("Error updating user role:", err)
+		// Erreur critique : Échec de la mise à jour du rôle de l'utilisateur
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Failed to update user role to DeletUser ",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
-
 	// Redirect or send a success message
 	http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
@@ -107,6 +135,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 	// Vérifie que la méthode de requête est POST
 	if r.Method != http.MethodPost {
+		// Erreur non critique : Méthode de requête invalide
 		lib.ErrorServer(w, "Invalid request method.")
 		return
 	}
@@ -115,7 +144,8 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	userUUID := r.FormValue("userUUID")
 	fmt.Println("Received userUUID:", userUUID)
 	if userUUID == "" {
-		lib.ErrorServer(w, "User UUID is required.")
+		// Erreur non critique : UUID de l'utilisateur requis
+		lib.ErrorServer(w, "User  UUID is required.")
 		return
 	}
 
@@ -131,8 +161,12 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	query := `UPDATE User SET Role = 'DeleteUser', username = ? WHERE UUID = ?`
 	_, err = db.Exec(query, newUsername, userUUID)
 	if err != nil {
-		lib.ErrorServer(w, "Failed to update user role.")
-		fmt.Println("Error updating user role:", err)
+		// Erreur critique : Échec de la mise à jour du rôle de l'utilisateur
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Failed to update user role to DeletUser ",
+		}
+		HandleError(w, err.StatusCode, err.Message)
 		return
 	}
 

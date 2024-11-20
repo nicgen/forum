@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"forum/cmd/lib"
+	"forum/models"
 	"net/http"
 	"net/url"
 	"os"
@@ -18,13 +19,20 @@ func GoogleOAuthHandler(w http.ResponseWriter, r *http.Request) {
 	// Generate a random state parameter to prevent CSRF attacks
 	state, err_state := lib.GenerateRandomID()
 	if err_state != nil {
-		lib.ErrorServer(w, "Error generating state")
+		// Erreur critique : Échec de la génération de l'état
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error generating state",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	// Store the state in the database
 	_, err := db.Exec("INSERT INTO oauth_states (state) VALUES (?)", state)
 	if err != nil {
-		lib.ErrorServer(w, "Error storing state")
+		// Erreur non critique : Échec de la mise à jour de l'utilisateur
+		lib.ErrorServer(w, "Error storing state, please try again later.")
 	}
 
 	// Redirect the user to the Google OAuth 2.0 authorization URL
@@ -46,13 +54,20 @@ func GitHubOAuthHandler(w http.ResponseWriter, r *http.Request) {
 	// Generate a random state parameter to prevent CSRF attacks
 	state, err_state := lib.GenerateRandomID()
 	if err_state != nil {
-		lib.ErrorServer(w, "Error generating state")
+		// Erreur critique : Échec de la génération de l'état
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error generating state",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	// Store the state in the database
 	_, err := db.Exec("INSERT INTO oauth_states (state) VALUES (?)", state)
 	if err != nil {
-		lib.ErrorServer(w, "Error storing state")
+		// Erreur non critique : Échec de la mise à jour de l'utilisateur
+		lib.ErrorServer(w, "Error storing state, please try again later.")
 	}
 
 	// Redirect the user to the GitHub OAuth 2.0 authorization URL
@@ -72,12 +87,19 @@ func DiscordOAuthHandler(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 	state, err := lib.GenerateRandomID()
 	if err != nil {
-		lib.ErrorServer(w, "Error generating state")
+		// Erreur critique : Échec de la génération de l'état
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error generating state",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	_, err = db.Exec("INSERT INTO oauth_states (state) VALUES (?)", state)
 	if err != nil {
-		lib.ErrorServer(w, "Error storing state")
+		// Erreur non critique : Échec de la mise à jour de l'utilisateur
+		lib.ErrorServer(w, "Error storing state, please try again later.")
 	}
 
 	authURL := "https://discord.com/api/oauth2/authorize"

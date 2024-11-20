@@ -65,6 +65,9 @@ func WithErrorHandling(next http.Handler) http.Handler {
 					case "see other":
 						statusCode = http.StatusSeeOther
 						message = "See Other"
+					case "Unauthorized":
+						statusCode = http.StatusUnauthorized
+						message = "Status Unauthorized"
 					default:
 						// fmt.Println(">>>>>>>>>>STRING:Internal<<<<<<<<<<")
 						statusCode = http.StatusInternalServerError
@@ -89,30 +92,30 @@ func WithErrorHandling(next http.Handler) http.Handler {
 }
 
 // ! Force500Handler forces a 500 error (for testing purposes)
-func Force500Handler(w http.ResponseWriter, r *http.Request) {
+//func Force500Handler(w http.ResponseWriter, r *http.Request) {
 
-	// panic("This is a forced panic to test 500 error handling")
+// panic("This is a forced panic to test 500 error handling")
 
-	// panic(&models.CustomError{ // custom error
-	// 	StatusCode: http.StatusInternalServerError,
-	// 	Message:    "Oh, snap! Internal Server Error",
-	// })
+// panic(&models.CustomError{ // custom error
+// 	StatusCode: http.StatusInternalServerError,
+// 	Message:    "Oh, snap! Internal Server Error",
+// })
 
-	OutOfRange() // Panic: runtime error: index out of range
-}
+//OutOfRange() // Panic: runtime error: index out of range
+//}
 
 // Oh SNAP!
-func OutOfRange() {
-	t := []int{1, 2, 3}
-	for i := 0; i < 4; i++ {
-		fmt.Println(t[i])
-	}
-}
+//func OutOfRange() {
+//t := []int{1, 2, 3}
+//for i := 0; i < 4; i++ {
+//fmt.Println(t[i])
+//}
+//}
 
 // ! ForceDirectError forces a direct string error (for testing purposes)
-func ForceDirectError(w http.ResponseWriter, r *http.Request) {
-	// panic("This is a forced panic to test the direct string error") // string(default)
-	panic("bad request")
-	// panic("not found")
-	// panic("Internal Server Error")
-}
+//func ForceDirectError(w http.ResponseWriter, r *http.Request) {
+// panic("This is a forced panic to test the direct string error") // string(default)
+//panic("bad request")
+// panic("not found")
+// panic("Internal Server Error")
+//}
