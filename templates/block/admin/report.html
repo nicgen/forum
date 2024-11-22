@@ -1,0 +1,6 @@
+{{define "block/admin/report"}}
+<h2>REPORTS</h2>
+{{ range .Report }}
+<h3>{{ .Username }}, {{ .Post_ID }}, {{ .Title}}</h3>
+{{end}}
+{{end}}
