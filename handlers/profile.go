@@ -16,7 +16,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	data := lib.GetData(db, cookie.Value, "logged", "profile", w, r)
 	data = lib.GetComments(db, cookie.Value, data, w, r)
 	data = lib.GetNotifications(w, cookie.Value, data)
-
+	data = lib.GetReport(w, data, r)
 	// Redirect User to the profile html page and sending the data to it
 	lib.RenderTemplate(w, "layout/index", "page/profile", data)
 }

@@ -17,6 +17,7 @@ func ReportHandler(w http.ResponseWriter, r *http.Request) {
 	uuid := cookie_user_uuid.Value
 	username := cookie_username.Value
 	report_post := formValues.Get("Report_post")
+	report_title := formValues.Get("Report_title")
 
 	if err_username != nil {
 		lib.ErrorServer(w, "Error getting Username from the cookies")
@@ -30,10 +31,11 @@ func ReportHandler(w http.ResponseWriter, r *http.Request) {
 
 	var respons_report string
 
-	state_report := `INSERT INTO Report (User_UUID, Username, Post_ID, Respons_Text) VALUES (?, ?, ?, ?)`
-	_, err_db := db.Exec(state_report, uuid, username, report_post, respons_report)
+	state_report := `INSERT INTO Report (User_UUID, Username, Post_ID,Title, Respons_Text) VALUES (?, ?, ?, ?, ?)`
+	_, err_db := db.Exec(state_report, uuid, username, report_post, report_title, respons_report)
 	if err_db != nil {
 		lib.ErrorServer(w, "Error report")
 	}
+	fmt.Println(err_db)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

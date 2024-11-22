@@ -69,6 +69,7 @@ type Reports struct {
 	User_UUID       string
 	Username        string
 	Post_ID         string
+	Title           string
 	Reported_Reason string
 	Response_Text   string
 }

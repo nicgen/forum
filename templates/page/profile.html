@@ -8,6 +8,7 @@
   {{if eq .Role "Admin"}}
   {{template "block/admin/users" .}}
   {{template "block/admin/categories" .}}
+  {{template "block/admin/report" .}}
   {{end}}
   {{if eq .Role "User" }}
   <ul>

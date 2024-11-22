@@ -132,7 +132,7 @@ func CreateTables() {
   User_UUID VARCHAR(255) NOT NULL,
   Username VARCHAR(255) NOT NULL,
   Post_ID INTEGER NOT NULL,
-  
+  Title TEXT NOT NULL,
   Respons_Text TEXT,
   FOREIGN KEY (User_UUID) REFERENCES User(UUID)
 );`,
