@@ -1,9 +1,9 @@
 {{define "block/form/login"}}
 
 <!-- Login container with role and aria-labelledby -->
-<div id="loginForm" class="form__container" role="form" aria-labelledby="form-container">
+<div id="loginForm" class="container__block" role="form" aria-labelledby="form-container">
 
-  <div class="form__content">
+  <div class="container__block__main">
 
     <!-- Form title -->
     <h2 class="form__title" id="form__title">Login</h2>
@@ -24,14 +24,14 @@
     </form>
 
     <!-- Register link -->
-    <div class="register-link">
+    <div class="container__block__main register-link">
       <p>Don't have an account?<a href="/nav-register" class="link" role="button" aria-controls="registerForm">Register</a></p>
     </div>
 
   </div>
 
   <!-- Social login section with roles and aria-labels -->
-  <div class="form__content form__socials" role="complementary" aria-label="Social login options">
+  <div class="container__block__main form__socials" role="complementary" aria-label="Social login options">
       <div class="form form__socials">
           <h3 class="form__title">Sign in with :</h3>
           <button class="button__socials" onclick="window.location.href='https://localhost:8080/google';" aria-label="Sign in with Google">{{template "ico_google"}}Sign in with Google</button>
