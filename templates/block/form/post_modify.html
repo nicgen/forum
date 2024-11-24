@@ -1,0 +1,10 @@
+{{define "block/form/post_modify"}}
+<form class="form" action="/modify" role="form" aria-label="Modify post">
+  <input type="hidden" name="id" value="{{ .ID }}">
+  <label for="post-title" aria-label="Post title">Title</label>
+  <input class="post-title-area" id="post-title" name="post_title" required aria-required="true" aria-label="Enter the post title"></input>
+  <label for="post-content" aria-label="Post content">Content</label>
+  <textarea class="post-content-area" id="post-content" name="post_text" required aria-required="true" aria-label="Enter the post content"></textarea>
+  <button aria-label="Submit the post" aria-describedby="post-category post-title post-content">Post!</button>
+</form>
+{{end}}
