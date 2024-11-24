@@ -33,9 +33,58 @@ ROOT VARIABLES
   --letter-spacing-default: 0.03em;
   --letter-spacing-title: 0.05em;
 
+  /* GRUVBOX */
+  /* GRUVBOX dark */
+  --dark0_hard: #1d2021;
+  --dark0: #282828;       /* bg dark */
+  --dark0_soft: #32302f;
+  --dark1: #3c3836;       /* fg light */
+  --dark2: #504945;
+  --dark3: #665c54;
+  --dark4: #7c6f64;
+  --dark4_256: #7c6f64;
+
+  --gray_245: #928374;
+  --gray_244: #928374;
+
+  /* GRUVBOX light */
+  --light0_hard: #f9f5d7;
+  --light0: #fbf1c7;      /* bg light */
+  --light0_soft: #f2e5bc;
+  --light1: #ebdbb2;      /* fg dark */
+  --light2: #d5c4a1;
+  --light3: #bdae93;
+  --light4: #a89984;
+  --light4_256: #a89984;
+
+  --bright_red: #fb4934;
+  --bright_green: #b8bb26;
+  --bright_yellow: #fabd2f;
+  --bright_blue: #83a598;
+  --bright_purple: #d3869b;
+  --bright_aqua: #8ec07c;
+  --bright_orange: #fe8019;
+
+  --neutral_red: #cc241d;
+  --neutral_green: #98971a;
+  --neutral_yellow: #d79921;
+  --neutral_blue: #458588;
+  --neutral_purple: #b16286;
+  --neutral_aqua: #689d6a;
+  --neutral_orange: #d65d0e;
+
+  --faded_red: #9d0006;
+  --faded_green: #79740e;
+  --faded_yellow: #b57614;
+  --faded_blue: #076678;
+  --faded_purple: #8f3f71;
+  --faded_aqua: #427b58;
+  --faded_orange: #af3a03;
+
   /* light */
   --text-color-light: #F9B872;
   --bkg-color-light: #EFEFFF;
+  --bkg-color-highlight-light: #191919;
   --nav-bg-color-light: #5960CB;
   --foot-bg-color-light: #5960CB;
   --hover-text-light:#FAE7A5;
@@ -44,6 +93,7 @@ ROOT VARIABLES
   /* dark */
   --text-color-dark: #a58c71;
   --bkg-color-dark: #191919;
+  --bkg-color-highlight-dark: #313131;
   --nav-bg-color-dark: #0e0e0e;
   --foot-bg-color-dark:#0e0e0e;
   --hover-text-dark:#191919;
@@ -57,10 +107,13 @@ DARK/LIGHT VARIABLES
 ------------------------------------------
 */
 
+/* for browser prefs */
+
 @media (prefers-color-scheme: dark) {
   :root {
-    --text-color: var(--text-color-dark);
-    --bkg-color: var(--bkg-color-dark);
+    --text-color: var(--light1);
+    --bkg-color: var(--dark0);
+    --bkg-color-highlight: var(--bkg-color-highlight-dark);
     --alert-color: var(--alert-color-dark);
     --nav-bg-color: var(--nav-bg-color-dark);
     --foot-bg-color: var(--foot-bg-color-dark);
@@ -75,8 +128,9 @@ DARK/LIGHT VARIABLES
 
 @media (prefers-color-scheme: light) {
   :root {
-    --text-color: var(--text-color-light);
-    --bkg-color: var(--bkg-color-light);
+    --text-color: var(--dark1);
+    --bkg-color: var(--light0);
+    --bkg-color-highlight: var(--bkg-color-highlight-light);
     --alert-color: var(--alert-color-light);
     --nav-bg-color: var(--nav-bg-color-light);
     --foot-bg-color: var(--foot-bg-color-light);
@@ -84,6 +138,8 @@ DARK/LIGHT VARIABLES
     --hover-bg:var(--text-color-light);
   }
 }
+
+/* for manual prefs */
 
 :root.dark-theme {
   --text-color: var(--text-color-dark);
@@ -135,7 +191,7 @@ RESET (minimal)
 /* Typography */
 body {
   font-family: sans-serif;
-  font-size: 16px;
+  font-size: var(--font-size-default);
   line-height: 1.5;
 }
 
@@ -245,7 +301,7 @@ main .container{
 .wrapper {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ensure the wrapper takes full viewport height */
+  min-height: 100vh;
 }
 
 .container {
@@ -272,73 +328,6 @@ main .container{
 /* NAV BAR
 ------------------------------------------
 */
-
-/*Create post area style */
-  /* it maybe still a bit buggy, need some more work */
-form {
-  max-width: 600px; /* Set a max width for the form */
-  margin: 20px auto; /* Center the form */
-  padding: 20px; /* Add padding */
-  border: 1px solid #ccc; /* Add a border */
-  border-radius: 8px; /* Rounded corners */
-  background-color: (--bkg-color); /* Light background color */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-/* Style for select dropdown */
-select {
-  width: 100%; /* Full width */
-  padding: 10px; /* Padding inside the dropdown */
-  margin-bottom: 20px; /* Space below the dropdown */
-  border: 1px solid #ccc; /* Border for the dropdown */
-  border-radius: 4px; /* Rounded corners */
-  font-size: 16px; /* Font size */
-}
-
-/* Style for labels */
-label {
-  display: block; /* Make labels block elements */
-  margin-bottom: 5px; /* Space below labels */
-  font-weight: bold; /* Bold text */
-}
-
-/* Style for textareas */
-.post-title-area {
-  height: 40px;
-  width: 100%; /* Full width */
-  padding: 10px; /* Padding inside the textarea */
-  margin-bottom: 20px; /* Space below textareas */
-  border: 1px solid #ccc; /* Border for the textarea */
-  border-radius: 4px; /* Rounded corners */
-  font-size: 16px; /* Font size */
-  resize: none; /* Allow vertical resizing only */
-}
-.post-content-area, .comment-area, .modify-area{
-  width: 100%; /* Full width */
-  height: 130px; /* Set a height */
-  padding: 10px; /* Padding inside the textarea */
-  margin-bottom: 20px; /* Space below textareas */
-  border: 1px solid #ccc; /* Border for the textarea */
-  border-radius: 4px; /* Rounded corners */
-  font-size: 16px; /* Font size */
-  resize: none; /* Allow vertical resizing only */
-}
-
-/* General Style for all the button */
-button {
-  font-family: 'Courier New', Courier, monospace;
-  display: inline-block; /* Make links block elements */
-  padding: 10px 10px 10px 10px;; /* Padding for links */
-  margin: 7px;
-
-  border: none;
-  border-radius: 10px;
-  text-decoration: none; /* Remove underline from links */
-  justify-content: space-between;
-
-  color: var(--text-color); /* Text color */
-  cursor: pointer;
-}
 
 /*-------------------------------------*/
 
@@ -414,37 +403,19 @@ header {
 /* dropdown */
 .profile-dropdown {
   display: none;
-  position: absolute; /* Position it absolutely */
-  background-color: var(--bkg-color); /* Background color */
-  border: 1px solid var(--text-color); /* Border */
-  z-index: 1; /* Ensure it appears above other elements */
-  margin-top: 200px; /* Add some padding */
-  padding: 10px; /* Padding for links */
-  animation: fadeIn 0.3s ease-in-out forwards; /* Fade in effect */
+  position: absolute; 
+  background-color: var(--bkg-color); 
+  border: 1px solid var(--text-color); 
+  z-index: 1; 
+  margin-top: 200px; 
+  padding: 10px; 
+  animation: fadeIn 0.3s ease-in-out forwards; 
   width: auto;
 
 }
 
-@keyframes fadeIn {
-  from {
-      opacity: 0;
-  }
-  to {
-      opacity: 1;
-  }
-}
-
-@keyframes fadeOut {
-  from {
-      opacity: 1;
-  }
-  to {
-      opacity: 0;
-  }
-}
-
 .profil_thumb:focus-within .profile-dropdown {
-  display: block; /* Show dropdown when profil_thumb is focused or hovered */
+  display: flex;
   font-size: 1.5em;
 }
 
@@ -497,32 +468,6 @@ header {
   justify-content: start;
   padding: 1px 3px 0px 3px;
 }
-
-/* header nav ul {
-  list-style-type: none;
-  display: flex;
-  justify-content: center;
-  padding: 0;
-}
-
-nav ul li {
-  margin: 0 1rem;
-}
-
-header nav ul li:last-child {
-  margin-right: 0;
-}
-
-nav ul li a {
-  text-decoration: none;
-  color: var(--text-color);
-  font-size: var(--font-size-default);
-}
-
-nav ul li a:hover {
-  color: var(--hover-text);
-  background-color: var(--hover-bg);
-} */
 
 /* 
 ------------------------------------------
@@ -580,6 +525,8 @@ POSTS & FORMS
   gap: 0.25em;
 }
 
+/* FORM */
+
 .form__socials{
   min-width: 30%;
   flex-grow: 0;
@@ -595,12 +542,14 @@ POSTS & FORMS
 	gap: 0.25em;
 }
 
-.form > input {
+.form > textarea, .form > input {
+  color: var(--bkg-color);
+  background-color: var(--text-color);
 	margin-bottom: 0.6em;
 	padding: 0.5em;
 }
 
-.form > button {
+.button__big {
 	padding: 1em;
 }
 
@@ -670,6 +619,12 @@ button.button__socials>svg {
 
 /* BUTTONS */
 
+button {
+  background-color: green;
+  border: none;
+  border-radius: 0.25em;
+}
+
 .liked {
   color: red;
 }
@@ -697,6 +652,7 @@ button.button__socials>svg {
   stroke: var(--text-color);
 }
 
+/* svg icons theme */
 button#theme-toggle.theme-toggle.light>.theme-toggle__dark {
   display: none;
 }
@@ -726,9 +682,30 @@ footer {
   margin-top: auto; /* Pushes the footer to the bottom */
 }
 
+
+/* ANIMATION */
+
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+  }
+  to {
+      opacity: 0.5;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+      opacity: 0.5;
+  }
+  to {
+      opacity: 0;
+  }
+}
+
 /* UNSET CSS classless system */
 
-body {
+/* body {
   width: 100%;
   grid-template-columns: unset !important;
   margin: auto 0;
@@ -745,20 +722,7 @@ main {
 .wrapper {
   width: 100%;
   grid-column: unset;
-}
-
-/* MEDIA queries */
-/* Desktop */
-@media only screen and (max-width: 1024px) {
-
-}
-
-/* Tablets and smartphone */
-@media only screen and (max-width: 768px) {
-  .post__container, .form__container{
-    flex-direction: column;
-  }
-}
+} */
 
 /* MEDIA queries */
 /* Desktop */
@@ -775,6 +739,6 @@ main {
 
 /* TEST */
 
-.notification-alert {
+.alert__notification {
   color : orange;
 }
