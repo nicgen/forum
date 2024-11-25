@@ -3,7 +3,6 @@
 
     <!-- post edit -->
     {{ if or (eq .Data.Role "Moderator") (eq .Data.Role "Admin") (eq .IsAuthor "yes")}}
-<<<<<<< HEAD
       <div class="comment__modify">
         <form method="GET" action="/delete">
           <input type="hidden" name="delete" value="post">
@@ -17,23 +16,6 @@
           <button class="button-icon" type="submit" title="Edit my post">{{ template "ico_edit"}} Edit my post</button>
         </form>
       </div>
-=======
-    <div class="delete-comment">
-      <form method="GET" action="/delete">
-        <input type="hidden" name="delete" value="post">
-        <input type="hidden" name="id" value="{{ .ID }}">
-        <button type="submit">Delete my post</button>
-      </form>
-    </div>
-    <div class="modify-comment">
-    <form method="GET" action="/modify">
-      <input type="hidden" name="delete" value="post">
-      <input type="hidden" name="id" value="{{ .ID }}">
-      <textarea class="modify-area" type="hidden" name="content"></textarea>
-      <button type="submit">Modify my post</button>
-    </form>
-    </div>
->>>>>>> aad475b790e631153f91d96aa6822a3f27731598
     {{end}}
   
     <header>
