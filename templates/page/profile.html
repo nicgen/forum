@@ -5,18 +5,17 @@
     <div class="container__block__main block__profile" role="region" aria-label="Profile">
 
       <section>
-        {{range .Notifications}}
-        Test Notification: {{ .PostID}}
-        {{end}}
-      </section>
-
-      <section>
         <h2>Welcome, {{ .Username }}</h2>
         <p>Your Email: {{ .Email }}</p>
         <p>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</p>
         <p>Your role: {{ .Role }}</p>
       </section>
-        
+      <section>
+        {{range .Notifications}}
+        Test Notification: {{ .PostID}}
+        {{end}}
+      </section>
+
       {{if eq .Role "Admin"}}
         {{template "block/admin/users" .}}
         {{template "block/admin/categories" .}}
