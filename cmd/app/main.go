@@ -77,6 +77,7 @@ func setupMux() *http.ServeMux {
 	mux.HandleFunc("/logout", lib.LogoutHandler)
 	mux.HandleFunc("/nav-register", handlers.NavRegister)
 	mux.HandleFunc("/nav-login", handlers.NavLogin)
+	mux.HandleFunc("/profile-user", handlers.ProfileUserHandler)
 
 	// Tier Authentication
 	mux.HandleFunc("/google", handlers.GoogleOAuthHandler)
