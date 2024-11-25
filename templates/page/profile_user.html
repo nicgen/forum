@@ -1,0 +1,53 @@
+{{define "page/profile_user"}}
+  <h2>Username: {{ .Username }}</h2>
+  <h3>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</h3>
+  <h3>User role: {{ .Role }}</h3>
+  
+  {{if eq .Role "User" }}
+  <ul>
+    <li>
+      Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
+      <form method="POST" action="/admin/delete-user">
+        <input type="hidden" name="userUUID" value="{{ .UUID }}">
+        <button type="submit">Delete my account</button>
+      </form>
+    </li>
+  </ul>
+  {{end}}
+  {{if eq .Role "User"}}
+  <form method="POST" action="/update-request">
+    <input type="hidden" name="userUUID" value="{{ .UUID }}">
+    <button type="submit">Request Mod</button>
+  </form>
+  {{end}}
+  {{ range .Posts }}
+  <h2>Posts de l'utilisateur</h2>
+  <div class="post">
+    <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+    <p>Post text: {{ .Text }}</p>
+    <!-- todo modify the date -->
+    <p>Created at: {{ .CreatedAt }}</p>
+  </div>
+  {{end}}
+
+  <h2>Posts likés de l'utilisateur</h2>
+  {{range .LikedPosts}}
+  <div class="post">
+    <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+    <p>Post text: {{ .Text }}</p>
+    <!-- todo modify the date -->
+    <p>Created at: {{ .CreatedAt }}</p>
+  </div>
+  {{end}}
+
+  <h2>Everything User commented</p>
+  {{range .ProfileComments }}
+  <div class="post">
+    <h3>Post commented: Title: {{ .Data.PostInfo.Title }} Text: {{ .Data.PostInfo.Text }}</p>
+    <p>Comment text: {{ .Text }}</p>
+    <p>Comment like: {{ .Like }}</p>
+    <p>Comment dislike: {{ .Dislike }}</p>
+  </div>
+  {{end}}
+
+{{end}}

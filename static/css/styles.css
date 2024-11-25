@@ -459,7 +459,7 @@ main .container{
   display: none;
   flex-direction: column;
   gap: 0.5em;
-  pad: 0.5em;
+  padding: 0.5em;
 }
 
 .js__toggle__block.active {
@@ -542,17 +542,16 @@ POSTS & FORMS
     border-radius: 4px;
     font-size: 16px;
     resize: none;
-  }
-  .post-content-area, .comment-area, .modify-area{
-    width: 100%;
-    height: 130px;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    resize: none;
   } */
+  
+  .post__select, .post__title__input, .post__content__textarea, .comment-area, .modify-area {
+    padding: 0.5em;
+  }
+
+  .post__content__textarea, .comment-area, .modify-area{
+    /* resize: none; */
+    max-width: 100%;
+  }
   
 /*--------------------------------------------------------*/
 

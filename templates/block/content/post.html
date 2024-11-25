@@ -32,8 +32,11 @@
       <!-- date -->
       <p class="post__date" aria-label="Post date" role="definition">{{ .Creation_Date }}/{{ .Creation_Hour }}</p>
       <!-- title -->
-      <h2 class="post__title" aria-label="Post title" role="heading" id="post-title-1">{{ .Title }}</h2>
-      <p class="post__username">{{ .Username }}</p>
+      <!-- <h2 class="post__title" aria-label="Post title" role="heading" id="post-title-1">{{ .Title }}</h2>
+      <p class="post__username">{{ .Username }}</p> -->
+      <h2 aria-label="Post title" role="heading" id="post-title-1">{{ .Title }}</h2>
+      <a href="/profile-user?uuid={{ .User_UUID }}">{{ .Username }}</a>
+  
 
     </header>
 
