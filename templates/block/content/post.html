@@ -13,19 +13,21 @@
 
     <!-- Check if it's the Author of the post -->
     {{ if or (eq .Data.Role "Moderator") (eq .Data.Role "Admin") (eq .IsAuthor "yes")}}
-    <div>
+    <div class="delete-comment">
       <form method="GET" action="/delete">
         <input type="hidden" name="delete" value="post">
         <input type="hidden" name="id" value="{{ .ID }}">
         <button type="submit">Delete my post</button>
       </form>
     </div>
+    <div class="modify-comment">
     <form method="GET" action="/modify">
       <input type="hidden" name="delete" value="post">
       <input type="hidden" name="id" value="{{ .ID }}">
       <textarea class="modify-area" type="hidden" name="content"></textarea>
       <button type="submit">Modify my post</button>
     </form>
+    </div>
     {{end}}
 
     <p aria-label="Post date" role="definition">
