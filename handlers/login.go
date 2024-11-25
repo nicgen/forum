@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"forum/cmd/lib"
+	"forum/models"
 	"net/http"
 	"time"
 
@@ -24,26 +25,38 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		// Prepared request to avoid SQL injection
 		stmt, err := db.Prepare("SELECT password FROM User WHERE email = ?")
 		if err != nil {
-			lib.ErrorServer(w, "Error preparing query")
+			//Erreur critique : échec de la préparation de la rêquete
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error preparing query. Please try again later.",
+			}
+			HandleError(w, err.StatusCode, err.Message)
 		}
 		defer stmt.Close()
 
 		var hashedPassword string
 		err = stmt.QueryRow(email).Scan(&hashedPassword)
 		if err != nil {
+			//Erreur non critique : Email
 			if err == sql.ErrNoRows {
 				data := lib.GetData(db, "null", "notlogged", "index", w, r)
 				data = lib.ErrorMessage(w, data, "LoginMail")
 				data["NavLogin"] = "show"
 				lib.RenderTemplate(w, "layout/index", "page/index", data)
 			} else {
-				lib.ErrorServer(w, "Error retrieving user data")
+				//Erreur critique : echec de la recuperation des données utilisateur
+				err := &models.CustomError{
+					StatusCode: http.StatusInternalServerError,
+					Message:    "Error retrieving user data. Please try again later.",
+				}
+				HandleError(w, err.StatusCode, err.Message)
 			}
 			return
 		}
 
 		// Verify password
 		if !CheckPassword(hashedPassword, password) {
+			//Erreur non critique : MDP
 			data := lib.GetData(db, "null", "notlogged", "index", w, r)
 			data = lib.ErrorMessage(w, data, "LoginPassword")
 			data["NavLogin"] = "show"
@@ -57,7 +70,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		state_cookie := `SELECT UUID, Username, CreatedAt, Role FROM User WHERE Email = ?`
 		err_cookie := db.QueryRow(state_cookie, email).Scan(&uuid, &username, &createdAt, &role)
 		if err_cookie != nil {
-			lib.ErrorServer(w, "Error getting User informations")
+			//Erreur critique: echec de la recuperation des informations utilisateur.
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error getting User information. Please try again later.",
+			}
+			HandleError(w, err.StatusCode, err.Message)
 		}
 		creation_date = createdAt.Format("2006-01-02") // YYYY-MM-DD
 		creation_hour = createdAt.Format("15:04:05")   // HH:MM:SS
