@@ -45,3 +45,15 @@ if (savedTheme) {
 } else {
     setTheme('auto');
 }
+
+//fonction for the expandable post
+function togglePost(element) {
+    const fullPost = element.querySelector('.post-full');
+    fullPost.classList.toggle('active');
+}
+
+function closePost(event) {
+    event.stopPropagation();
+    const fullPost = event.target.closest('.post-full');
+    fullPost.classList.remove('active');
+}
