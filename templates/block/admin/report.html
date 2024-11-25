@@ -1,6 +1,13 @@
 {{define "block/admin/report"}}
 <h2>REPORTS</h2>
 {{ range .Report }}
+<form action="/report-delete">
 <h3>{{ .Username }}, {{ .Post_ID }}, {{ .Title}}</h3>
+<textarea name="respons_text" ></textarea>
+<button type="submit">Delete Post</button>
+<input type="hidden" name="report_ID" value="{{ .ID }}">
+<input type="hidden" name="report_postID" value="{{ .Post_ID }}">
+<button type="submit" href="/">Delete Report</button>
+</form>
 {{end}}
 {{end}}
