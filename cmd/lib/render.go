@@ -52,30 +52,43 @@ func findAndParseTemplates(rootDir string, funcMap template.FuncMap) (*template.
 	return root, err
 }
 
-// renderer function (handles different layouts)
 func RenderTemplate(w http.ResponseWriter, layoutName, tmplName string, data interface{}) {
-	// Execute the specific template first and get the rendered content
+
+	// Convertir data en map si ce n'est pas déjà le cas
+	var dataMap map[string]interface{}
+	switch v := data.(type) {
+	case map[string]interface{}:
+		dataMap = v
+	default:
+		dataMap = map[string]interface{}{}
+	}
+
+	// Exécution du template spécifique d'abord
 	var buf bytes.Buffer
 	err := tmpl.ExecuteTemplate(&buf, tmplName, data)
 	if err != nil {
+		log.Printf("Error executing template: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Create the layoutData struct to pass to the layout template
+	// Créer la structure layoutData
 	layoutData := struct {
 		Content     template.HTML
 		Data        interface{}
 		UserContent interface{}
+		Post        interface{} // Changé de *models.Post à interface{}
 	}{
 		Content:     template.HTML(buf.String()),
 		Data:        data,
 		UserContent: data,
+		Post:        dataMap["Post"], // Utilisez dataMap["Post"] sans type assertion
 	}
 
-	// Execute the layout template, passing the layoutData struct as the template data
+	// Exécution du layout template
 	err = tmpl.ExecuteTemplate(w, layoutName, layoutData)
 	if err != nil {
+		log.Printf("Error executing layout template: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

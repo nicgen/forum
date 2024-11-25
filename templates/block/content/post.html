@@ -38,17 +38,16 @@
       <a href="/profile-user?uuid={{ .User_UUID }}">{{ .Username }}</a>
   
 
+<<<<<<< HEAD
     </header>
 
     <section>
       <!-- todo add {{/* image_alt */}} later -->
-      {{/* if .image_url */}}
+      {{if .ImagePath}}
         <figure aria-label="Post image" role="img">
-            <img src="{{/* image_url */}}" alt="image" aria-label="Post image" role="img">
+          <img src="/static/uploads/{{ .ImagePath }}" alt="{{ .Title }}" onerror="console.error('Image failed to load. Path:', this.src)">
         </figure>
-      {{/* else */}}
-       <p>no image (text for testing purpose only, delete on 'block/content/post.html')</p>
-      {{/* end */}}
+      {{ end }}
   
       <!-- post content -->
       <div aria-label="Post content" role="contentinfo" id="post-content-1">
@@ -95,3 +94,66 @@
 
   </article>
 {{end}}
+=======
+    <p aria-label="Post date" role="definition">
+      {{ .CreatedAt.Format "2006-01-02 à 15:04:05" }}
+    </p>
+  </header>
+
+  <!-- post image -->
+  {{if .ImagePath}}
+<figure aria-label="Post image" role="img">
+  <img 
+    src="/static/uploads/{{ .ImagePath }}" 
+    alt="{{ .Title }}" 
+    onerror="console.error('Image failed to load. Path:', this.src)"
+  >
+</figure>
+{{end}}
+
+  <!-- post content -->
+  <div aria-label="Post content" role="contentinfo" id="post-content-1">
+    {{ .Text }}
+  </div>
+
+  <!-- action (like/dislike) -->
+  <div class="like__container">
+    <div class="like__content">
+      <h2 class="like__number">{{if .Like }}{{ .Like }}{{ else }}0{{end}}</h2>
+      <form action="/like" method="POST">
+        <input type="hidden" name="id" value="{{ .ID }}">
+        <button name="like_post" value="like_post" class="ico__like {{ if eq .Status "liked" }}liked{{end}}" {{ if eq .Data.Role "Guest" }}disabled{{end}}>
+          {{ template "ico_thumb-up"}}
+        </button>
+      </form>
+    </div>
+    <div class="like__content">
+      <h2 class="like__number">{{if .Dislike }}{{ .Dislike }}{{ else }}0{{end}}</h2>
+      <form action="/like" method="POST">
+        <input type="hidden" name="id" value="{{ .ID }}">
+        <button name="dislike_post" value="dislike_post" class="ico__like {{ if eq .Status "disliked" }}liked{{end}}" {{ if eq .Data.Role "Guest" }}disabled{{end}}>
+          {{ template "ico_thumb-down"}}
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- add comment -->
+  <div>{{template "block/content/comment_add" .}}</div>
+
+  <!-- show comments -->
+  {{ if .Comments }}
+  <h2>Comments</h2>
+  <ul>
+    {{ range .Comments }}
+    <li>
+      {{ template "block/content/comment" . }}
+    </li>
+    {{ end }}
+  </ul>
+  {{else}}
+    Oh No! There's no comments...
+  {{ end }}
+</article>
+{{end}}
+>>>>>>> d30546d7586ecf0975c3602677b8b00aaeb6ee8c
