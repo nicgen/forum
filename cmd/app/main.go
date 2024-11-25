@@ -69,7 +69,7 @@ func setupMux() *http.ServeMux {
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	// upload pictures
-	//mux.Handle("/static/uploads/", http.StripPrefix("/static/uploads/", http.FileServer(http.Dir("./static/uploads/"))))
+	mux.Handle("/static/uploads/", http.StripPrefix("/static/uploads/", http.FileServer(http.Dir("./static/uploads/"))))
 
 	// Set up routes
 	mux.HandleFunc("/", handlers.IndexHandler)
