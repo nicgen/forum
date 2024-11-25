@@ -27,7 +27,13 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 	var count int
 	err := db.QueryRow("SELECT COUNT(*) FROM Categories").Scan(&count)
 	if err != nil {
-		// Handle error
+		//Erreur critique: échec de la récuperation du nombre de catégorie
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error retrieving categories count. Please try again.",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	// filter category
@@ -100,20 +106,30 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err_post := db.Query(state_filters, category, likemin, likemax, likemin, likemax, dislikemin, dislikemax, dislikemin, dislikemax, lastperiod)
 
 	if err_post != nil {
-
+		//Erreur critique: échec de la récuperation des posts
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error retrieving posts. Please try again later.",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var post models.Post
 		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
-
+			//Erreur non critique: échec de la lecture des données du post
+			lib.ErrorServer(w, "Error scanning post data. Please try again later.")
+			return
 		}
 
 		posts = append(posts, &post)
 	}
 
 	if err := rows.Err(); err != nil {
+		//Erreur non critique: erreur lors du traitement des lignes
+		lib.ErrorServer(w, "Error processing posts. Please try again later.")
 	}
 	data := lib.DataTest(w, r)
 	data["Posts"] = posts
@@ -129,7 +145,13 @@ func Category(w http.ResponseWriter, r *http.Request) {
 	var count int
 	err := db.QueryRow("SELECT COUNT(*) FROM Categories").Scan(&count)
 	if err != nil {
-		// Handle error
+		//Erreur critique : échec de la récuperation du nombre de catégories.
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error retrieving categories count.Please try again.",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	// numbercat := map[string]bool{}
@@ -167,20 +189,31 @@ func Category(w http.ResponseWriter, r *http.Request) {
 	rows, err_post := db.Query(state_category, category)
 
 	if err_post != nil {
-
+		//Erreur critique : echec de la récupération des posts par categories.
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error retrieving posts by category. Please try again later.",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var post models.Post
 		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
-
+			//Erreur non critique : échec de la lecture des données du post.
+			lib.ErrorServer(w, "Error scanning post data. Please try again later.")
+			return
 		}
 
 		posts = append(posts, &post)
 	}
 
 	if err := rows.Err(); err != nil {
+		//Erreur non critique: Erreur lors du traitement des lignes
+		lib.ErrorServer(w, "Error processing posts. Please try again later.")
+		return
 	}
 
 	// db.Exec()
@@ -231,6 +264,13 @@ func Like(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err_post != nil {
+		//Erreur critique : Echec de la recuperation des posts par like
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error retrieving posts by like. Please try again later.",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 
 	}
 	defer rows.Close()
@@ -238,12 +278,18 @@ func Like(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var post models.Post
 		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
+			//Erreur non critique : échec de la lecture des données du posts
+			lib.ErrorServer(w, "Error scanning post data.Please try again")
+			return
 
 		}
 		posts = append(posts, &post)
 	}
 
 	if err := rows.Err(); err != nil {
+		//Erreur non critique : erreur lors du traitements des lignes
+		lib.ErrorServer(w, "Error processing posts. Please try again later")
+		return
 	}
 	data := lib.DataTest(w, r)
 	data["Posts"] = posts
@@ -290,14 +336,22 @@ func Dislike(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err_post != nil {
-
+		//Erreur critique : échec de la récupération des posts par dislike
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error retrieving posts by dislike. Please try again later.",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var post models.Post
 		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
-
+			//Erreur non critique : Echec de la lecture des données du posts
+			lib.ErrorServer(w, "Error scanning post data. Please try again later.")
+			return
 		}
 		if (post.Dislike > mindislike && post.Dislike < maxdislike) || nothing {
 			posts = append(posts, &post)
@@ -305,6 +359,9 @@ func Dislike(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := rows.Err(); err != nil {
+		//Erreur non critique: erreur lors du traitement des lignes
+		lib.ErrorServer(w, "Error processing posts. Please try again later")
+		return
 	}
 	data := lib.DataTest(w, r)
 	data["Posts"] = posts
@@ -328,14 +385,22 @@ func CreationDate(w http.ResponseWriter, r *http.Request) {
 	rows, err_post := db.Query(state_period)
 
 	if err_post != nil {
-
+		//Erreur critique: echec de la récuperation des posts par date
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error retrieving posts by creation date. Please try again later",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var post models.Post
 		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
-
+			//Erreur non critique : Echec de la lecture des données du posts
+			lib.ErrorServer(w, "Error scanning post data. Please try again later")
+			return
 		}
 		// Time := strings.Split(post.CreatedAt.Format(2024), " ")
 		// Date := strings.Split(Time[0], "-")
@@ -361,5 +426,8 @@ func CreationDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := rows.Err(); err != nil {
+		//Erreur non critique : erreur lors du traitement des lignes
+		lib.ErrorServer(w, "Error processing posts. Please try again later.")
+		return
 	}
 }
