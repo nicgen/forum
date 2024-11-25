@@ -34,5 +34,5 @@ func ProfileUserHandler(w http.ResponseWriter, r *http.Request) {
 	data = lib.GetNotifications(w, user_uuid, data)
 
 	// Redirect User to the profile html page and sending the data to it
-	lib.RenderTemplate(w, "layout/index", "page/profile_user", data)
+	lib.RenderTemplate(w, "layout/index", "page/profile", data)
 }

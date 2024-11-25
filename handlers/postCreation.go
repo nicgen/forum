@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -94,17 +95,34 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Récupère les autres données du formulaire
 	db := lib.GetDB()
+
+	// Parse the form data (including query parameters and form body)
+	err_parse := r.ParseForm()
+	if err_parse != nil {
+		fmt.Println("Error parsing form:", err)
+		http.Error(w, "Unable to parse form data", http.StatusInternalServerError)
+		return
+	}
+
+	// Getting the cookie (containing the UUID)
 	cookie, _ := r.Cookie("session_id")
+
+	// Storing the form values into variables
 	title := r.FormValue("post_title")
 	text := r.FormValue("post_text")
-	category := r.FormValue("post_category")
+	selectedCategories := r.Form["categories"] // This gives you a slice of strings
+
+	var categories string
+	for i := 0; i < len(selectedCategories); i++ {
+		categories += selectedCategories[i] + ","
+	}
 
 	// Chemin relatif pour la base de données
 	relativePath := filename
 
 	// Insère le post dans la base de données
 	state_post := `INSERT INTO Posts (User_UUID, Title, Category_ID, Text, Like, Dislike, CreatedAt, ImagePath) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-	_, err_db := db.Exec(state_post, cookie.Value, title, category, text, 0, 0, time.Now(), relativePath)
+	_, err_db := db.Exec(state_post, cookie.Value, title, categories, text, 0, 0, time.Now(), relativePath)
 
 	if err_db != nil {
 
