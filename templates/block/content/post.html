@@ -2,9 +2,6 @@
 <article aria-label="Forum post" role="article">
   <header>
     <h2 aria-label="Post title" role="heading" id="post-title-1">{{ .Title }}</h2>
-    {{ if or (eq .Data.Role "Moderator") (eq .Data.Role "Admin") }}
-    {{template "block/moderator/report" .}}
-    {{end}}
     <h3>{{ .Username }}</h3>
     
     <!-- todo, add list of category to the post -->
@@ -30,9 +27,6 @@
       <button type="submit">Modify my post</button>
     </form>
     {{end}}
-
-
-
 
     <p aria-label="Post date" role="definition">
       {{ .Creation_Date }}

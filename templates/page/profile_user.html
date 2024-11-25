@@ -1,19 +1,8 @@
-{{define "page/profile"}}
-  <h2>Welcome, {{ .Username }}</h2>
-  <h3>Your Email: {{ .Email }}</h3>
+{{define "page/profile_user"}}
+  <h2>Username: {{ .Username }}</h2>
   <h3>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</h3>
-  <h3>Your role: {{ .Role }}</h3>
+  <h3>User role: {{ .Role }}</h3>
   
-  
-  {{if eq .Role "Admin"}}
-  {{template "block/admin/users" .}}
-  {{template "block/admin/categories" .}}
-  {{template "block/admin/report" .}}
-  {{end}}
-
-  {{if eq .Role "Moderator"}}
-  {{template "block/moderator/delete_report" .}}
-  {{end}}
   {{if eq .Role "User" }}
   <ul>
     <li>
@@ -32,7 +21,7 @@
   </form>
   {{end}}
   {{ range .Posts }}
-  <h2>Mes Posts</h2>
+  <h2>Posts de l'utilisateur</h2>
   <div class="post">
     <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
     <p>Post text: {{ .Text }}</p>
@@ -41,7 +30,7 @@
   </div>
   {{end}}
 
-  <h2>Mes Posts likés</h2>
+  <h2>Posts likés de l'utilisateur</h2>
   {{range .LikedPosts}}
   <div class="post">
     <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
@@ -59,10 +48,6 @@
     <p>Comment like: {{ .Like }}</p>
     <p>Comment dislike: {{ .Dislike }}</p>
   </div>
-  {{end}}
-
-  {{range .Notifications}}
-  Test Notification: {{ .PostID}}
   {{end}}
 
 {{end}}
