@@ -102,6 +102,7 @@ func setupMux() *http.ServeMux {
 	mux.HandleFunc("/filters", handlers.FiltersHandler)
 	mux.HandleFunc("/update-request", handlers.AuthMiddleware(handlers.RequestHandler))
 	mux.HandleFunc("/report", handlers.ReportHandler)
+	mux.HandleFunc("/report-delete", handlers.Report_Delete)
 
 	// Basic Web handlers
 	mux.HandleFunc("/about", handlers.AboutHandler)
