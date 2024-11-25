@@ -1,60 +1,57 @@
 {{define "block/nav/main"}}
-  <header role="banner">
+<header role="banner">
 
-    <div class="container header">
+  <div class="container header">
 
-      <!-- left panel (logo) -->
-      <div class="logo" aria-label="Site Logo">
-        <a href="/"><span>Hello-There</span></a>
-      </div>
+  <div class="logo" aria-label="Site Logo">
+    <a href="/"><span>Hello-There</span></a>
+  </div>
 
-      <!-- right side (guest/user nav) -->
-      <nav class="nav" role="navigation">
-        <!-- guest -->
-        {{ if eq .UserContent.Role "Guest" }}
-          <div id="nav-guest" class="nav nav-guest">
-            <a href="/nav-register" class="link">Sign Up</a>
-            <a href="/nav-login" class="link">Login</a>
-          </div>
-        {{ else }}
-        <!-- registered user -->
-        <div id="nav-user" class="nav nav-user">
-          <div class="notification {{ if .UserContent.notification }}alert__notification{{end}}">
-            {{ if .UserContent.notification }}
-            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-bell-ringing"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /><path d="M21 6.727a11.05 11.05 0 0 0 -2.794 -3.727" /><path d="M3 6.727a11.05 11.05 0 0 1 2.792 -3.727" /></svg>          <div class="notification-number">{{ if .UserContent.notification }}{{ .UserContent.notification }}{{else}}0{{ end }}</div>
-            {{ else }}
-            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-bell"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
-            {{ end }}
-          </div>
+  <nav class="nav" role="navigation">
 
-          <div class="profil_thumb" tabindex="0">
-            <!-- User profil thumbnail -->
-            <span>{{ .UserContent.Username }}</span>
-            <!-- POPUP NAV -->
-            <div class="profile-dropdown" role="menu" aria-live="polite" tabindex="-1">
-              <button onclick="window.location.href='/profile';" role="menuitem">Profile</button>
-              <button onclick="window.location.href='/logout';" role="menuitem">Log out</button>
-            </div>
-          </div>
-        </div>
-        {{ end }}
-
-        <!-- Theme dark/light -->
-        <button id="theme-toggle" class="theme-toggle auto" aria-label="Toggle theme">
-          <div class="theme-toggle__light">
-            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-sun"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" /></svg>
-          </div>
-          <div class="theme-toggle__dark">
-            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-sun-off"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 3l18 18" /><path d="M16 12a4 4 0 0 0 -4 -4m-2.834 1.177a4 4 0 0 0 5.66 5.654" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" /></svg>
-          </div>
-          <div class="theme-toggle__auto">
-            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brightness-auto"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 6h3.5l2.5 -2.5l2.5 2.5h3.5v3.5l2.5 2.5l-2.5 2.5v3.5h-3.5l-2.5 2.5l-2.5 -2.5h-3.5v-3.5l-2.5 -2.5l2.5 -2.5z" /><path d="M10 14.5v-3.5a2 2 0 1 1 4 0v3.5" /><path d="M10 13h4" /></svg>
-          </div>
-        </button>
-
-      </nav>
-
+    <!-- guest -->
+    {{ if eq .UserContent.Role "Guest" }}
+    <div id="nav-guest" class="nav nav-guest">
+      <a href="/nav-register" class="link">Sign Up</a>
+      <a href="/nav-login" class="link">Login</a>
     </div>
 
-  </header>
+    {{ else }}
+
+    <!-- todo, import user pop-up (popup/...) -->
+    <div id="nav-user" class="nav nav-user">
+      <div class="notification {{ if .UserContent.notification }}alert__notification{{end}}">
+        {{ if .UserContent.notification }}
+        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-bell-ringing"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /><path d="M21 6.727a11.05 11.05 0 0 0 -2.794 -3.727" /><path d="M3 6.727a11.05 11.05 0 0 1 2.792 -3.727" /></svg>          <div class="notification-number">{{ if .UserContent.notification }}{{ .UserContent.notification }}{{else}}0{{ end }}</div>
+        {{ else }}
+        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-bell"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
+        {{ end }}
+      </div>
+      <div class="profil_thumb" onclick="togglePost(this)" tabindex="0">
+        <span>{{ .UserContent.Username }}</span>
+        <div class="profile-dropdown post-full" role="menu" aria-live="polite" tabindex="-1">
+        <button  onclick="window.location.href='/profile';" role="menuitem">Profile</button>
+        <button onclick="window.location.href='/logout';" role="menuitem">Log out</button>
+      </div>
+      </div>
+    </div>
+    {{ end }}
+
+    <button id="theme-toggle" class="theme-toggle auto" aria-label="Toggle theme">
+      <div class="theme-toggle__light">
+        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-sun"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" /></svg>
+      </div>
+      <div class="theme-toggle__dark">
+        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-sun-off"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 3l18 18" /><path d="M16 12a4 4 0 0 0 -4 -4m-2.834 1.177a4 4 0 0 0 5.66 5.654" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" /></svg>
+      </div>
+      <div class="theme-toggle__auto">
+        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brightness-auto"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 6h3.5l2.5 -2.5l2.5 2.5h3.5v3.5l2.5 2.5l-2.5 2.5v3.5h-3.5l-2.5 2.5l-2.5 -2.5h-3.5v-3.5l-2.5 -2.5l2.5 -2.5z" /><path d="M10 14.5v-3.5a2 2 0 1 1 4 0v3.5" /><path d="M10 13h4" /></svg>
+      </div>
+    </button>
+
+  </nav>
+
+  </div>
+
+</header>
 {{end}}

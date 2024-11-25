@@ -437,24 +437,24 @@ main .container{
 }
 
 /* dropdown */
-/* .profile-dropdown {
-  display: none;
+.profile-dropdown {
+  /* display: none; */
   position: absolute; 
   background-color: var(--bkg-color); 
   border: 1px solid var(--text-color); 
   z-index: 1; 
-  top: 6em; 
-  padding: 10px; 
+  top: 2.3em; 
+  padding: 0.25em; 
   animation: fadeIn 0.3s ease-in-out forwards; 
   width: auto;
 }
 
-.profil_thumb:focus-within .profile-dropdown {
+/* .profil_thumb:focus-within .profile-dropdown {
   display: flex;
   flex-direction: column;
   font-size: 1.5em;
 } */
- 
+
 .post-full {
   display: none;
   border: 1px solid #ddd;
@@ -532,7 +532,7 @@ POSTS & FORMS
   /* it maybe still a bit buggy, need some more work */
 
   /* Style for textareas */
-  .post-title-area {
+  /* .post-title-area {
     height: 40px;
     width: 100%;
     padding: 10px;
@@ -551,7 +551,7 @@ POSTS & FORMS
     border-radius: 4px;
     font-size: 16px;
     resize: none;
-  }
+  } */
   
 /*--------------------------------------------------------*/
 
