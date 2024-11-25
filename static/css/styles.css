@@ -443,7 +443,7 @@ main .container{
   background-color: var(--bkg-color); 
   border: 1px solid var(--text-color); 
   z-index: 1; 
-  top: 2.3em; 
+  top: 3.3em; 
   padding: 0.25em; 
   animation: fadeIn 0.3s ease-in-out forwards; 
   width: auto;
@@ -454,14 +454,16 @@ main .container{
   flex-direction: column;
   font-size: 1.5em;
 } */
-.post-full {
+
+.js__toggle__block {
   display: none;
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin-top: 10px;
+  flex-direction: column;
+  gap: 0.5em;
+  pad: 0.5em;
 }
-.post-full.active {
-  display: block;
+
+.js__toggle__block.active {
+  display: flex;
 }
 
 .nav {
@@ -729,14 +731,16 @@ padding: 1em;
 /* BUTTONS */
 
 button {
-  background-color: green;
-  border: none;
-  border-radius: 0.25em;
-  padding: 0.5em 1em;
   display: flex;
   flex-direction: row;
   gap: 0.25em;
   justify-content: center;
+  align-items: center;
+  background-color: green;
+  border: none;
+  border-radius: 0.25em;
+  padding: 0.5em 1em;
+  text-wrap: nowrap;
 }
 
 .button__socials {
