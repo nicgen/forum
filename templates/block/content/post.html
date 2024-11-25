@@ -2,7 +2,7 @@
 <article aria-label="Forum post" role="article">
   <header>
     <h2 aria-label="Post title" role="heading" id="post-title-1">{{ .Title }}</h2>
-    <h3>{{ .Username }}</h3>
+    <a href="/profile-user?uuid={{ .User_UUID }}">{{ .Username }}</a>
     
     <!-- todo, add list of category to the post -->
     <div>
@@ -27,9 +27,6 @@
       <button type="submit">Modify my post</button>
     </form>
     {{end}}
-
-
-
 
     <p aria-label="Post date" role="definition">
       {{ .Creation_Date }}
