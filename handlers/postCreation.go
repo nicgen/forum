@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"forum/cmd/lib"
+	"forum/models"
 	"net/http"
 	"time"
 )
@@ -12,8 +13,16 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 
 	// Getting the cookie (containing the UUID)
-	cookie, _ := r.Cookie("session_id")
-
+	cookie, err := r.Cookie("session_id")
+	if err != nil {
+		//Err crit : Cookie non trouvé
+		err := &models.CustomError{
+			StatusCode: http.StatusUnauthorized,
+			Message:    "Session not found, please try log in again.",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
+	}
 	// Storing the form values into variables
 	title := r.FormValue("post_title")
 	text := r.FormValue("post_text")
@@ -24,7 +33,13 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	state_post := `INSERT INTO Posts (User_UUID, Title, Category_ID, Text, Like, Dislike, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	_, err_db := db.Exec(state_post, cookie.Value, title, category, text, like_count, dislike_count, time.Now())
 	if err_db != nil {
-		lib.ErrorServer(w, "Error inserting new Post")
+		//Erreur critique: echec de l'insertion du post
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error inserting new post, please try again later.",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
 	}
 
 	// Redirect User to the home page

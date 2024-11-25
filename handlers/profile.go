@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"forum/cmd/lib"
+	"forum/models"
 	"net/http"
 )
 
@@ -10,12 +11,35 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	db := lib.GetDB()
 
 	// Checking the cookie values
-	cookie, _ := r.Cookie("session_id")
+	cookie, err := r.Cookie("session_id")
+	if err != nil {
+		// Err crit : cookie de session non trouvé
+		err := &models.CustomError{
+			StatusCode: http.StatusUnauthorized,
+			Message:    "Session not found, please log in again",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
+	}
 
 	// Getting the User Data
 	data := lib.GetData(db, cookie.Value, "logged", "profile", w, r)
+	if data == nil {
+		//Err non crit : Impossible de recuperer les données.
+		lib.ErrorServer(w, "Unable to retrieve user data, please try again")
+	}
+
 	data = lib.GetComments(db, cookie.Value, data, w, r)
+	if data == nil {
+		//Err non crit : Impossible de recup les commentaires
+		lib.ErrorServer(w, "Unable to retrieve comments, please try again later.")
+
+	}
 	data = lib.GetNotifications(w, cookie.Value, data)
+	if data == nil {
+		//Err non critique : Impossible de recup les notifications
+		lib.ErrorServer(w, "Unable to retrieve notifications, please try again later")
+	}
 
 	// Redirect User to the profile html page and sending the data to it
 	lib.RenderTemplate(w, "layout/index", "page/profile", data)
