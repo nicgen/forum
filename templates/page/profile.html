@@ -1,15 +1,20 @@
 {{define "page/profile"}}
-  <h2>Welcome, {{ .Username }}</h2>
-  <h3>Your Email: {{ .Email }}</h3>
+  {{if eq .UUID .User_UUID}}
+    <h2>Welcome, {{ .Username }}</h2>
+    <h3>Your Email: {{ .Email }}</h3>
+    <h3>Your role: {{ .Role }}</h3>
+  {{ else }}
+    <h2>Username: {{ .Username }}</h2>
+    <h3>User role: {{ .Role }}</h3>  
+  {{ end }}  
   <h3>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</h3>
-  <h3>Your role: {{ .Role }}</h3>
-  
   
   {{if eq .Role "Admin"}}
-  {{template "block/admin/users" .}}
-  {{template "block/admin/categories" .}}
+    {{template "block/admin/users" .}}
+    {{template "block/admin/categories" .}}
   {{end}}
-  {{if eq .Role "User" }}
+
+  {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
   <ul>
     <li>
       Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
@@ -19,31 +24,31 @@
       </form>
     </li>
   </ul>
-  {{end}}
-  {{if eq .Role "User"}}
+
   <form method="POST" action="/update-request">
     <input type="hidden" name="userUUID" value="{{ .UUID }}">
     <button type="submit">Request Mod</button>
   </form>
   {{end}}
+
   {{ range .Posts }}
-  <h2>Mes Posts</h2>
-  <div class="post">
-    <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-    <p>Post text: {{ .Text }}</p>
-    <!-- todo modify the date -->
-    <p>Created at: {{ .CreatedAt }}</p>
-  </div>
+    <h2>Mes Posts</h2>
+    <div class="post">
+      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+      <p>Post text: {{ .Text }}</p>
+      <!-- todo modify the date -->
+      <p>Created at: {{ .CreatedAt }}</p>
+    </div>
   {{end}}
 
   <h2>Mes Posts likés</h2>
   {{range .LikedPosts}}
-  <div class="post">
-    <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-    <p>Post text: {{ .Text }}</p>
-    <!-- todo modify the date -->
-    <p>Created at: {{ .CreatedAt }}</p>
-  </div>
+    <div class="post">
+      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+      <p>Post text: {{ .Text }}</p>
+      <!-- todo modify the date -->
+      <p>Created at: {{ .CreatedAt }}</p>
+    </div>
   {{end}}
 
   <h2>Everything User commented</p>
