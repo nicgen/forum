@@ -401,7 +401,7 @@ header {
 
 
 /* dropdown */
-.profile-dropdown {
+/* .profile-dropdown {
   display: none;
   position: absolute; 
   background-color: var(--bkg-color); 
@@ -416,7 +416,17 @@ header {
 
 .profil_thumb:focus-within .profile-dropdown {
   display: flex;
+  flex-direction: column;
   font-size: 1.5em;
+} */
+.post-full {
+  display: none;
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-top: 10px;
+}
+.post-full.active {
+  display: block;
 }
 
 
@@ -476,7 +486,30 @@ POSTS & FORMS
 */
 
 /* Create post-Area */
+  /* it maybe still a bit buggy, need some more work */
 
+  /* Style for textareas */
+  .post-title-area {
+    height: 40px;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    resize: none;
+  }
+  .post-content-area, .comment-area, .modify-area{
+    width: 100%;
+    height: 130px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    resize: none;
+  }
+  
 /*--------------------------------------------------------*/
 
 .post__main{
