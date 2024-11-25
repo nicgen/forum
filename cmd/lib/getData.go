@@ -45,9 +45,9 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 		// Posts Query based on page
 		var state_posts string
 		if page == "profile" {
-			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
+			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID, ImagePath FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
 		} else if page == "index" {
-			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts ORDER BY CreatedAt DESC`
+			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID, ImagePath FROM Posts ORDER BY CreatedAt DESC`
 		}
 
 		data_post := map[string]interface{}{
@@ -88,7 +88,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 		}
 
 		// Not logged in - show all posts
-		state_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts ORDER BY CreatedAt DESC`
+		state_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID, ImagePath FROM Posts ORDER BY CreatedAt DESC`
 		rows, err := db.Query(state_posts)
 		if err != nil {
 			ErrorServer(w, "Error accessing posts")

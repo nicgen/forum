@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -24,7 +23,6 @@ var allowedImageTypes = map[string]bool{
 }
 
 func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("Début de CreatePostHandler")
 	// Limite de taille de requête
 	r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 
@@ -72,7 +70,6 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	uploadDir := "./static/uploads/"
 	errMkdir := os.MkdirAll(uploadDir, 0755)
 	if errMkdir != nil {
-		log.Printf("Erreur lors de la création du dossier : %v", errMkdir)
 		http.Error(w, "Impossible de créer le dossier d'upload", http.StatusInternalServerError)
 		return
 	}
@@ -83,7 +80,6 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	// Crée le fichier avec des permissions spécifiques
 	out, errFile := os.OpenFile(filepath, os.O_WRONLY|os.O_CREATE, 0666)
 	if errFile != nil {
-		log.Printf("Erreur lors de la création du fichier : %v", errFile)
 		http.Error(w, "Impossible de créer le fichier", http.StatusInternalServerError)
 		return
 	}
@@ -105,13 +101,13 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Chemin relatif pour la base de données
 	relativePath := filename
-	log.Printf("Uploaded image path: %s", relativePath)
 
 	// Insère le post dans la base de données
 	state_post := `INSERT INTO Posts (User_UUID, Title, Category_ID, Text, Like, Dislike, CreatedAt, ImagePath) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 	_, err_db := db.Exec(state_post, cookie.Value, title, category, text, 0, 0, time.Now(), relativePath)
 
 	if err_db != nil {
+
 		// Supprime le fichier uploadé en cas d'erreur
 		os.Remove(filepath)
 		lib.ErrorServer(w, "Erreur lors de l'insertion du post")

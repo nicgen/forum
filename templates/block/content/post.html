@@ -34,18 +34,16 @@
   </header>
 
   <!-- post image -->
-<h1>LOL</h1>
   {{if .ImagePath}}
-  <figure aria-label="Post image" role="img">
-    <img 
-      src="/static/uploads/{{ .ImagePath }}" 
-      alt="{{ .Title }}" 
-      aria-label="Post image" 
-      role="img"
-      class="post-image"
-    >
-  </figure>
-  {{end}}
+<figure aria-label="Post image" role="img">
+  <img 
+    src="/static/uploads/{{ .ImagePath }}" 
+    alt="{{ .Title }}" 
+    onerror="console.error('Image failed to load. Path:', this.src)"
+    onload="console.log('Image loaded successfully. Path:', this.src)"
+  >
+</figure>
+{{end}}
 
   <!-- post content -->
   <div aria-label="Post content" role="contentinfo" id="post-content-1">

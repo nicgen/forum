@@ -3,7 +3,6 @@ package handlers
 import (
 	"forum/cmd/lib"
 	"forum/models"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -46,14 +45,12 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 		&post.Role,
 	)
 	if err != nil {
-		log.Printf("Debug - Post Details: ID=%d, Title=%s, ImagePath=%s", post.ID, post.Title, post.ImagePath)
-		log.Printf("Error fetching post details: %v", err)
 		lib.ErrorServer(w, "Error fetching post details")
 		return
 	}
 
 	// Récupération des commentaires
-	state_comment := `
+	stateComment := `
         SELECT 
             c.ID, 
             c.Text, 
@@ -68,20 +65,19 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
         ORDER BY c.CreatedAt DESC
     `
 
-	rows_comment, err_comment := db.Query(state_comment, post_id)
-	if err_comment != nil {
-		log.Printf("Error querying comments: %v", err_comment)
-		lib.ErrorServer(w, "Error accessing user comments")
+	rowsComment, errComment := db.Query(stateComment, post_id)
+	if errComment != nil {
+		lib.ErrorServer(w, "Error accessing comments")
 		return
 	}
-	defer rows_comment.Close()
+	defer rowsComment.Close()
 
 	var comments []*models.Comment
-	for rows_comment.Next() {
+	for rowsComment.Next() {
 		var comment models.Comment
 		var createdAt time.Time
 
-		err := rows_comment.Scan(
+		err := rowsComment.Scan(
 			&comment.ID,
 			&comment.Text,
 			&comment.Like,
@@ -92,8 +88,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 		)
 
 		if err != nil {
-			log.Printf("Error scanning comment: %v", err)
-			lib.ErrorServer(w, "Error scanning posts comments")
+			lib.ErrorServer(w, "Error scanning comments")
 			return
 		}
 
@@ -102,15 +97,6 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	post.Comments = comments
-
-	// Préparation des données pour le template
-	data := lib.DataTest(w, r)
-
-	if post.ImagePath != "" {
-		log.Printf("Image path is not empty: %s", post.ImagePath)
-	} else {
-		log.Printf("Warning: Image path is empty for post %d", post.ID)
-	}
 
 	// Vérification du statut de like/dislike
 	cookie, _ := r.Cookie("session_id")
@@ -126,10 +112,14 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Récupérer les données utilisateur
+		data := lib.DataTest(w, r)
 		post.Data = data
 	}
 
+	// Préparez les données pour le template
+	data := lib.DataTest(w, r)
 	data["Post"] = post
-	log.Printf("Rendering post with ImagePath: %s", post.ImagePath)
-	lib.RenderTemplate(w, "layout/index", "page/post", data)
+	data["Comments"] = comments
+
+	lib.RenderTemplate(w, "layout/index", "page/index", data)
 }

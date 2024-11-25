@@ -51,7 +51,7 @@
           </header>
         
           <!-- post image -->
-          {{/*if .ImagePath*/}}
+          {{ if .ImagePath }}
           <figure aria-label="Post image" role="img">
             <img 
               src="/static/uploads/{{ .ImagePath }}" 
@@ -59,10 +59,9 @@
               aria-label="Post image" 
               role="img"
               class="post-image"
-              onerror="console.log('Image failed to load: ', this.src)"
             >
           </figure>
-          {{/*end*/}}
+          {{ end }}
         
           <!-- post content -->
           <div aria-label="Post content" role="contentinfo" id="post-content-1">

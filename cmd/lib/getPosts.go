@@ -14,9 +14,12 @@ func GetPosts(w http.ResponseWriter, uuid, state string, rows *sql.Rows, data, d
 
 	for rows.Next() {
 		var post models.Post
-		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
+		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID, &post.ImagePath); err != nil {
 			ErrorServer(w, "Error scanning posts")
 		}
+
+		var size int64 = 20
+		post.ImageSize = size
 
 		// Convertir la date en chaînes de caractères
 		time_post := strings.Split(post.CreatedAt.Format("2006-01-02 15:04:05"), " ")
