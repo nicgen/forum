@@ -20,42 +20,60 @@
     {{end}}
   </div>
 
-  <!-- main (posts and comments) -->
-  <div class="post__content post__main" role="region" aria-label="Main Content">
-  
-    <!-- FORM Create a post -->
-    {{if ne .Role "Guest"}}
-    <div>
-      <h2 aria-label="Create a new post title">Create a new post</h2>
-      <div role="form" aria-label="Create a new post form">
-        {{template "block/form/post_create" .}}
-      </div>
-    </div>
-    {{else}}
-    <div>
-      <div class="alert__guest__post">
-        <p>You're a guest, if you want to post, please <a href="/nav-register" class="link" aria-label="Sign Up">Sign Up</a> or <a href="/nav-login" class="link" aria-label="Login">Login</a>.</p>
-      </div>
-    </div>
-    {{ end }}
-
-    <!-- POSTS -->
-    {{ if .Posts }}
-    <div class="posts">
-      <!-- list of posts & comments -->
-      <ul role="list" aria-label="Posts List">
-        {{ range .Posts }}
+  <div class="container__block">
+    <!-- left menu, categories -->
+    <div class="container__block__main block__categories" role="region" aria-label="Categories">
+      <h2 aria-label="Categories Title">Categories</h2>
+      {{if .Categories }}
+      <ul role="list" aria-label="Categories List">
+        {{range .Categories}}
         <li role="listitem">
-          {{ template "block/content/post" . }}
+          <a href="filter?id={{.ID}}" aria-label="{{.Name}}">{{.Name}}</a>
         </li>
-        {{ end }}
+        {{end}}
       </ul>
+      <ul role="list" aria-label="Sub-menu List">
+        <li><a href="/about">About</a></li>
+      </ul>
+      {{else}}
+      <p aria-label="No categories message">There's no categories</p>
+      {{end}}
     </div>
-    {{else}}
-    <div role="alert" aria-label="No posts message">
-      <h2 aria-label="No posts title">Strange! There's no posts.</h2>
+
+    <!-- main (posts and comments) -->
+    <div class="container__block__main block__post" role="region" aria-label="Main Content">
+    
+      <!-- FORM Create a post -->
+      {{if eq .Role "Guest"}}
+        <div class="container__block__main alert__post-guest">
+          <p>You're a guest, if you want to post, please <a href="/nav-register" class="link" aria-label="Sign Up">Sign Up</a> or <a href="/nav-login" class="link" aria-label="Login">Login</a>.</p>
+        </div>
+      {{else}}
+        <div class="container__block__main">
+          <h2 aria-label="Create a new post title">Create a new post</h2>
+          <div role="form" aria-label="Create a new post form">
+            {{template "block/form/post_create" . }}
+          </div>
+        </div>
+      {{ end }}
+
+      <!-- POSTS (list) -->
+      {{ if .Posts }}
+        <div class="container__block__main posts">
+          <!-- list of posts & comments -->
+          <ul role="list" aria-label="Posts List">
+            {{ range .Posts }}
+              <li class="post" role="listitem">
+                {{ template "block/content/post" . }}
+              </li>
+            {{ end }}
+          </ul>
+        </div>
+      {{else}}
+        <div class="alert__post-guest" role="alert" aria-label="No posts message">
+          <h2 aria-label="No posts title">Strange! There's no posts.</h2>
+        </div>
+      {{ end }}
     </div>
-    {{ end }}
   </div>
-</div>
 {{end}}

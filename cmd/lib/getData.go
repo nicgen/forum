@@ -62,9 +62,15 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 				ErrorServer(w, "Error getting User infos")
 			}
 
+			// Checking the cookie values
+			cookie, _ := r.Cookie("session_id")
+			data["User_UUID"] = cookie.Value
+
+			// Storing date informations into the map
 			time_comment := strings.Split(createdAt.Format("2006-01-02 15:04:05"), " ")
 			date = time_comment[0]
 			hour = time_comment[1]
+
 		}
 
 		// Storing the list of Users into the data map if the role is Admin
@@ -73,9 +79,9 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 		// Posts Query based on page
 		var state_posts string
 		if page == "profile" || page == "profile_user" {
-			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
+			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID, ImagePath FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
 		} else if page == "index" {
-			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts ORDER BY CreatedAt DESC`
+			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID, ImagePath FROM Posts ORDER BY CreatedAt DESC`
 		}
 
 		data_post := map[string]interface{}{
@@ -108,6 +114,9 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 		data["NavLogin"] = "hide"
 		data["NavRegister"] = "hide"
 		data = ErrorMessage(w, data, "none")
+		if page != "profile_user" {
+			data["User_UUID"] = uuid
+		}
 
 	} else {
 
@@ -117,7 +126,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 		}
 
 		// Not logged in - show all posts
-		state_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts ORDER BY CreatedAt DESC`
+		state_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID, ImagePath FROM Posts ORDER BY CreatedAt DESC`
 		rows, err := db.Query(state_posts)
 		if err != nil {
 			ErrorServer(w, "Error accessing posts")

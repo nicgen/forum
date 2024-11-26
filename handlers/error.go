@@ -9,7 +9,6 @@ import (
 	"net"
 	"net/http"
 	"runtime/debug"
-	"strconv"
 )
 
 // HandleError handles error requests and send an error response with the given status code and message
@@ -20,8 +19,7 @@ func HandleError(w http.ResponseWriter, statusCode int, message string) {
 		Header: fmt.Sprintf("Error %d", statusCode),
 		// Content:   message,
 		Content: map[string]template.HTML{
-			"Msg_raw":    template.HTML("<h1>" + message + "</>"),
-			"Msg_styled": template.HTML("<h1 style=\"text=color: blue;\">" + strconv.Itoa(statusCode) + "</h1><p>paragraph with</br>style</>"),
+			"Msg_raw": template.HTML("<h1>" + message + "</>"),
 		},
 		IsError:   true,
 		ErrorCode: statusCode,
@@ -68,6 +66,9 @@ func WithErrorHandling(next http.Handler) http.Handler {
 					case "Unauthorized":
 						statusCode = http.StatusUnauthorized
 						message = "Status Unauthorized"
+					case "StatusConflict":
+						statusCode = http.StatusConflict
+						message = "Status Conflict"
 					default:
 						// fmt.Println(">>>>>>>>>>STRING:Internal<<<<<<<<<<")
 						statusCode = http.StatusInternalServerError

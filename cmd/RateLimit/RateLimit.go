@@ -35,7 +35,7 @@ func (rl *RateLimiter) Limit(next http.Handler) http.Handler {
 		}
 		rl.visitors[ip][path]++
 
-		if rl.visitors[ip][path] > 100 { // Limite à 10 requêtes
+		if rl.visitors[ip][path] > 10 { // Limite à 10 requêtes
 			// Erreur personnalisé via error.go
 			err := &models.CustomError{
 				StatusCode: http.StatusTooManyRequests,
