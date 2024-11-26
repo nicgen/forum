@@ -13,7 +13,7 @@ func GetNotifications(w http.ResponseWriter, userUUID string, data map[string]in
 	var notifications []*models.Notification
 
 	notificationsQuery := `
-		SELECT ID, Post_ID, Comment_ID, CreatedAt, IsRead	FROM Notification WHERE User_UUID = ? ORDER BY CreatedAt DESC`
+		SELECT ID, Post_ID, Reaction_ID, Comment_ID, CreatedAt, IsRead	FROM Notification WHERE User_UUID = ? ORDER BY CreatedAt DESC`
 
 	rows, err := db.Query(notificationsQuery, userUUID)
 	if err != nil {
@@ -27,8 +27,8 @@ func GetNotifications(w http.ResponseWriter, userUUID string, data map[string]in
 		// var createdAt string
 
 		// Scan the results into the Notification struct
-		if err := rows.Scan(&notification.ID, &notification.PostID, &notification.CommentID, &notification.CreatedAt, &notification.IsRead); err != nil {
-			ErrorServer(w, "Error scanning notifications")
+		if err := rows.Scan(&notification.ID, &notification.PostID, &notification.CommentID, &notification.ReactionID, &notification.CreatedAt, &notification.IsRead); err != nil {
+			ErrorServer(w, "Error scanning notifications 1")
 			return data
 		}
 
@@ -80,7 +80,7 @@ func InsertNotifications(w http.ResponseWriter, userUUID string, data map[string
 
 		// Scan the results into the Notification struct
 		if err := rows.Scan(&notification.ID, &notification.PostID, &notification.CommentID, &notification.CreatedAt, &notification.IsRead); err != nil {
-			ErrorServer(w, "Error scanning notifications")
+			ErrorServer(w, "Error scanning notifications 2")
 			return data
 		}
 
