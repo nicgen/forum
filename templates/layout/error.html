@@ -19,7 +19,6 @@
     <main role="main">
       <div class="container">
         {{if .Data.IsError}}
-        <p>LAYOUT[error]</p>
         <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
         {{.Data.Content.Msg_raw}}
         {{else}}
