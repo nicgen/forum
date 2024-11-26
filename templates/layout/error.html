@@ -21,8 +21,10 @@
         {{if .Data.IsError}}
         <p>LAYOUT[error]</p>
         <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
+        {{.Data.Content.Msg_raw}}
         {{else}}
         <h1 role="heading" aria-level="1">{{.Data.Header}}</h1>
+        {{.Data.Content.Msg_raw}}
         {{end}}
         {{if .Content}}{{.Content}}{{else}}<p>^^ no content</p>{{end}}
       </div>
