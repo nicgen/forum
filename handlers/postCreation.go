@@ -144,7 +144,6 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 			Message:    "Error inserting new post, please try again later.",
 		}
 		HandleError(w, err.StatusCode, err.Message)
-		return
 
 		// Supprime le fichier uploadé en cas d'erreur
 		os.Remove(filepath)
