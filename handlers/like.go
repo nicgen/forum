@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"forum/cmd/lib"
 	"forum/models"
 	"net/http"
@@ -31,7 +32,6 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 	dislike_post := r.FormValue("dislike_post")
 	like_comment := r.FormValue("like_comment")
 	dislike_comment := r.FormValue("dislike_comment")
-	post_id := r.URL.Query().Get("post_id")
 
 	if like_post != "" || dislike_post != "" {
 		var reaction_status string
@@ -43,7 +43,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 			if like_post == "like_post" {
 				// Creation of a new reaction
 				state_create := `INSERT INTO Reaction (User_UUID, Post_ID, Status) VALUES (?, ?, ?)`
-				_, err_creation := db.Exec(state_create, cookie.Value, id, "liked")
+				result, err_creation := db.Exec(state_create, cookie.Value, id, "liked")
 				if err_creation != nil {
 					//Erreur non critique : Echec de création de réaction
 					lib.ErrorServer(w, "Error creating Post Reaction")
@@ -56,23 +56,6 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 					//Erreur non critique : Echec de mise à jour de réaction
 					lib.ErrorServer(w, "Error updating Post Like value")
 				}
-			} else if dislike_post == "dislike_post" {
-				// Creation of a new reaction
-				state_create := `INSERT INTO Reaction (User_UUID, Post_ID, Status) VALUES (?, ?, ?)`
-				_, err_creation := db.Exec(state_create, cookie.Value, id, "disliked")
-				if err_creation != nil {
-					//Erreur non critique: Echec de la création de réaction
-					lib.ErrorServer(w, "Error creating Post Reaction")
-				}
-
-				// Updating the post like value
-				state_post_like := `UPDATE Posts SET Dislike = Dislike + 1 WHERE ID = ?`
-				_, err_post_like := db.Exec(state_post_like, id)
-				if err_post_like != nil {
-					//Erreur non critique : Echec de la mise a jour du nombre de dislike
-					lib.ErrorServer(w, "Error updating Post Dislike value")
-				}
-
 				// Retrieve the last inserted comment ID
 				reactionID, err := result.LastInsertId()
 				if err != nil {
@@ -83,37 +66,60 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 				// Insert a notification for the post author
 				var postAuthorUUID string
 				queryPostAuthor := `SELECT User_UUID FROM Posts WHERE ID = ?`
-				err = db.QueryRow(queryPostAuthor, post_id).Scan(&postAuthorUUID)
+				err = db.QueryRow(queryPostAuthor, id).Scan(&postAuthorUUID)
 				if err != nil {
 					lib.ErrorServer(w, "Error finding post author")
+					return
+				}
+				if id == "" {
+					lib.ErrorServer(w, "Post ID is missing")
+					fmt.Println("erreur missing")
 					return
 				}
 
 				if postAuthorUUID != cookie.Value { // Avoid notifying the user if they commented on their own post
 					state_notification := `INSERT INTO Notification (User_UUID, Comment_ID, Post_ID, CreatedAt, IsRead) VALUES (?, ?, ?, ?, ?)`
-					_, errNotif := db.Exec(state_notification, postAuthorUUID, reactionID, post_id, time.Now(), false)
+					_, errNotif := db.Exec(state_notification, postAuthorUUID, reactionID, id, time.Now(), false)
 					if errNotif != nil {
 						lib.ErrorServer(w, "Error inserting notification")
 						return
 					}
 				}
-				// // Notifier le propriétaire du post
-				// var postOwnerUUID string
-				// queryPostOwner := `SELECT User_UUID FROM Posts WHERE ID = ?`
-				// err := db.QueryRow(queryPostOwner, id).Scan(&postOwnerUUID)
-				// if err != nil {
-				// 	lib.ErrorServer(w, "Error retrieving post owner")
-				// 	return
-				// }
+			} else if dislike_post == "dislike_post" {
+				// Creation of a new reaction
+				state_create := `INSERT INTO Reaction (User_UUID, Post_ID, Status) VALUES (?, ?, ?)`
+				_, err_creation := db.Exec(state_create, cookie.Value, id, "disliked")
+				if err_creation != nil {
+					//Erreur non critique: Echec de la création de réaction
+					lib.ErrorServer(w, "Error creating Post Reaction")
+					return
+				}
 
-				// if postOwnerUUID != cookie.Value { // Ne pas s'auto-notifier
-				// 	reactionID := fmt.Sprintf("%s-%s", cookie.Value, id) // ID unique pour la réaction
-				// 	errNotif := InsertNotification(db, postOwnerUUID, reactionID, sql.NullString{String: id, Valid: true}, sql.NullString{})
-				// 	if errNotif != nil {
-				// 		lib.ErrorServer(w, "Error creating notification for post owner")
-				// 	}
-				// }
+				// Updating the post like value
+				state_post_like := `UPDATE Posts SET Dislike = Dislike + 1 WHERE ID = ?`
+				_, err_post_like := db.Exec(state_post_like, id)
+				if err_post_like != nil {
+					//Erreur non critique : Echec de la mise a jour du nombre de dislike
+					lib.ErrorServer(w, "Error updating Post Dislike value")
+				}
+
 			}
+			// // Notifier le propriétaire du post
+			// var postOwnerUUID string
+			// queryPostOwner := `SELECT User_UUID FROM Posts WHERE ID = ?`
+			// err := db.QueryRow(queryPostOwner, id).Scan(&postOwnerUUID)
+			// if err != nil {
+			// 	lib.ErrorServer(w, "Error retrieving post owner")
+			// 	return
+			// }
+
+			// if postOwnerUUID != cookie.Value { // Ne pas s'auto-notifier
+			// 	reactionID := fmt.Sprintf("%s-%s", cookie.Value, id) // ID unique pour la réaction
+			// 	errNotif := InsertNotification(db, postOwnerUUID, reactionID, sql.NullString{String: id, Valid: true}, sql.NullString{})
+			// 	if errNotif != nil {
+			// 		lib.ErrorServer(w, "Error creating notification for post owner")
+			// 	}
+			// }
 
 			// If the User already like the post
 		} else if reaction_status == "liked" {
