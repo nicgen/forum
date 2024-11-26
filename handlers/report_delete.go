@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"fmt"
 	"forum/cmd/lib"
 	"net/http"
@@ -24,6 +25,14 @@ func Report_Delete(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(name2)
 
 	if len(name1) != 0 {
+		var state_reaction string
+		state_reaction = `SELECT ID From Report WHERE ID = ? AND Post_Id = ?`
+		err_reaction := db.QueryRow(state_reaction, report_ID, report_postID).Scan(&state_reaction)
+
+		if err_reaction == sql.ErrNoRows {
+			lib.ErrorServer(w, "Error Report exist")
+			return
+		}
 		var state_delete string
 		state_delete = `DELETE FROM Posts WHERE ID = ?`
 		// var state_deletereport string
