@@ -62,9 +62,15 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 				ErrorServer(w, "Error getting User infos")
 			}
 
+			// Checking the cookie values
+			cookie, _ := r.Cookie("session_id")
+			data["User_UUID"] = cookie.Value
+
+			// Storing date informations into the map
 			time_comment := strings.Split(createdAt.Format("2006-01-02 15:04:05"), " ")
 			date = time_comment[0]
 			hour = time_comment[1]
+			
 		}
 
 		// Storing the list of Users into the data map if the role is Admin
@@ -107,6 +113,9 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 		data["UUID"] = uuid
 		data["NavLogin"] = "hide"
 		data["NavRegister"] = "hide"
+		if page != "profile_user" {
+			data["User_UUID"] = uuid
+		}
 
 	} else {
 
