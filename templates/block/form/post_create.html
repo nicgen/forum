@@ -3,7 +3,7 @@
     <select name="categories" multiple>
       <option value="">--Please choose one or more option(s)--</option>
       {{range .Categories}}
-        <option value="{{.ID}}">{{.Name}}</option>
+        <option value="{{.Name}}">{{.Name}}</option>
       {{end}}
     </select>
     <label for="post-title">Title</label>
