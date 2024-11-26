@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	maxUploadSize = 20 * 100 * 100 // 20MB
+	maxUploadSize = 20971520 // 20MB in octets
 )
 
 var allowedImageTypes = map[string]bool{
