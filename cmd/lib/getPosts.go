@@ -15,7 +15,7 @@ func GetPosts(w http.ResponseWriter, uuid, state string, rows *sql.Rows, data, d
 
 	for rows.Next() {
 		var post models.Post
-		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
+		if err := rows.Scan(&post.ID, &post.Category_Name, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
 			ErrorServer(w, "Error scanning posts")
 		}
 
