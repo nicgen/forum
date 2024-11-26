@@ -16,6 +16,7 @@ type Post struct {
 	Like          int
 	Dislike       int
 	Data          map[string]interface{}
+	Error         map[string]interface{}
 	Comments      []*Comment
 	CreatedAt     time.Time
 	Creation_Date string
