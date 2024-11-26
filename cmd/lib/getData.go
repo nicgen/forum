@@ -32,7 +32,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 			cookie_hour, err_hour := r.Cookie("creation_hour")
 			cookie_email, err_email := r.Cookie("email")
 			cookie_role, err_role := r.Cookie("role")
-	
+
 			// Checking for database requests errors
 			if err_username != nil {
 				ErrorServer(w, "Error getting Username from the cookies")
@@ -107,6 +107,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 		data["UUID"] = uuid
 		data["NavLogin"] = "hide"
 		data["NavRegister"] = "hide"
+		data = ErrorMessage(w, data, "none")
 
 	} else {
 
