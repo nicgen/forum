@@ -1,4 +1,7 @@
+<!-- ----------------------Informations de l'utilisateur------------------------>
+
 {{define "page/profile"}}
+<<<<<<< HEAD
 
   <div class="container__block">
     <!-- left menu, categories -->
@@ -75,4 +78,119 @@
     </div>
   </div>
 
+=======
+  {{if eq .UUID .User_UUID}}
+    <h2>Welcome, {{ .Username }}</h2>
+    <h3>Your Email: {{ .Email }}</h3>
+    <h3>Your role: {{ .Role }}</h3>
+  {{ else }}
+    <h2>Username: {{ .Username }}</h2>
+    <h3>User role: {{ .Role }}</h3>  
+  {{ end }}  
+  <h3>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</h3>
+
+<!-- -------------------------------------------------------------------------->
+  
+<!--- Affichage de la liste des Utilisateurs et de la création de Categories -->
+
+  {{if and (eq .UUID .User_UUID) (eq .Role "Admin")}}
+    {{template "block/admin/users" .}}
+    {{template "block/admin/categories" .}}
+  {{end}}
+
+<!-- ------------------------------------------------------------------------ -->
+
+<!-- --Affichage des boutons de supréssion de compte de de demande de modo -- -->
+  {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
+  <ul>
+    <li>
+      Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
+      <form method="POST" action="/admin/delete-user">
+        <input type="hidden" name="userUUID" value="{{ .UUID }}">
+        <button type="submit">Delete my account</button>
+      </form>
+    </li>
+  </ul>
+
+  <form method="POST" action="/update-request">
+    <input type="hidden" name="userUUID" value="{{ .UUID }}">
+    <button type="submit">Request Mod</button>
+  </form>
+  {{end}}
+<!-- --------------------------------------------------------------------------->
+
+<!------------------ Affichage des posts de l'utilisateur-------------------- -->
+  {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
+    {{if gt (len .Posts) 0}}
+      <h2>Mes Posts</h2>
+    {{ end }}
+  {{ else }}
+    {{if gt (len .Posts) 0}}
+      <h2>Posts de l'utilisateur</h2>
+    {{ end }}
+  {{ end }}
+
+  {{ range .Posts }}
+    <div class="post">
+      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+      <p>Post text: {{ .Text }}</p>
+      <p>Creation date: {{ .Creation_Date }}</p>
+      <p>Creation hour: {{ .Creation_Hour }}</p>
+    </div>
+  {{end}}
+<!-- --------------------------------------------------------------------------->  
+
+<!-- -----------Affichage des posts likés par l'utilisateur--------------------->
+  {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
+    {{if gt (len .LikedPosts) 0}}
+      <h2>Mes Posts likés</h2>
+    {{ end }}
+  {{ else }}
+    {{if gt (len .LikedPosts) 0}}
+      <h2>Posts likés par l'utilisateur</h2>
+    {{ end }}
+  {{ end }}
+
+  {{range .LikedPosts}}
+    <div class="post">
+      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+      <p>Post text: {{ .Text }}</p>
+      <p>Creation date: {{ .Creation_Date }}</p>
+      <p>Creation hour: {{ .Creation_Hour }}</p>
+    </div>
+  {{end}}
+<!-- --------------------------------------------------------------------------->  
+
+<!-- --------------Affichage des commentaires de l'utilisateur------------------>
+  {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
+    {{if gt (len .ProfileComments) 0}}
+      <h2>Tout ce que j'ai commenté</h2>
+    {{ end }}
+  {{ else }}
+    {{if gt (len .ProfileComments) 0}}
+      <h2>Tout ce que l'utilisateur a commenté</h2>
+    {{ end }}
+  {{ end }}
+
+  {{range .ProfileComments }}
+  <div class="post">
+    <h3>Post commented: Title: {{ .Data.PostInfo.Title }} Text: {{ .Data.PostInfo.Text }}</p>
+    <p>Comment text: {{ .Text }}</p>
+    <p>Comment like: {{ .Like }}</p>
+    <p>Comment dislike: {{ .Dislike }}</p>
+  </div>
+  {{end}}
+<!-- --------------------------------------------------------------------------->  
+
+<!-- -------------Affichage des notifications de l'utilisateur------------------>
+  {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
+    {{if gt (len .LikedPosts) 0}}
+      <h2>Mes notifications</h2>
+    {{ end }}  
+    {{range .Notifications}}
+      Test Notification: {{ .PostID}}
+    {{ end }}
+  {{ end }}
+<!-- --------------------------------------------------------------------------->
+>>>>>>> cc48c767aefc72672d8b5e165bcb727c1ca54b41
 {{end}}

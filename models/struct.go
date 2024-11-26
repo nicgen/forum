@@ -6,6 +6,7 @@ import (
 
 type Post struct {
 	ID            int
+	Category_Name string
 	User_UUID     string
 	Category_ID   string
 	Title         string
