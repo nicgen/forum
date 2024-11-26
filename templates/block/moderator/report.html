@@ -4,7 +4,5 @@
 <input type="hidden" name="Report_title" value="{{ .Title }}">
 <button href="/" class="report">Report</button>
 </form>
-{{if ne .Error.ReportExist "null"}}
-<span class="form__error">{{ .Error.ReportExist}}</span>
-{{end}}
+
 {{end}}
