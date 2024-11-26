@@ -13,6 +13,7 @@
 
     <!-- Check if it's the Author of the post -->
     {{ if or (eq .Data.Role "Moderator") (eq .Data.Role "Admin") (eq .IsAuthor "yes")}}
+    {{template "block/moderator/report" .}}
     <div>
       <form method="GET" action="/delete">
         <input type="hidden" name="delete" value="post">
