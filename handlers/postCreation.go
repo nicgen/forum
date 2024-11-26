@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"forum/models"
 	"io"
 	"net/http"
@@ -15,7 +14,7 @@ import (
 )
 
 const (
-	maxUploadSize = 20971520 // 20MB in octets
+	maxUploadSize = 20971520 // 20MB en octets
 )
 
 var allowedImageTypes = map[string]bool{
@@ -35,91 +34,100 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Récupère le fichier
-	file, handler, err := r.FormFile("image")
+	// Récupération du cookie de session
+	cookie, err := r.Cookie("session_id")
 	if err != nil {
+		err := &models.CustomError{
+			StatusCode: http.StatusUnauthorized,
+			Message:    "Session not found, please log in again.",
+		}
+		HandleError(w, err.StatusCode, err.Message)
+		return
+	}
+
+	// Vérifie si le champ "image" est présent
+	file, handler, err := r.FormFile("image")
+	if err != nil && err != http.ErrMissingFile {
 		http.Error(w, "Erreur lors du téléchargement", http.StatusBadRequest)
 		return
 	}
-	defer file.Close()
+	defer func() {
+		if file != nil {
+			file.Close()
+		}
+	}()
 
-	// Vérifie le type de fichier
-	buff := make([]byte, 512)
-	_, err = file.Read(buff)
-	if err != nil {
-		http.Error(w, "Erreur de lecture", http.StatusInternalServerError)
-		return
-	}
-	filetype := http.DetectContentType(buff)
+	var filename string
+	if err == http.ErrMissingFile {
+		// Pas d'image téléchargée, continuez sans image
+		filename = "" // Pas de fichier
+	} else {
+		// Traitement de l'image
+		buff := make([]byte, 512)
+		_, err = file.Read(buff)
+		if err != nil {
+			http.Error(w, "Erreur de lecture", http.StatusInternalServerError)
+			return
+		}
+		filetype := http.DetectContentType(buff)
 
-	if !allowedImageTypes[filetype] {
-		http.Error(w, "Type de fichier non autorisé", http.StatusBadRequest)
-		return
-	}
+		if !allowedImageTypes[filetype] {
+			http.Error(w, "Type de fichier non autorisé", http.StatusBadRequest)
+			return
+		}
 
-	// Réinitialise le curseur du fichier
-	_, err = file.Seek(0, 0)
-	if err != nil {
-		http.Error(w, "Erreur de lecture", http.StatusInternalServerError)
-		return
-	}
+		// Réinitialise le curseur du fichier
+		_, err = file.Seek(0, 0)
+		if err != nil {
+			http.Error(w, "Erreur de lecture", http.StatusInternalServerError)
+			return
+		}
 
-	// Génère un nom de fichier unique
-	ext := filepath.Ext(handler.Filename)
-	filename := uuid.Must(uuid.NewV4()).String() + ext
+		// Génère un nom de fichier unique
+		ext := filepath.Ext(handler.Filename)
+		filename = uuid.Must(uuid.NewV4()).String() + ext
 
-	// Crée le dossier d'upload s'il n'existe pas avec des permissions spécifiques
-	uploadDir := "./static/uploads/"
-	errMkdir := os.MkdirAll(uploadDir, 0755)
-	if errMkdir != nil {
-		http.Error(w, "Impossible de créer le dossier d'upload", http.StatusInternalServerError)
-		return
-	}
+		// Crée le dossier d'upload s'il n'existe pas avec des permissions spécifiques
+		uploadDir := "./static/uploads/"
+		errMkdir := os.MkdirAll(uploadDir, 0755)
+		if errMkdir != nil {
+			http.Error(w, "Impossible de créer le dossier d'upload", http.StatusInternalServerError)
+			return
+		}
 
-	// Chemin complet du fichier
-	filepath := filepath.Join(uploadDir, filename)
+		// Chemin complet du fichier
+		filePath := filepath.Join(uploadDir, filename)
 
-	// Crée le fichier avec des permissions spécifiques
-	out, errFile := os.OpenFile(filepath, os.O_WRONLY|os.O_CREATE, 0666)
-	if errFile != nil {
-		http.Error(w, "Impossible de créer le fichier", http.StatusInternalServerError)
-		return
-	}
-	defer out.Close()
+		// Crée le fichier avec des permissions spécifiques
+		out, errFile := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0666)
+		if errFile != nil {
+			http.Error(w, "Impossible de créer le fichier", http.StatusInternalServerError)
+			return
+		}
+		defer out.Close()
 
-	// Copie le fichier
-	_, err = io.Copy(out, file)
-	if err != nil {
-		http.Error(w, "Erreur de copie", http.StatusInternalServerError)
-		return
+		// Copie le fichier
+		_, err = io.Copy(out, file)
+		if err != nil {
+			http.Error(w, "Erreur de copie", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	// Récupère les autres données du formulaire
 	db := lib.GetDB()
 
-	// Parse the form data (including query parameters and form body)
-	err_parse := r.ParseForm()
-	if err_parse != nil {
-		fmt.Println("Error parsing form:", err)
+	// Récupération des données du formulaire
+	errParse := r.ParseForm()
+	if errParse != nil {
 		http.Error(w, "Unable to parse form data", http.StatusInternalServerError)
 		return
 	}
 
-	// Getting the cookie (containing the UUID)
-	cookie, err := r.Cookie("session_id")
-	if err != nil {
-		//Err crit : Cookie non trouvé
-		err := &models.CustomError{
-			StatusCode: http.StatusUnauthorized,
-			Message:    "Session not found, please try log in again.",
-		}
-		HandleError(w, err.StatusCode, err.Message)
-		return
-	}
-	// Storing the form values into variables
+	// Récupération des valeurs du formulaire
 	title := r.FormValue("post_title")
 	text := r.FormValue("post_text")
-	selectedCategories := r.Form["categories"] // This gives you a slice of strings
+	selectedCategories := r.Form["categories"]
 
 	var categories string
 	for i := 0; i < len(selectedCategories); i++ {
@@ -134,11 +142,11 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	relativePath := filename
 
 	// Insère le post dans la base de données
-	state_post := `INSERT INTO Posts (User_UUID, Title, Category_ID, Text, Like, Dislike, CreatedAt, ImagePath) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-	_, err_db := db.Exec(state_post, cookie.Value, title, categories, text, 0, 0, time.Now(), relativePath)
+	statePost := `INSERT INTO Posts (User_UUID, Title, Category_ID, Text, Like, Dislike, CreatedAt, ImagePath) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+	_, errDb := db.Exec(statePost, cookie.Value, title, categories, text, 0, 0, time.Now(), relativePath)
 
-	if err_db != nil {
-		//Erreur critique: echec de l'insertion du post
+	if errDb != nil {
+		// Erreur critique : échec de l'insertion du post
 		err := &models.CustomError{
 			StatusCode: http.StatusInternalServerError,
 			Message:    "Error inserting new post, please try again later.",
@@ -146,8 +154,9 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		HandleError(w, err.StatusCode, err.Message)
 
 		// Supprime le fichier uploadé en cas d'erreur
-		os.Remove(filepath)
-		lib.ErrorServer(w, "Erreur lors de l'insertion du post")
+		if filename != "" {
+			os.Remove(filepath.Join("./static/uploads/", filename))
+		}
 		return
 	}
 
