@@ -78,7 +78,7 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 
 		// Posts Query based on page
 		var state_posts string
-		if page == "profile" {
+		if page == "profile" || page == "profile_user" {
 			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID, ImagePath FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
 		} else if page == "index" {
 			state_posts = `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID, ImagePath FROM Posts ORDER BY CreatedAt DESC`
