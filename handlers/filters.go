@@ -21,7 +21,7 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 
 	var posts []*models.Post
 	var err_post error
-
+	// sqlite
 	state_filters :=
 		`SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID
 	FROM Posts
