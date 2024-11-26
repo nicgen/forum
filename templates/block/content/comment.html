@@ -1,13 +1,5 @@
 {{define "block/content/comment"}}
-<!-- /!\ not used, structure not ready -->
- <h3>lol</h3>
-<p>{{ .Text }}</p>
-<p>{{if .Like }}{{ .Like }}{{ else }}0{{end}}like</p>
-<p>{{if .Dislike }}{{ .Dislike }}{{ else }}0{{end}}dislike</p>
-<p><span>{{ .Creation_Date }}</span><span>{{ .Creation_Hour }}</span></p>
-  {{ .Text }}
-  {{ .Like }}
-  {{ .Dislike }}
-  {{ .Creation_Date }}
-  {{ .Creation_Hour }}
+  <p><span>{{ .Creation_Date }}/{{ .Creation_Hour }}</span></p>
+  <p>{{ .Text }}</p>
+  {{ template "block/form/like" .}}
 {{end}}

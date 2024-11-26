@@ -1,0 +1,78 @@
+{{define "layout/index"}}
+
+<!-- /!\ default layout -->
+
+<!-- todo, add path condition?: `if /register` or `if /log` -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- commented, no need -->
+{{/* template "block/share/head" */}}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    {{ if eq .UserContent.Role "admin" }}
+    <div class="wrapper" role="document">
+
+        <!-- tests, not for production -->
+        <!-- <div class="container" role="region" aria-label="Main content container">
+            <ul role="list">
+                {{if .Data.Title }}<li role="listitem">{{ .Data.Title }}</li>{{ end }}
+                <li role="listitem">{{ .Data.ErrorCode }}</li>
+                <li role="listitem"></li>
+            </ul>
+        </div> -->
+
+        <!-- dev banner (force error), not for production -->
+        {{ template "block/dev/force-error" . }}
+
+        <!-- main nav -->
+        {{/* template "block/nav/main" . */}}
+        <nav role="navigation" aria-label="Main menu">
+            <ul role="menubar">
+                <li role="menuitem" aria-haspopup="false">
+                    <a href="/admin/users" aria-label="Users">Users</a>
+                </li>
+                <li role="menuitem" aria-haspopup="false">
+                    <a href="/admin/posts" aria-label="Posts">Posts</a>
+                </li>
+                <li role="menuitem" aria-haspopup="false">
+                    <a href="/admin/comments" aria-label="Comments">Comments</a>
+                </li>
+                <li role="menuitem" aria-haspopup="false">
+                    <a href="/admin/notifications" aria-label="Notifications">Notifications</a>
+                </li>
+            </ul>
+        </nav>
+        
+
+        <main role="main" aria-label="Main content">
+            <div class="container" role="region" aria-label="Page content container">
+            {{if .Data.IsError}}
+            <!-- if error -->
+                <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
+                {{ .Content }}
+            {{else}}
+            <!-- page content -->
+            {{if .Content}}{{.Content}}{{else}}<p role="definition">no content</p>{{end}}
+            {{ end }}
+            </div>
+        </main>
+
+        {{/* template "block/nav/footer" . */}} <!-- not for production (no use) -->
+
+        <script src="/static/js/theme.js"></script> <!-- import for the js (theme) -->
+    </div>
+
+    {{ end }}
+</body>
+
+</html>
+{{end}}

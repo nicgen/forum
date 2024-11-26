@@ -4,21 +4,24 @@ import (
 	"database/sql"
 	"forum/models"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
-// ? Function to get the posts bases on the query
 func GetPosts(w http.ResponseWriter, uuid, state string, rows *sql.Rows, data, data_user map[string]interface{}) map[string]interface{} {
-
 	var posts []*models.Post
 	defer rows.Close()
 
 	for rows.Next() {
 		var post models.Post
-		if err := rows.Scan(&post.ID, &post.Category_Name, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
+		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID, &post.ImagePath); err != nil {
 			ErrorServer(w, "Error scanning posts")
 		}
 
+		var size int64 = 20
+		post.ImageSize = size
+
+		// Convertir la date en chaînes de caractères
 		time_post := strings.Split(post.CreatedAt.Format("2006-01-02 15:04:05"), " ")
 		post.Creation_Date = time_post[0]
 		post.Creation_Hour = time_post[1]
@@ -27,8 +30,8 @@ func GetPosts(w http.ResponseWriter, uuid, state string, rows *sql.Rows, data, d
 		post.Username = CheckUsername(w, post.User_UUID)
 
 		if data_user["Role"] != "Guest" {
-			// Check the post status with user's uuid and post id
-			post.Status = CheckStatus(w, uuid, post.ID, "post")
+			// Conversion de l'ID en string avec strconv
+			post.Status = CheckStatus(w, uuid, strconv.Itoa(post.ID), "post")
 
 			// Check if the post is from the User making the request
 			if post.User_UUID == uuid {
@@ -64,7 +67,7 @@ func GetPosts(w http.ResponseWriter, uuid, state string, rows *sql.Rows, data, d
 
 			if data_user["Role"] != "Guest" {
 				// Check the post status with user's uuid and post id
-				post.Status = CheckStatus(w, uuid, post.ID, "comment")
+				post.Status = CheckStatus(w, uuid, strconv.Itoa(post.ID), "comment")
 
 				// Check if the post is from the User making the request
 				if post.User_UUID == uuid {

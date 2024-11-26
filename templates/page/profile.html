@@ -1,6 +1,84 @@
 <!-- ----------------------Informations de l'utilisateur------------------------>
 
 {{define "page/profile"}}
+<<<<<<< HEAD
+
+  <div class="container__block">
+    <!-- left menu, categories -->
+    <div class="container__block__main block__profile" role="region" aria-label="Profile">
+
+      <section>
+        <h2>Welcome, {{ .Username }}</h2>
+        <p>Your Email: {{ .Email }}</p>
+        <p>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</p>
+        <p>Your role: {{ .Role }}</p>
+      </section>
+      <section>
+        {{range .Notifications}}
+        Test Notification: {{ .PostID}}
+        {{end}}
+      </section>
+
+      {{if eq .Role "Admin"}}
+        {{template "block/admin/users" .}}
+        {{template "block/admin/categories" .}}
+      {{end}}
+    
+      {{if eq .Role "User" }}
+        <ul>
+          <li>
+            Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
+            <form method="POST" action="/admin/delete-user">
+              <input type="hidden" name="userUUID" value="{{ .UUID }}">
+              <button type="submit">Delete my account</button>
+            </form>
+          </li>
+        </ul>
+        <hr>
+        <form method="POST" action="/update-request">
+          <input type="hidden" name="userUUID" value="{{ .UUID }}">
+          <button type="submit">Request Mod</button>
+        </form>
+      {{end}}
+
+      <section>
+        <h3>Mes Posts</h3>
+        {{ range .Posts }}
+        <div class="post">
+          <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+          <p>Post text: {{ .Text }}</p>
+          <!-- todo modify the date -->
+          <p>Created at: {{ .CreatedAt }}</p>
+        </div>
+        {{end}}
+      </section>
+
+      <section>
+        <h3>Liked post</h3>
+        {{range .LikedPosts}}
+        <div class="post">
+          <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+          <p>Post text: {{ .Text }}</p>
+          <!-- todo modify the date -->
+          <p>Created at: {{ .CreatedAt }}</p>
+        </div>
+        {{end}}
+      </section>
+
+      <h3>Everything User commented</h3>
+      {{range .ProfileComments }}
+      <div class="post">
+        <h3>Post commented: Title: {{ .Data.PostInfo.Title }} Text: {{ .Data.PostInfo.Text }}</p>
+        <p>Comment text: {{ .Text }}</p>
+        <p>Comment like: {{ .Like }}</p>
+        <p>Comment dislike: {{ .Dislike }}</p>
+      </div>
+      {{end}}
+
+    </div>
+  </div>
+
+=======
   {{if eq .UUID .User_UUID}}
     <h2>Welcome, {{ .Username }}</h2>
     <h3>Your Email: {{ .Email }}</h3>
@@ -114,4 +192,5 @@
     {{ end }}
   {{ end }}
 <!-- --------------------------------------------------------------------------->
+>>>>>>> cc48c767aefc72672d8b5e165bcb727c1ca54b41
 {{end}}
