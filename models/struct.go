@@ -5,20 +5,23 @@ import (
 )
 
 type Post struct {
-	ID            string
-	Category_ID   string
+	ID            int
 	Category_Name string
 	User_UUID     string
-	Username      string
+	Category_ID   string
 	Title         string
 	Text          string
-	IsAuthor      string
-	Status        string
+	ImagePath     string
 	Like          int
 	Dislike       int
-	Data          map[string]interface{}
-	Comments      []*Comment
 	CreatedAt     time.Time
+	Username      string
+	Comments      []*Comment
+	Status        string
+	IsAuthor      string
+	Data          map[string]interface{}
+	Role          string
+	ImageSize     int64
 	Creation_Date string
 	Creation_Hour string
 }

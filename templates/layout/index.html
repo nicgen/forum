@@ -1,51 +1,50 @@
+<!-- /!\ default layout -->
 {{define "layout/index"}}
 
-<!-- /!\ default layout -->
+    <!DOCTYPE html>
+    <html lang="en">
 
-<!DOCTYPE html>
-<html lang="en">
+    <!-- todo: check if needed -->
+    {{if eq .UserContent.Role "DeletUser"}}
+        {{template "block/deleteduser" .}}
+    {{else}}
 
-<!-- todo: check if needed -->
-{{if eq .UserContent.Role "DeletUser"}}
-    {{template "block/deleteduser" .}}
-{{else}}
+    <!-- META -->
+    {{ template "block/share/head" }}
 
-{{ template "block/share/head" }}
+    <body>
+        <div class="wrapper" role="document">
 
-<body>
-    <div class="wrapper" role="document">
+            <!-- dev banner (force error), not for production -->
+            {{/* template "block/dev/force-error" . */}}
 
-        <!-- dev banner (force error), not for production -->
-        {{/* template "block/dev/force-error" . */}}
+            <!-- main nav -->
+            {{ template "block/nav/main" . }}
 
-        <!-- main nav -->
-        {{ template "block/nav/main" . }}
+            <main role="main" aria-label="Main content">
+                <div class="container" role="region" aria-label="Page content container">
+                {{if .Data.IsError}}
+                    <!-- error block -->
+                    <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
+                    {{ .Content }}
+                {{else}}
+                    <!-- login/register for guests -->
+                    {{ if eq .UserContent.Role "Guest" }}
+                        {{if eq .UserContent.NavLogin "show"}}{{ template "block/form/login" .}}{{else}}{{end}}
+                        {{if eq .UserContent.NavRegister "show"}}{{ template "block/form/register" .}}{{else}}{{end}}            
+                    {{ end }}
+                <!-- page content -->
+                {{ if .Content }}{{ .Content }}{{ else }}<p role="definition">no content</p>{{ end }}
+                {{end}}
+                </div>
+            </main>
 
-        <main role="main" aria-label="Main content">
-            <div class="container" role="region" aria-label="Page content container">
-            {{if .Data.IsError}}
-            <!-- if error -->
-                <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
-                {{ .Content }}
-            {{else}}
-                {{ if eq .UserContent.Role "Guest" }}
-                    <!-- todo, add condition for login/register -->
-                    {{if eq .UserContent.NavLogin "show"}}{{ template "block/form/login" .}}{{else}}{{end}}
-                    {{if eq .UserContent.NavRegister "show"}}{{ template "block/form/register" .}}{{else}}{{end}}
-                    
-                {{ end }}
-            <!-- page content -->
-            {{ if .Content }}{{ .Content }}{{ else }}<p role="definition">no content</p>{{ end }}
-            {{end}}
-            </div>
-        </main>
+            {{/* template "block/nav/footer" . */}} <!-- not for production (no use) -->
 
-        {{/* template "block/nav/footer" . */}} <!-- not for production (no use) -->
+            <script src="/static/js/theme.js"></script> <!-- import for the js (theme) -->
+        </div>
+    </body>
 
-        <script src="/static/js/theme.js"></script> <!-- import for the js (theme) -->
-    </div>
-</body>
-
-</html>
-{{end}}
+    </html>
+    {{end}}
 {{end}}

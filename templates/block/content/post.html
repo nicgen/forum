@@ -1,115 +1,95 @@
 {{define "block/content/post"}}
-<article aria-label="Forum post" role="article">
-  <header>
-    <h2 aria-label="Post title" role="heading" id="post-title-1">{{ .Title }}</h2>
-    <a href="/profile-user?uuid={{ .User_UUID }}">{{ .Username }}</a>
-    
-    <!-- todo, add list of category to the post -->
-    <div>
-    {{/* range .Category_ID */}}
-      {{ .Category_Name }}
-    {{/* end */}}
-    </div>
+  <article class="container__block__inner block__post" aria-label="Forum post" role="article">
 
-    <!-- Check if it's the Author of the post -->
+    <!-- post edit -->
     {{ if or (eq .Data.Role "Moderator") (eq .Data.Role "Admin") (eq .IsAuthor "yes")}}
-    <div>
-      <form method="GET" action="/delete">
-        <input type="hidden" name="delete" value="post">
-        <input type="hidden" name="id" value="{{ .ID }}">
-        <button type="submit">Delete my post</button>
-      </form>
-    </div>
-    <form method="GET" action="/modify">
-      <input type="hidden" name="delete" value="post">
-      <input type="hidden" name="id" value="{{ .ID }}">
-      <textarea type="hidden" name="content"></textarea>
-      <button type="submit">Modify my post</button>
-    </form>
+      <div class="comment__modify">
+        <form method="GET" action="/delete">
+          <input type="hidden" name="delete" value="post">
+          <input type="hidden" name="id" value="{{ .ID }}">
+          <button class="button-icon" type="submit" title="Delete my post">{{ template "ico_delete"}} Delete my post</button>
+        </form>
+        <form method="GET" action="/modify">
+          <input type="hidden" name="delete" value="post">
+          <input type="hidden" name="id" value="{{ .ID }}">
+          <textarea class="modify-area" type="hidden" name="content"></textarea>
+          <button class="button-icon" type="submit" title="Edit my post">{{ template "ico_edit"}} Edit my post</button>
+        </form>
+      </div>
     {{end}}
+  
+    <header>
+      <!-- categories -->
+      {{/* if .Category */}}
+      <div>
+        <ul class="post__categories">
+          {{/* range .Category */}}
+          <li class="tag">{{/* .Name */}}</li>
+          {{/* end */}}
+        </ul>
+      </div>
+      {{/* end */}}
+      <!-- date -->
+      <p class="post__date" aria-label="Post date" role="definition">{{ .Creation_Date }}/{{ .Creation_Hour }}<br>HERE:{{ .CreatedAt.Format "January 2, 2006, 15:04:05" }}</p>
+      <!-- title -->
+      <!-- <h2 class="post__title" aria-label="Post title" role="heading" id="post-title-1">{{ .Title }}</h2>
+      <p class="post__username">{{ .Username }}</p> -->
+      <h2 aria-label="Post title" role="heading" id="post-title-1">{{ .Title }}</h2>
+      <a href="/profile-user?uuid={{ .User_UUID }}">{{ .Username }}</a>
+  
 
-    <p aria-label="Post date" role="definition">
-      {{ .Creation_Date }}
-      {{/* .Creation_Hour */}}
-    </p>
-  </header>
+    </header>
 
-  <!-- post image -->
-  {{/* if .image_url */}}
-  <figure aria-label="Post image" role="img">
-      <img src="{{/* image_url */}}" alt="image" aria-label="Post image" role="img">
+    <section>
       <!-- todo add {{/* image_alt */}} later -->
-  </figure>
-  {{/* else */}}
-  <p>no image (text for testing purpose only, delete on 'block/content/post.html')</p>
-  {{/* end */}}
+      {{if .ImagePath}}
+        <figure aria-label="Post image" role="img">
+          <img src="/static/uploads/{{ .ImagePath }}" alt="{{ .Title }}" onerror="console.error('Image failed to load. Path:', this.src)">
+        </figure>
+      {{ end }}
+  
+      <!-- post content -->
+      <div aria-label="Post content" role="contentinfo" id="post-content-1">
+          <p>{{ .Text }}</p>
+      </div>
+    </section>
 
-  <!-- post content -->
-  <div aria-label="Post content" role="contentinfo" id="post-content-1">
-      {{ .Text }}
-  </div>
-
-  <!-- action (like/dislike) -->
-  <div class="like__container">
-    <div class="like__content">
-      <h2 class="like__number">{{if .Like }}{{ .Like }}{{ else }}0{{end}}</h2>
-      <form action="/like" method="POST">
-        <input type="hidden" name="id" value="{{ .ID }}">
-        <button name="like_post" value="like_post" class="ico__like {{ if eq .Status "liked" }}liked{{end}}" {{ if eq .Data.Role "Guest" }}disabled{{end}}>{{ template "ico_thumb-up"}}</button>
-      </form>
-    </div>
-    <div class="like__content">
-      <h2 class="like__number">{{if .Dislike }}{{ .Dislike }}{{ else }}0{{end}}</h2>
-      <form action="/like" method="POST">
-        <input type="hidden" name="id" value="{{ .ID }}">
-        <button name="dislike_post" value="dislike_post" class="ico__like {{ if eq .Status "disliked" }}liked{{end}}" {{ if eq .Data.Role "Guest" }}disabled{{end}}>{{ template "ico_thumb-down"}}</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- add comment -->
-  <div>{{template "block/content/comment_add" .}}</div>
-
-  <!-- show comments -->
-  {{ if .Comments }}
-  <h2>Comments</h2>
-  <h3>{{.ID}}</h3>
-  <ul>
-    {{ range .Comments }}
-        <!-- Check if it's the Author of the post -->
-        {{ if eq .IsAuthor "yes"}}
-        <div>
-          <form method="GET" action="/delete">
-            <input type="hidden" name="delete" value="comment">
-            <input type="hidden" name="id" value="{{ .ID }}">
-            <button type="submit">Delete my post</button>
-          </form>
-        </div>
-        {{end}}
-    <li>
-      {{ template "block/content/comment" . }}
-      {{ .Text }}
-      {{ .Like }}
-      {{ .Dislike }}
-      {{ .Creation_Date }}
-      {{ .Creation_Hour }}
-    </li>
-    {{ end }}
-            <!-- Check if it's the Author of the post -->
+    <footer>
+      <!-- action (like/dislike) -->
+      {{ template "block/form/like" .}}
+      <!-- add comment -->
+      <div>{{template "block/content/comment_add" .}}</div>
+      <!-- show comments -->
+      {{ if .Comments }}
+      <h3>Comments</h3>
+      <ul>
+        {{ range .Comments }}
+          <li>
+            <!-- comment edit -->
             {{ if eq .IsAuthor "yes"}}
-            <div>
-              <form method="GET" action="/modify">
-                <input type="hidden" name="delete" value="comment">
-                <input type="hidden" name="id" value="{{ .ID }}">
-                <textarea type="hidden" name="content"></textarea>
-                <button type="submit">Modify my comment</button>
-              </form>
-            </div>
+              <div class="comment__modify">
+                <form method="GET" action="/delete">
+                  <input type="hidden" name="delete" value="post">
+                  <input type="hidden" name="id" value="{{ .ID }}">
+                  <button class="button-icon" type="submit" title="Delete my post">{{ template "ico_delete"}} Delete my post</button>
+                </form>
+                <form method="GET" action="/modify">
+                  <input type="hidden" name="delete" value="post">
+                  <input type="hidden" name="id" value="{{ .ID }}">
+                  <textarea class="modify-area" type="hidden" name="content"></textarea>
+                  <button class="button-icon" type="submit" title="Edit my post">{{ template "ico_edit"}} Edit my post</button>
+                </form>
+              </div>
             {{end}}
-  </ul>
-  {{else}}
-    Oh No! There's no comments...
-  {{ end }}
+            <!-- Comment content -->
+            {{ template "block/content/comment" . }}
+          </li>
+        {{ end }}
+      </ul>
+      {{else}}
+        Oh No! There's no comments...
+      {{ end }}
+    </footer>
 
-</article>
+  </article>
 {{end}}
