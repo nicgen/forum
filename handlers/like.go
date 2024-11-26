@@ -5,6 +5,7 @@ import (
 	"forum/cmd/lib"
 	"forum/models"
 	"net/http"
+	"time"
 )
 
 // ? Function to retrieve like/dislike infos and handler them
@@ -30,6 +31,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 	dislike_post := r.FormValue("dislike_post")
 	like_comment := r.FormValue("like_comment")
 	dislike_comment := r.FormValue("dislike_comment")
+	post_id := r.URL.Query().Get("post_id")
 
 	if like_post != "" || dislike_post != "" {
 		var reaction_status string
@@ -70,6 +72,47 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 					//Erreur non critique : Echec de la mise a jour du nombre de dislike
 					lib.ErrorServer(w, "Error updating Post Dislike value")
 				}
+
+				// Retrieve the last inserted comment ID
+				reactionID, err := result.LastInsertId()
+				if err != nil {
+					lib.ErrorServer(w, "Error retrieving comment ID")
+					return
+				}
+
+				// Insert a notification for the post author
+				var postAuthorUUID string
+				queryPostAuthor := `SELECT User_UUID FROM Posts WHERE ID = ?`
+				err = db.QueryRow(queryPostAuthor, post_id).Scan(&postAuthorUUID)
+				if err != nil {
+					lib.ErrorServer(w, "Error finding post author")
+					return
+				}
+
+				if postAuthorUUID != cookie.Value { // Avoid notifying the user if they commented on their own post
+					state_notification := `INSERT INTO Notification (User_UUID, Comment_ID, Post_ID, CreatedAt, IsRead) VALUES (?, ?, ?, ?, ?)`
+					_, errNotif := db.Exec(state_notification, postAuthorUUID, reactionID, post_id, time.Now(), false)
+					if errNotif != nil {
+						lib.ErrorServer(w, "Error inserting notification")
+						return
+					}
+				}
+				// // Notifier le propriétaire du post
+				// var postOwnerUUID string
+				// queryPostOwner := `SELECT User_UUID FROM Posts WHERE ID = ?`
+				// err := db.QueryRow(queryPostOwner, id).Scan(&postOwnerUUID)
+				// if err != nil {
+				// 	lib.ErrorServer(w, "Error retrieving post owner")
+				// 	return
+				// }
+
+				// if postOwnerUUID != cookie.Value { // Ne pas s'auto-notifier
+				// 	reactionID := fmt.Sprintf("%s-%s", cookie.Value, id) // ID unique pour la réaction
+				// 	errNotif := InsertNotification(db, postOwnerUUID, reactionID, sql.NullString{String: id, Valid: true}, sql.NullString{})
+				// 	if errNotif != nil {
+				// 		lib.ErrorServer(w, "Error creating notification for post owner")
+				// 	}
+				// }
 			}
 
 			// If the User already like the post
@@ -297,4 +340,11 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func InsertNotification(db *sql.DB, recipientUUID string, reactionID string, postID sql.NullString, commentID sql.NullString) error {
+	query := `INSERT INTO Notification (User_UUID, ReactionID, Post_ID, Comment_ID, CreatedAt, IsRead) 
+	          VALUES (?, ?, ?, ?, ?, ?)`
+	_, err := db.Exec(query, recipientUUID, reactionID, postID, commentID, time.Now(), false)
+	return err
 }
