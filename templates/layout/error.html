@@ -21,7 +21,7 @@
         {{if .Data.IsError}}
         <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
         {{.Data.Content.Msg_raw}}
-        {{else}}
+        {{end}}
         {{if .Content}}{{.Content}}{{else}}<p>^^ no content</p>{{end}}
       </div>
     </main>
