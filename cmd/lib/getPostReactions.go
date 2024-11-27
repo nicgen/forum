@@ -2,6 +2,7 @@ package lib
 
 import (
 	"database/sql"
+	"fmt"
 	"forum/models"
 )
 
@@ -9,6 +10,7 @@ func GetPostReactions(db *sql.DB, data map[string]interface{}, uuid string) (map
 	// Making query for the posts liked by the User
 	state_liked := `SELECT Post_ID FROM Reaction WHERE User_UUID = ?`
 	query, err_liked := db.Query(state_liked, uuid)
+	fmt.Println("Error: ", err_liked)
 	if err_liked != nil {
 		return nil, "Error accessing user's Reactions"
 	}
@@ -20,6 +22,7 @@ func GetPostReactions(db *sql.DB, data map[string]interface{}, uuid string) (map
 
 	for query.Next() {
 		if err := query.Scan(&reaction); err != nil {
+			fmt.Println("Error2: ", err)
 			return nil, "Error scanning user's Reactions"
 		}
 
