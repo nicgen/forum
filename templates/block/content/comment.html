@@ -1,5 +1,5 @@
 {{define "block/content/comment"}}
   <p><span>{{ .Creation_Date }}/{{ .Creation_Hour }}</span></p>
   <p>{{ .Text }}</p>
-  {{ template "block/form/like" .}}
+  {{ template "block/form/likecomment" .}}
 {{end}}
