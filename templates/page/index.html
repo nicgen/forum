@@ -2,26 +2,6 @@
 {{if eq .Role "DeleteUser"}}
 {{template "block/deleteduser" .}}
 {{else}}
-{{template "filters".}}
-<div class="post__container">
-  <!-- left menu, categories -->
-  <div class="post__content post__categories" role="region" aria-label="Categories">
-    <h2 aria-label="Categories Title">Categories</h2>
-    {{if .Categories }}
-    <ul role="list" aria-label="Categories List">
-      {{range .Categories}}
-      <li role="listitem">
-        <a href="filter?id={{.ID}}" aria-label="{{.Name}}">{{.Name}}</a>
-      </li>
-      {{end}}
-    </ul>
-    <ul role="list" aria-label="Sub-menu List">
-      <li><a href="/about">About</a></li>
-    </ul>
-    {{else}}
-    <p aria-label="No categories message">There's no categories</p>
-    {{end}}
-  </div>
 
   <div class="container__block">
     <!-- left menu, categories -->
@@ -35,6 +15,7 @@
         </li>
         {{end}}
       </ul>
+      {{template "filters".}}
       <ul role="list" aria-label="Sub-menu List">
         <li><a href="/about">About</a></li>
       </ul>
