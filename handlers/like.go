@@ -33,6 +33,12 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 	like_comment := r.FormValue("like_comment")
 	dislike_comment := r.FormValue("dislike_comment")
 
+	fmt.Println("id: ", id)
+	fmt.Println("like_post: ", like_post)
+	fmt.Println("dislike_post: ", dislike_post)
+	fmt.Println("like_comment: ", like_comment)
+	fmt.Println("dislike_comment: ", dislike_comment)
+
 	if like_post != "" || dislike_post != "" {
 		var reaction_status string
 		state_reaction := `SELECT Status FROM Reaction WHERE User_UUID = ? AND Post_ID = ?`
@@ -254,7 +260,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 				if err_comment_like != nil {
 					lib.ErrorServer(w, "Error updating Comment Like value")
 				}
-			} else if dislike_post == "dislike_comment" {
+			} else if dislike_comment == "dislike_comment" {
 				// Creation of a new reaction
 				state_create := `INSERT INTO Reaction (User_UUID, Comment_ID, Status) VALUES (?, ?, ?)`
 				_, err_creation := db.Exec(state_create, cookie.Value, id, "disliked")
@@ -338,7 +344,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 			} else if dislike_comment == "dislike_comment" {
 
 				// Updating the post like value
-				state_comment_like := `UPDATE Posts SET Dislike = Dislike - 1 WHERE ID = ?`
+				state_comment_like := `UPDATE Comments SET Dislike = Dislike - 1 WHERE ID = ?`
 				_, err_comment_like := db.Exec(state_comment_like, id)
 				if err_comment_like != nil {
 					lib.ErrorServer(w, "Error updating Comment Dislike value")
