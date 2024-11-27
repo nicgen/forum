@@ -4,7 +4,7 @@
     <!-- BUTTON_like -->
     <div class="like__content">
       <p class="like__number">{{if .Like }}{{ .Like }}{{ else }}0{{end}}</p>
-      <form action="/like" method="POST">
+      <form action="/like" method="GET">
         <input type="hidden" name="id" value="{{ .ID }}">
         <button name="like_post" value="like_post" class="ico__like {{ if eq .Status "liked" }}liked{{end}}">{{ template "ico_thumb-up"}}</button>
       </form>
@@ -12,7 +12,7 @@
     <!-- BUTTON_dislike -->
     <div class="like__content">
       <p class="like__number">{{if .Dislike }}{{ .Dislike }}{{ else }}0{{end}}</p>
-      <form action="/like" method="POST">
+      <form action="/like" method="GET">
         <input type="hidden" name="id" value="{{ .ID }}">
         <button name="dislike_post" value="dislike_post" class="ico__like {{ if eq .Status "disliked" }}liked{{end}}" {{ if eq .Data.Role "Guest" }}disabled{{end}}>{{ template "ico_thumb-down"}}</button>
       </form>
