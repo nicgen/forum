@@ -1,4 +1,7 @@
 {{define "page/index"}}
+{{if eq .Role "DeleteUser"}}
+{{template "block/deleteduser" .}}
+{{else}}
 {{template "filters".}}
 <div class="post__container">
   <!-- left menu, categories -->
@@ -76,4 +79,5 @@
       {{ end }}
     </div>
   </div>
+  {{end}}
 {{end}}
