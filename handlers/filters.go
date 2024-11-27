@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"forum/cmd/lib"
 	"forum/models"
 	"net/http"
@@ -19,6 +20,10 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 	numberlike := formValues.Get("Like")
 	numberdislike := formValues.Get("Dislike")
 	period := formValues.Get("Period")
+
+	fmt.Println(period)
+	fmt.Println(numberdislike)
+	fmt.Println(numberlike)
 
 	var posts []*models.Post
 	var err_post error
