@@ -124,7 +124,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	var categories string
 	for i := 0; i < len(selectedCategories); i++ {
 		if i != len(selectedCategories)-1 {
-			categories += selectedCategories[i] + ", "
+			categories += selectedCategories[i] + " - "
 		} else {
 			categories += selectedCategories[i]
 		}

@@ -4,7 +4,6 @@ import (
 	"forum/cmd/lib"
 	"forum/models"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -102,7 +101,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, _ := r.Cookie("session_id")
 	if cookie != nil {
 		// Convertissez post.ID en string
-		post.Status = lib.CheckStatus(w, cookie.Value, strconv.Itoa(post.ID), "post")
+		post.Status = lib.CheckStatus(w, cookie.Value, post.ID, "post")
 
 		// Vérifier si l'utilisateur est l'auteur
 		if post.User_UUID == cookie.Value {
