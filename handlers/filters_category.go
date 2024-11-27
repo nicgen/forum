@@ -16,8 +16,7 @@ func Filters_Category(w http.ResponseWriter, r *http.Request) {
 	var err_post error
 
 	state_filters :=
-		`SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID
-	FROM Posts `
+		`SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID, ImagePath FROM Posts`
 
 	rows, err_post := db.Query(state_filters)
 
@@ -32,7 +31,7 @@ func Filters_Category(w http.ResponseWriter, r *http.Request) {
 	}()
 	for rows.Next() {
 		var post models.Post
-		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
+		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID, &post.ImagePath); err != nil {
 		}
 
 		category_array := strings.Split(post.Category_ID, " - ")

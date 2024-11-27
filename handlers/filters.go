@@ -20,17 +20,11 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 	numberdislike := formValues.Get("Dislike")
 	period := formValues.Get("Period")
 
-	state_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID, ImagePath FROM Posts ORDER BY CreatedAt DESC`
-	rows, err := db.Query(state_posts)
-	if err != nil {
-		lib.ErrorServer(w, "Error accessing posts")
-	}
-
 	var posts []*models.Post
 	var err_post error
 	// sqlite
 	state_filters :=
-		`SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID
+		`SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID, ImagePath
 	FROM Posts
 	WHERE 
    (
@@ -93,7 +87,7 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 		dislikePlus100 = numberdislike
 	}
 
-	rows, err_post = db.Query(state_filters, categories, categories, likeTous, like1_10, like11_50, like51_100, likePlus100, dislikeTous, dislike1_10, dislike11_50, dislike51_100, dislikePlus100, period, period, period, period)
+	rows, err_post := db.Query(state_filters, categories, categories, likeTous, like1_10, like11_50, like51_100, likePlus100, dislikeTous, dislike1_10, dislike11_50, dislike51_100, dislikePlus100, period, period, period, period)
 
 	if err_post != nil {
 		lib.ErrorMessage(w, nil, err_post.Error())
@@ -106,7 +100,7 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 	}()
 	for rows.Next() {
 		var post models.Post
-		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
+		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID, &post.ImagePath); err != nil {
 		}
 
 		category_array := strings.Split(post.Category_ID, " - ")
