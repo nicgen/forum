@@ -20,6 +20,7 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 	// Retrieve the user's UUID from the form data.
 	userUUID := r.FormValue("userUUID")
 	if userUUID == "" {
+		// Erreur non critique : UUID required
 		lib.ErrorServer(w, "User UUID is required.") // Respond if UUID is missing.
 		return
 	}
@@ -31,7 +32,12 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 	requestQuery := `UPDATE User SET IsRequest = TRUE WHERE UUID = ?`
 	_, err := db.Exec(requestQuery, userUUID)
 	if err != nil {
-		lib.ErrorServer(w, "Error updating request status.") // Log and respond on failure.
+		//Erreur critique : échec mise a jour du statut de la demande
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error updating request status.Please try again later",
+		}
+		HandleError(w, err.StatusCode, err.Message)
 		return
 	}
 
@@ -44,6 +50,7 @@ func GetIsRequestStatus(w http.ResponseWriter, r *http.Request) {
 	// Extract the UUID from the form data.
 	userUUID := r.FormValue("userUUID")
 	if userUUID == "" {
+		//Erreur non critique : User UUID required
 		http.Error(w, "User UUID is required.", http.StatusBadRequest) // Handle missing UUID.
 		return
 	}
@@ -59,12 +66,16 @@ func GetIsRequestStatus(w http.ResponseWriter, r *http.Request) {
 	err := db.QueryRow(query, userUUID).Scan(&isRequest)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			// Handle the case where no matching user is found.
+			//Erreur non critique : User not found
 			http.Error(w, "User not found.", http.StatusNotFound)
 		} else {
-			// Log and respond for any other database error.
+			//Erreur critique : échec de la récuperation du status IsRequest
 			log.Printf("Error fetching IsRequest status for UUID %s: %v", userUUID, err)
-			http.Error(w, "Error fetching data from the database.", http.StatusInternalServerError)
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error fetching data from the database. Please try again later.",
+			}
+			HandleError(w, err.StatusCode, err.Message)
 		}
 		return
 	}
@@ -72,9 +83,13 @@ func GetIsRequestStatus(w http.ResponseWriter, r *http.Request) {
 	// Parse the HTML template for rendering the response.
 	tmpl, err := template.ParseFiles("template.html")
 	if err != nil {
-		// Log and respond if the template parsing fails.
+		// Erreur critique : échec de l'analyse du modèle
 		log.Printf("Error parsing template: %v", err)
-		http.Error(w, "Internal server error.", http.StatusInternalServerError)
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Internal server error. Please try again later.",
+		}
+		HandleError(w, err.StatusCode, err.Message)
 		return
 	}
 
@@ -85,8 +100,12 @@ func GetIsRequestStatus(w http.ResponseWriter, r *http.Request) {
 
 	// Render the template with the user data and send it to the response.
 	if err := tmpl.Execute(w, data); err != nil {
-		// Log and respond if template execution fails.
+		// Erreur critique : échec de l'exécution du modèle
 		log.Printf("Error executing template: %v", err)
-		http.Error(w, "Internal server error.", http.StatusInternalServerError)
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Internal server error. Please try again later.",
+		}
+		HandleError(w, err.StatusCode, err.Message)
 	}
 }

@@ -1,60 +1,125 @@
 package handlers
 
 import (
-	"database/sql"
 	"forum/cmd/lib"
 	"forum/models"
 	"net/http"
-	"strings"
+	"strconv"
+	"time"
 )
 
-// TODO test if we want post and comments to be outside of index
 func PostHandler(w http.ResponseWriter, r *http.Request) {
-	// Getting database data into a variable
 	db := lib.GetDB()
-
-	// Getting the id of the post selected
 	post_id := r.URL.Query().Get("id")
 
-	// Getting User data and posts
-	data := lib.DataTest(w, r)
-	data = lib.ErrorMessage(w, data, "none")
+	var post models.Post
+	query := `
+        SELECT 
+            p.ID, 
+            c.Name, 
+            p.Title, 
+            p.Text, 
+            p.Like, 
+            p.Dislike, 
+            p.CreatedAt, 
+            u.Username, 
+            p.ImagePath,
+            p.User_UUID,
+            u.Role
+        FROM Posts p
+        JOIN Categories c ON p.Category_ID = c.ID
+        JOIN User u ON p.User_UUID = u.UUID
+        WHERE p.ID = ?
+    `
+	err := db.QueryRow(query, post_id).Scan(
+		&post.ID,
+		&post.Category_ID,
+		&post.Title,
+		&post.Text,
+		&post.Like,
+		&post.Dislike,
+		&post.CreatedAt,
+		&post.Username,
+		&post.ImagePath,
+		&post.User_UUID,
+		&post.Role,
+	)
+	if err != nil {
+		lib.ErrorServer(w, "Error fetching post details")
+		return
+	}
 
-	state_comment := `SELECT ID, Text, Like, Dislike, CreatedAt, User_UUID, Post_ID FROM Comments WHERE Post_ID = ? ORDER BY CreatedAt DESC`
-	// Users posts Request
+	// Récupération des commentaires
+	stateComment := `
+        SELECT 
+            c.ID, 
+            c.Text, 
+            c.Like, 
+            c.Dislike, 
+            c.CreatedAt, 
+            u.Username,
+            c.User_UUID
+        FROM Comments c
+        JOIN User u ON c.User_UUID = u.UUID
+        WHERE c.Post_ID = ?
+        ORDER BY c.CreatedAt DESC
+    `
+
+	rowsComment, errComment := db.Query(stateComment, post_id)
+	if errComment != nil {
+		lib.ErrorServer(w, "Error accessing comments")
+		return
+	}
+	defer rowsComment.Close()
+
 	var comments []*models.Comment
-	var rows_comment *sql.Rows
-	rows_comment, err_comment := db.Query(state_comment, post_id)
-	if err_comment != nil {
-		lib.ErrorServer(w, "Error accessing user comments")
-	}
-
-	defer rows_comment.Close()
-
-	for rows_comment.Next() {
+	for rowsComment.Next() {
 		var comment models.Comment
-		if err := rows_comment.Scan(&comment.ID, &comment.Text, &comment.Like, &comment.Dislike, &comment.CreatedAt, &comment.User_UUID, &comment.Post_ID); err != nil {
-			lib.ErrorServer(w, "Error scanning posts comments")
+		var createdAt time.Time
+
+		err := rowsComment.Scan(
+			&comment.ID,
+			&comment.Text,
+			&comment.Like,
+			&comment.Dislike,
+			&createdAt,
+			&comment.Username,
+			&comment.User_UUID,
+		)
+
+		if err != nil {
+			lib.ErrorServer(w, "Error scanning comments")
+			return
 		}
 
-		time_comment := strings.Split(comment.CreatedAt.Format("2006-01-02 15:04:05"), " ")
-		comment.Creation_Date = time_comment[0]
-		comment.Creation_Hour = time_comment[1]
-
-		// Getting the Username of the person who made the comment
-		state_username := `SELECT Username FROM User WHERE UUID = ?`
-		err_db := db.QueryRow(state_username, comment.User_UUID).Scan(&comment.Username)
-		if err_db != nil {
-			// Erreur critique : Échec de l'insertion du post
-			err := &models.CustomError{
-				StatusCode: http.StatusInternalServerError,
-				Message:    "Error inserting new post, please try again later.",
-			}
-			HandleError(w, err.StatusCode, err.Message)
-
-			comments = append(comments, &comment)
-		}
-
-		lib.RenderTemplate(w, "layout/index", "page/post", data)
+		comment.CreatedAt = createdAt
+		comments = append(comments, &comment)
 	}
+
+	post.Comments = comments
+
+	// Vérification du statut de like/dislike
+	cookie, _ := r.Cookie("session_id")
+	if cookie != nil {
+		// Convertissez post.ID en string
+		post.Status = lib.CheckStatus(w, cookie.Value, strconv.Itoa(post.ID), "post")
+
+		// Vérifier si l'utilisateur est l'auteur
+		if post.User_UUID == cookie.Value {
+			post.IsAuthor = "yes"
+		} else {
+			post.IsAuthor = "no"
+		}
+
+		// Récupérer les données utilisateur
+		data := lib.DataTest(w, r)
+		post.Data = data
+	}
+
+	// Préparez les données pour le template
+	data := lib.DataTest(w, r)
+	data["Post"] = post
+	data["Comments"] = comments
+
+	lib.RenderTemplate(w, "layout/index", "page/index", data)
 }

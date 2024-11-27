@@ -15,6 +15,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		// Get session cookie
 		cookie, err_cookie := r.Cookie("session_id")
 		if err_cookie != nil {
+			// Erreur critique: See Other
 			err := &models.CustomError{
 				StatusCode: http.StatusSeeOther,
 				Message:    "See Other",
@@ -29,6 +30,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		state := "SELECT IsLogged FROM User WHERE UUID = ?"
 		err_db := db.QueryRow(state, cookie.Value).Scan(&userUUID)
 		if err_db != nil {
+			//Erreur critique: Session not found
 			err := &models.CustomError{
 				StatusCode: http.StatusSeeOther,
 				Message:    "Session not found or expired",

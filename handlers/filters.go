@@ -14,112 +14,110 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 
 	formValues := r.URL.Query()
 
-	// categories := formValues.Get("Category")
+	categories := formValues.Get("Category")
 	numberlike := formValues.Get("Like")
 	numberdislike := formValues.Get("Dislike")
 	period := formValues.Get("Period")
 
-	println("Like: ", numberlike)
-	println("Dislike: ", numberdislike)
-	println("Period: ", period)
-
-	// Getting the number of values stored in the Categories tables
-	var count int
-	err := db.QueryRow("SELECT COUNT(*) FROM Categories").Scan(&count)
-	if err != nil {
-		// Handle error
-	}
-
-	// filter category
-	category := ""
-	for i := 0; i < count; i++ {
-		compteur := strconv.Itoa(i)
-		notempty := formValues.Get("Category" + compteur)
-		if len(notempty) != 0 {
-			category = notempty
-		}
-	}
-
-	// Filter like
-	likemin, likemax := 0, 0
-	switch numberlike {
-	case "1-10":
-		likemin = 1
-		likemax = 10
-	case "11-50":
-		likemin = 11
-		likemax = 50
-	case "51-100":
-		likemin = 51
-		likemax = 100
-	case "plus-de-100":
-		likemin = 101
-	}
-
-	// filter dislike
-	dislikemin, dislikemax := 0, 0
-	switch numberdislike {
-	case "1-10":
-		dislikemin = 1
-		dislikemax = 10
-	case "11-50":
-		dislikemin = 11
-		dislikemax = 50
-	case "51-100":
-		dislikemin = 51
-		dislikemax = 100
-	case "plus-de-100":
-		dislikemin = 101
-	}
-
-	//filter period
-	lastperiod := ""
-	switch period {
-	case "week":
-		lastperiod = "-7 days"
-	case "month":
-		lastperiod = "start of month"
-	case "year":
-		lastperiod = "start of year"
-	}
 	var posts []*models.Post
 	var err_post error
-
+	// sqlite
 	state_filters :=
 		`SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID
-	FROM posts
+	FROM Posts
 	WHERE 
-  (Category_ID = ?)
+	(Category_ID = ? OR ? = '')  
 	AND
-	(Like BETWEEN ? AND ? OR (? = 0 AND ? = 0)) 
-	AND 
-	(Dislike BETWEEN ? AND ? OR (? = 0 AND ? = 0))
-	AND 
-	(CreatedAt >= DATE('now', ?) AND CreatedAt < DATE('now', 'start of month', '+1 month')) 
+   (
+    CASE 
+      WHEN ? = 'tous les likes' THEN Like >= 0
+      WHEN ? = '1-10' THEN Like BETWEEN 1 AND 10
+      WHEN ? = '11-50' THEN Like BETWEEN 11 AND 50
+      WHEN ? = '51-100' THEN Like BETWEEN 51 AND 100
+      WHEN ? = 'plus-de-100' THEN Like >= 101
+      ELSE True
+    END
+  )
+	AND
+	(
+    CASE 
+      WHEN ? = 'tous les dislikes' THEN Dislike >= 0
+      WHEN ? = '1-10' THEN Dislike BETWEEN 1 AND 10
+      WHEN ? = '11-50' THEN Dislike BETWEEN 11 AND 50
+      WHEN ? = '51-100' THEN Dislike BETWEEN 51 AND 100
+      WHEN ? = 'plus-de-100' THEN Dislike >= 101
+      ELSE True
+    END
+  )
+	AND
+	(
+	CASE
+	    WHEN ? = 'today' THEN date(CreatedAt) = date('now')
+        WHEN ? = 'last-7-days' THEN date(CreatedAt) BETWEEN date('now', '-7 days') AND date('now')
+		WHEN ? = 'last-30-days' THEN date(CreatedAt) BETWEEN date ('now','-30 days') AND date('now')
+		WHEN ? = 'last-7-days' THEN date(CreatedAt) BETWEEN date('now', '-365 days') AND date('now')
+		ELSE True 
+		END
+)
 	 `
-	rows, err_post := db.Query(state_filters, category, likemin, likemax, likemin, likemax, dislikemin, dislikemax, dislikemin, dislikemax, lastperiod)
+	var likeTous, like1_10, like11_50, like51_100, likePlus100 string
+	switch numberlike {
+	case "tous les likes":
+		likeTous = numberlike
+	case "1-10":
+		like1_10 = numberlike
+	case "11-50":
+		like11_50 = numberlike
+	case "51-100":
+		like51_100 = numberlike
+	case "plus-de-100":
+		likePlus100 = numberlike
+	}
+
+	var dislikeTous, dislike1_10, dislike11_50, dislike51_100, dislikePlus100 string
+	switch numberdislike {
+	case "tous les likes":
+		dislikeTous = numberdislike
+	case "1-10":
+		dislike1_10 = numberdislike
+	case "11-50":
+		dislike11_50 = numberdislike
+	case "51-100":
+		dislike51_100 = numberdislike
+	case "plus-de-100":
+		dislikePlus100 = numberdislike
+	}
+
+	rows, err_post := db.Query(state_filters, categories, categories, likeTous, like1_10, like11_50, like51_100, likePlus100, dislikeTous, dislike1_10, dislike11_50, dislike51_100, dislikePlus100, period, period, period, period)
 
 	if err_post != nil {
-
+		lib.ErrorMessage(w, nil, err_post.Error())
+		return
 	}
-	defer rows.Close()
-
+	defer func() {
+		if err := rows.Close(); err != nil {
+			lib.ErrorMessage(w, nil, err.Error())
+		}
+	}()
 	for rows.Next() {
 		var post models.Post
 		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID); err != nil {
-
 		}
 
 		posts = append(posts, &post)
 	}
 
 	if err := rows.Err(); err != nil {
+		lib.ErrorMessage(w, nil, err.Error())
+		return
 	}
+
 	data := lib.DataTest(w, r)
 	data["Posts"] = posts
+	data = lib.ErrorMessage(w, data, "none")
 
-	// Redirect User to the home page
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	lib.RenderTemplate(w, "layout/index", "page/index", data)
+
 }
 
 func Category(w http.ResponseWriter, r *http.Request) {

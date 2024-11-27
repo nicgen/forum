@@ -19,6 +19,7 @@ func ErrorMessage(w http.ResponseWriter, data map[string]interface{}, errtype st
 		"PostAlreadyDisliked":    "null",
 		"CommentAlreadyLiked":    "null",
 		"CommentAlreadyDisliked": "null",
+		"ReportExist":            "null",
 	}
 
 	// Changing the error depending on the errtype variable given
@@ -45,6 +46,8 @@ func ErrorMessage(w http.ResponseWriter, data map[string]interface{}, errtype st
 		errorMap["CommentAlreadyLiked"] = "You already liked this comment"
 	case "CommentAlreadyDisliked":
 		errorMap["CommentAlreadyDisliked"] = "You already disliked this comment"
+	case "ReportExist":
+		errorMap["ReportExist"] = "Report already completed"
 	}
 
 	// Adding the errorMap to the data map
