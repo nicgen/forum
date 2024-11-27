@@ -68,6 +68,9 @@ func setupMux() *http.ServeMux {
 	// Servir des fichiers statiques
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
+	// upload pictures
+	mux.Handle("/static/uploads/", http.StripPrefix("/static/uploads/", http.FileServer(http.Dir("./static/uploads/"))))
+
 	// Set up routes
 	mux.HandleFunc("/", handlers.IndexHandler)
 
@@ -77,6 +80,7 @@ func setupMux() *http.ServeMux {
 	mux.HandleFunc("/logout", lib.LogoutHandler)
 	mux.HandleFunc("/nav-register", handlers.NavRegister)
 	mux.HandleFunc("/nav-login", handlers.NavLogin)
+	mux.HandleFunc("/profile-user", handlers.ProfileUserHandler)
 
 	// Tier Authentication
 	mux.HandleFunc("/google", handlers.GoogleOAuthHandler)
@@ -99,7 +103,10 @@ func setupMux() *http.ServeMux {
 	mux.HandleFunc("/admin/delete-user", handlers.AuthMiddleware(handlers.DeleteUser))
 	mux.HandleFunc("/admin/admindelete-user", handlers.AuthMiddleware(handlers.AdminDeleteUser))
 	mux.HandleFunc("/create-category", handlers.AuthMiddleware(handlers.CategoriesHandler))
+	mux.HandleFunc("/filters", handlers.FiltersHandler)
 	mux.HandleFunc("/update-request", handlers.AuthMiddleware(handlers.RequestHandler))
+	mux.HandleFunc("/report", handlers.ReportHandler)
+	mux.HandleFunc("/report-delete", handlers.Report_Delete)
 
 	// Basic Web handlers
 	mux.HandleFunc("/about", handlers.AboutHandler)

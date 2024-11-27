@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"forum/cmd/lib"
+	"forum/models"
 	"net/http"
 )
 
@@ -21,9 +22,21 @@ func ModifyPostComment(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err_delete := db.Exec(state_modify, content, id)
 	if err_delete != nil && status == "post" {
-		lib.ErrorServer(w, "Error modifying User's post")
+
+		//Erreur critique : échec de la modification du commentaire
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error modifying User's comment. Please try again later.",
+		}
+		HandleError(w, err.StatusCode, err.Message)
 	} else if err_delete != nil && status == "comment" {
-		lib.ErrorServer(w, "Error modifying User's comment")
+
+		//Erreur critique : echec de la modification du commentaire
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error modifying user's comment. Please try again later.",
+		}
+		HandleError(w, err.StatusCode, err.Message)
 	}
 
 	// Redirect User to the home page

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"forum/cmd/lib"
+	"forum/models"
 	"net/http"
 )
 
@@ -18,11 +19,22 @@ func DeletePostComment(w http.ResponseWriter, r *http.Request) {
 	} else {
 		state_delete = `DELETE FROM Comments WHERE ID = ?`
 	}
+
 	_, err_delete := db.Exec(state_delete, id)
 	if err_delete != nil && status == "post" {
-		lib.ErrorServer(w, "Error deleting User's post")
+		//Erreur critique : Erreur deleting user post
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error deleting user's post. Please try again.",
+		}
+		HandleError(w, err.StatusCode, err.Message)
 	} else if err_delete != nil && status == "comment" {
-		lib.ErrorServer(w, "Error deleting User's comment")
+		//Erreur critique : Erreur deleting user comment
+		err := &models.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Error deleting user's comment",
+		}
+		HandleError(w, err.StatusCode, err.Message)
 	}
 
 	// Redirect User to the home page
