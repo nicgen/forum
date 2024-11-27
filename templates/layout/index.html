@@ -4,11 +4,6 @@
     <!DOCTYPE html>
     <html lang="en">
 
-    <!-- todo: check if needed -->
-    {{if eq .UserContent.Role "DeletUser"}}
-        {{template "block/deleteduser" .}}
-    {{else}}
-
     <!-- META -->
     {{ template "block/share/head" }}
 
@@ -46,5 +41,4 @@
     </body>
 
     </html>
-    {{end}}
 {{end}}

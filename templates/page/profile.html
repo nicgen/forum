@@ -109,14 +109,30 @@
   {{end}}
 <!-- --------------------------------------------------------------------------->  
 
-<!-- -------------Affichage des notifications de l'utilisateur------------------>
-  {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
-    {{if gt (len .LikedPosts) 0}}
-      <h2>Mes notifications</h2>
-    {{ end }}  
-    {{range .Notifications}}
-      Test Notification: {{ .PostID}}
-    {{ end }}
-  {{ end }}
-<!-- --------------------------------------------------------------------------->
+  <h1>Notifications</h1>
+
+  <div>Total notifications: 
+      {{if .TotalCount}} 
+          {{.TotalCount}} 
+      {{else}}
+          Aucun notification.
+      {{end}}
+  </div>
+  
+  <ul>
+      {{range .Notifications}}
+          <li>
+              Notification ID: {{.ID}} - {{.CreatedAt}} - 
+              {{if .ReactionID}} 
+                  Reaction: {{.ReactionID}}
+              {{else}} 
+                  Comment: {{.CommentID}}
+              {{end}}
+          </li>
+      {{end}}
+  </ul>
+  
+
+
+
 {{end}}

@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"forum/cmd/lib"
 	"forum/models"
 	"net/http"
+	"time"
 )
 
 // ? Function to retrieve like/dislike infos and handler them
@@ -41,7 +43,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 			if like_post == "like_post" {
 				// Creation of a new reaction
 				state_create := `INSERT INTO Reaction (User_UUID, Post_ID, Status) VALUES (?, ?, ?)`
-				_, err_creation := db.Exec(state_create, cookie.Value, id, "liked")
+				result, err_creation := db.Exec(state_create, cookie.Value, id, "liked")
 				if err_creation != nil {
 					//Erreur non critique : Echec de création de réaction
 					lib.ErrorServer(w, "Error creating Post Reaction")
@@ -54,13 +56,43 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 					//Erreur non critique : Echec de mise à jour de réaction
 					lib.ErrorServer(w, "Error updating Post Like value")
 				}
+				// Retrieve the last inserted comment ID
+				reactionID, err := result.LastInsertId()
+				if err != nil {
+					lib.ErrorServer(w, "Error retrieving comment ID")
+					return
+				}
+
+				// Insert a notification for the post author
+				var postAuthorUUID string
+				queryPostAuthor := `SELECT User_UUID FROM Posts WHERE ID = ?`
+				err = db.QueryRow(queryPostAuthor, id).Scan(&postAuthorUUID)
+				if err != nil {
+					lib.ErrorServer(w, "Error finding post author")
+					return
+				}
+				if id == "" {
+					lib.ErrorServer(w, "Post ID is missing")
+					fmt.Println("erreur missing")
+					return
+				}
+
+				if postAuthorUUID != cookie.Value { // Avoid notifying the user if they commented on their own post
+					state_notification := `INSERT INTO Notification (User_UUID, Reaction_ID, Post_ID, CreatedAt, IsRead) VALUES (?, ?, ?, ?, ?)`
+					_, errNotif := db.Exec(state_notification, postAuthorUUID, reactionID, id, time.Now(), false)
+					if errNotif != nil {
+						lib.ErrorServer(w, "Error inserting notification")
+						return
+					}
+				}
 			} else if dislike_post == "dislike_post" {
 				// Creation of a new reaction
 				state_create := `INSERT INTO Reaction (User_UUID, Post_ID, Status) VALUES (?, ?, ?)`
-				_, err_creation := db.Exec(state_create, cookie.Value, id, "disliked")
+				result, err_creation := db.Exec(state_create, cookie.Value, id, "disliked")
 				if err_creation != nil {
 					//Erreur non critique: Echec de la création de réaction
 					lib.ErrorServer(w, "Error creating Post Reaction")
+					return
 				}
 
 				// Updating the post like value
@@ -69,6 +101,35 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 				if err_post_like != nil {
 					//Erreur non critique : Echec de la mise a jour du nombre de dislike
 					lib.ErrorServer(w, "Error updating Post Dislike value")
+				}
+				// Retrieve the last inserted comment ID
+				reactionID, err := result.LastInsertId()
+				if err != nil {
+					lib.ErrorServer(w, "Error retrieving comment ID")
+					return
+				}
+
+				// Insert a notification for the post author
+				var postAuthorUUID string
+				queryPostAuthor := `SELECT User_UUID FROM Posts WHERE ID = ?`
+				err = db.QueryRow(queryPostAuthor, id).Scan(&postAuthorUUID)
+				if err != nil {
+					lib.ErrorServer(w, "Error finding post author")
+					return
+				}
+				if id == "" {
+					lib.ErrorServer(w, "Post ID is missing")
+					fmt.Println("erreur missing")
+					return
+				}
+
+				if postAuthorUUID != cookie.Value { // Avoid notifying the user if they commented on their own post
+					state_notification := `INSERT INTO Notification (User_UUID, Reaction_ID, Post_ID, CreatedAt, IsRead) VALUES (?, ?, ?, ?, ?)`
+					_, errNotif := db.Exec(state_notification, postAuthorUUID, reactionID, id, time.Now(), false)
+					if errNotif != nil {
+						lib.ErrorServer(w, "Error inserting notification")
+						return
+					}
 				}
 			}
 
@@ -297,4 +358,11 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func InsertNotification(db *sql.DB, recipientUUID string, reactionID string, postID sql.NullString, commentID sql.NullString) error {
+	query := `INSERT INTO Notification (User_UUID, ReactionID, Post_ID, Comment_ID, CreatedAt, IsRead) 
+	          VALUES (?, ?, ?, ?, ?, ?)`
+	_, err := db.Exec(query, recipientUUID, reactionID, postID, commentID, time.Now(), false)
+	return err
 }

@@ -27,12 +27,13 @@ type Post struct {
 }
 
 type Notification struct {
-	ID         string
-	ReactionID string
-	PostID     string
-	CommentID  string
+	ID         int
+	ReactionID *int
+	PostID     *int
+	CommentID  *int
 	CreatedAt  time.Time
 	IsRead     bool
+	TotalCount *int
 }
 
 type User struct {
