@@ -31,7 +31,7 @@
       <ul role="list" aria-label="Categories List">
         {{range .Categories}}
         <li role="listitem">
-          <a href="filter?id={{.ID}}" aria-label="{{.Name}}">{{.Name}}</a>
+          <a href="filters_category?Category={{.Name}}" aria-label="{{.Name}}">{{.Name}}</a>
         </li>
         {{end}}
       </ul>

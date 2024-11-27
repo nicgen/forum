@@ -103,6 +103,7 @@ func setupMux() *http.ServeMux {
 	mux.HandleFunc("/admin/delete-user", handlers.AuthMiddleware(handlers.DeleteUser))
 	mux.HandleFunc("/admin/admindelete-user", handlers.AuthMiddleware(handlers.AdminDeleteUser))
 	mux.HandleFunc("/create-category", handlers.AuthMiddleware(handlers.CategoriesHandler))
+	mux.HandleFunc("/filters_category", handlers.Filters_Category)
 	mux.HandleFunc("/filters", handlers.FiltersHandler)
 	mux.HandleFunc("/update-request", handlers.AuthMiddleware(handlers.RequestHandler))
 	mux.HandleFunc("/report", handlers.ReportHandler)
