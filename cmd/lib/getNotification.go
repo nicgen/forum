@@ -1,18 +1,34 @@
 package lib
 
 import (
-	"forum/models"
+	"database/sql"
+	"fmt"
+	"forum/models" // Assurez-vous d'importer le package "models"
 	"net/http"
 )
 
-// GetNotifications - Function to retrieve notifications for a user and store them in the data map
-func GetNotifications(w http.ResponseWriter, userUUID string, data map[string]interface{}) map[string]interface{} {
-	// Retrieve all notifications for the given user
+func GetNotifications(w http.ResponseWriter, userUUID string, useReactionID bool, data map[string]interface{}) map[string]interface{} {
 	var notifications []*models.Notification
+	var totalCount int
 
-	notificationsQuery := `
-		SELECT ID, Post_ID, Comment_ID, CreatedAt, IsRead	FROM Notification WHERE User_UUID = ? ORDER BY CreatedAt DESC`
+	// Requête pour compter le nombre total de notifications pour l'utilisateur
+	countQuery := `SELECT COUNT(*) FROM Notification WHERE User_UUID = ?`
+	err := db.QueryRow(countQuery, userUUID).Scan(&totalCount)
+	if err != nil {
+		ErrorServer(w, "Error counting notifications")
+		return data
+	}
 
+	// Construire la requête SQL pour récupérer les notifications
+	columnToSelect := "Reaction_ID"
+	if !useReactionID {
+		columnToSelect = "Comment_ID"
+	}
+
+	notificationsQuery := fmt.Sprintf(`
+        SELECT ID, Post_ID, %s, CreatedAt, IsRead FROM Notification WHERE User_UUID = ? ORDER BY CreatedAt DESC`, columnToSelect)
+
+	// Exécuter la requête pour récupérer les notifications
 	rows, err := db.Query(notificationsQuery, userUUID)
 	if err != nil {
 		ErrorServer(w, "Error accessing notifications")
@@ -20,32 +36,39 @@ func GetNotifications(w http.ResponseWriter, userUUID string, data map[string]in
 	}
 	defer rows.Close()
 
+	// Récupérer les notifications
 	for rows.Next() {
 		var notification models.Notification
-		// var createdAt string
+		var tempID sql.NullInt64 // Utilisation de NullInt64 pour gérer les NULL
 
-		// Scan the results into the Notification struct
-		if err := rows.Scan(&notification.ID, &notification.PostID, &notification.CommentID, &notification.CreatedAt, &notification.IsRead); err != nil {
+		// Scanner les données de la base
+		if err := rows.Scan(&notification.ID, &notification.PostID, &tempID, &notification.CreatedAt, &notification.IsRead); err != nil {
 			ErrorServer(w, "Error scanning notifications")
 			return data
 		}
 
-		// // Convert the createdAt string to a time.Time
-		// notification.CreatedAt, err = time.Parse("2006-01-02 15:04:05", createdAt)
-		// if err != nil {
-		// 	ErrorServer(w, "Error parsing notification timestamp")
-		// 	return data
-		// }
+		// Affecter ReactionID ou CommentID
+		if tempID.Valid {
+			id := int(tempID.Int64)
+			if useReactionID {
+				notification.ReactionID = &id
+			} else {
+				notification.CommentID = &id
+			}
+		}
 
+		// Ajouter la notification à la liste
 		notifications = append(notifications, &notification)
 	}
 
 	if err := rows.Err(); err != nil {
-		ErrorServer(w, "Error iterating over notifications")
+		ErrorServer(w, "Error iterating notifications")
 		return data
 	}
 
-	// Add notifications to the data map
+	// Ajouter les notifications et le total à la map des données
 	data["Notifications"] = notifications
+	data["TotalCount"] = totalCount // Assurez-vous que TotalCount est bien assigné
+
 	return data
 }
