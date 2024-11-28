@@ -47,24 +47,27 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 			log.Printf("Received registration request: Username=%s, Email=%s", username, email)
 
-			// if !lib.IsValidPassword(password) {
-			// 	data := lib.GetData(db, "null", "notlogged", "index", w, r)
-			// 	data = lib.ErrorMessage(w, data, "RegisterPassword")
-			// 	data["NavRegister"] = "show"
-			// 	lib.RenderTemplate(w, "layout/index", "page/index", data)
-			// }
-			// if !lib.IsValidEmail(email) {
-			// 	data := lib.GetData(db, "null", "notlogged", "index", w, r)
-			// 	data = lib.ErrorMessage(w, data, "EmailFormat")
-			// 	data["NavRegister"] = "show"
-			// 	lib.RenderTemplate(w, "layout/index", "page/index", data)
-			// }
+			if !lib.IsValidPassword(password) {
+				data := lib.GetData(db, "null", "notlogged", "index", w, r)
+				data = lib.ErrorMessage(w, data, "RegisterPassword")
+				data["NavRegister"] = "show"
+				lib.RenderTemplate(w, "layout/index", "page/index", data)
+				return
+			}
+			if !lib.IsValidEmail(email) {
+				data := lib.GetData(db, "null", "notlogged", "index", w, r)
+				data = lib.ErrorMessage(w, data, "EmailFormat")
+				data["NavRegister"] = "show"
+				lib.RenderTemplate(w, "layout/index", "page/index", data)
+				return
+			}
 			// Check if passwords match
 			if password != confirmPassword {
 				data := lib.GetData(db, "null", "notlogged", "index", w, r)
 				data = lib.ErrorMessage(w, data, "PasswordMatch")
 				data["NavRegister"] = "show"
 				lib.RenderTemplate(w, "layout/index", "page/index", data)
+				return
 			}
 
 			// Generate UUID

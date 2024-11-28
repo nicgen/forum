@@ -78,13 +78,23 @@
     {{ end }}
   {{ end }}
 
-  {{range .LikedPosts}}
+  {{range and .LikedPosts}}
+  {{if .Like}}
     <div class="post">
       <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
       <p>Post text: {{ .Text }}</p>
       <p>Creation date: {{ .Creation_Date }}</p>
       <p>Creation hour: {{ .Creation_Hour }}</p>
     </div>
+    {{else}}
+    <h2>Mes Posts dislikés</h2>
+    <div class="post">
+      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+      <p>Post text: {{ .Text }}</p>
+      <p>Creation date: {{ .Creation_Date }}</p>
+      <p>Creation hour: {{ .Creation_Hour }}</p>
+    </div>
+    {{end}}
   {{end}}
 <!-- --------------------------------------------------------------------------->  
 
