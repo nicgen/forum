@@ -2,10 +2,6 @@
   <form action="/create-post" method="POST" enctype="multipart/form-data">
     <label type="post__label" for="post-category" name="">Categories</label>
     <select class="post__select" name="categories" multiple required>
-<<<<<<< HEAD
-      <!-- <option value="">--Please choose one or more option(s)--</option> -->
-=======
->>>>>>> 4d5cb02acb4a13e6dcd60771b2b35788edb44c8d
       {{range .Categories}}
         <option value="{{.Name}}">{{.Name}}</option>
       {{end}}
