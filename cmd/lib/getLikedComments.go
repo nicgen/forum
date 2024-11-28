@@ -33,7 +33,7 @@ func GetLikedComments(w http.ResponseWriter, uuid string, data map[string]interf
 
 	// Ranging over the posts id to get all posts reactions
 	var comments_liked []*models.Comment
-	state_reacted_posts := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE ID = ? ORDER BY CreatedAt DESC`
+	state_reacted_posts := `SELECT ID, Text, Like, Dislike, CreatedAt, User_UUID FROM Comments WHERE ID = ? ORDER BY CreatedAt DESC`
 	for key, value := range react_map {
 		row_post, err_react := db.Query(state_reacted_posts, key)
 		if err_react != nil {
@@ -43,7 +43,9 @@ func GetLikedComments(w http.ResponseWriter, uuid string, data map[string]interf
 
 		for row_post.Next() {
 			var comment_liked models.Comment
+			
 			if err := row_post.Scan(&comment_liked.ID, &comment_liked.Text, &comment_liked.Like, &comment_liked.Dislike, &comment_liked.CreatedAt, &comment_liked.User_UUID); err != nil {
+				fmt.Println(err)
 				ErrorServer(w, "Error scanning comments data")
 			}
 
