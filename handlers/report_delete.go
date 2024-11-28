@@ -35,8 +35,7 @@ func Report_Delete(w http.ResponseWriter, r *http.Request) {
 		}
 		var state_delete string
 		state_delete = `DELETE FROM Posts WHERE ID = ?`
-		// var state_deletereport string
-
+		fmt.Println(state_delete)
 		_, err_db := db.Exec(state_delete, report_postID)
 		if err_db != nil {
 			lib.ErrorServer(w, "Error delete_report")
