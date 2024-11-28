@@ -109,28 +109,32 @@
   {{end}}
 <!-- --------------------------------------------------------------------------->  
 
-  <h1>Notifications</h1>
+<h1>Notifications</h1>
 
-  <div>Total notifications: 
-      {{if .TotalCount}} 
-          {{.TotalCount}} 
-      {{else}}
-          Aucun notification.
-      {{end}}
-  </div>
-  
-  <ul>
-      {{range .Notifications}}
-          <li>
-              Notification ID: {{.ID}} - {{.CreatedAt}} - 
-              {{if .ReactionID}} 
-                  Reaction: {{.ReactionID}}
-              {{else}} 
-                  Comment: {{.CommentID}}
-              {{end}}
-          </li>
-      {{end}}
-  </ul>
+<div>Total notifications: 
+    {{if .TotalCount}}
+        {{.TotalCount}}
+    {{else}}
+        Aucun notification.
+    {{end}}
+</div>
+
+<ul>
+    {{range .Notifications}}
+        <li>
+            Notification ID: {{.ID}} - {{.CreatedAt}} -
+            {{if and (.IsOnComment) (.ReactionID)}}
+                Reaction on Comment: {{.CommentID}} (Reaction ID: {{.ReactionID}})
+            {{else if .IsOnComment}}
+                Comment on Post: (Comment ID :{{.CommentID}})
+            {{else}}
+                Reaction on Post: {{.PostID}} (Reaction ID: {{.ReactionID}})
+            {{end}}
+        </li>
+    {{end}}
+</ul>
+
+
   
 
 

@@ -249,7 +249,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 			if like_comment == "like_comment" {
 				// Creation of a new reaction
 				state_create := `INSERT INTO Reaction (User_UUID, Comment_ID, Status) VALUES (?, ?, ?)`
-				_, err_creation := db.Exec(state_create, cookie.Value, id, "liked")
+				result, err_creation := db.Exec(state_create, cookie.Value, id, "liked")
 				if err_creation != nil {
 					lib.ErrorServer(w, "Error creating Comment Reaction")
 				}
@@ -260,10 +260,39 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 				if err_comment_like != nil {
 					lib.ErrorServer(w, "Error updating Comment Like value")
 				}
+				// Retrieve the last inserted comment ID
+				reactionID, err := result.LastInsertId()
+				if err != nil {
+					lib.ErrorServer(w, "Error retrieving comment ID")
+					return
+				}
+
+				// Insert a notification for the comment author
+				var commentAuthorUUID string
+				queryPostAuthor := `SELECT User_UUID FROM Posts WHERE ID = ?`
+				err = db.QueryRow(queryPostAuthor, id).Scan(&commentAuthorUUID)
+				if err != nil {
+					lib.ErrorServer(w, "Error finding post author")
+					return
+				}
+				if id == "" {
+					lib.ErrorServer(w, "Comment ID is missing")
+					fmt.Println("erreur missing")
+					return
+				}
+
+				if commentAuthorUUID != cookie.Value { // Avoid notifying the user if they commented on their own post
+					state_notification := `INSERT INTO Notification (User_UUID, Reaction_ID, Comment_ID, CreatedAt, IsRead) VALUES (?, ?, ?, ?, ?)`
+					_, errNotif := db.Exec(state_notification, commentAuthorUUID, reactionID, id, time.Now(), false)
+					if errNotif != nil {
+						lib.ErrorServer(w, "Error inserting notification")
+						return
+					}
+				}
 			} else if dislike_comment == "dislike_comment" {
 				// Creation of a new reaction
 				state_create := `INSERT INTO Reaction (User_UUID, Comment_ID, Status) VALUES (?, ?, ?)`
-				_, err_creation := db.Exec(state_create, cookie.Value, id, "disliked")
+				result, err_creation := db.Exec(state_create, cookie.Value, id, "disliked")
 				if err_creation != nil {
 					lib.ErrorServer(w, "Error creating Comment Reaction")
 				}
@@ -273,6 +302,35 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 				_, err_comment_like := db.Exec(state_comment_like, id)
 				if err_comment_like != nil {
 					lib.ErrorServer(w, "Error updating Comment Dislike value")
+				}
+				// Retrieve the last inserted comment ID
+				reactionID, err := result.LastInsertId()
+				if err != nil {
+					lib.ErrorServer(w, "Error retrieving comment ID")
+					return
+				}
+
+				// Insert a notification for the comment author
+				var commentAuthorUUID string
+				queryPostAuthor := `SELECT User_UUID FROM Posts WHERE ID = ?`
+				err = db.QueryRow(queryPostAuthor, id).Scan(&commentAuthorUUID)
+				if err != nil {
+					lib.ErrorServer(w, "Error finding post author")
+					return
+				}
+				if id == "" {
+					lib.ErrorServer(w, "Comment ID is missing")
+					fmt.Println("erreur missing")
+					return
+				}
+
+				if commentAuthorUUID != cookie.Value { // Avoid notifying the user if they commented on their own post
+					state_notification := `INSERT INTO Notification (User_UUID, Reaction_ID, Comment_ID, CreatedAt, IsRead) VALUES (?, ?, ?, ?, ?)`
+					_, errNotif := db.Exec(state_notification, commentAuthorUUID, reactionID, id, time.Now(), false)
+					if errNotif != nil {
+						lib.ErrorServer(w, "Error inserting notification")
+						return
+					}
 				}
 			}
 
