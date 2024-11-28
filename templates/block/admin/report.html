@@ -1,6 +1,7 @@
 {{define "block/admin/report"}}
 <h2>REPORTS</h2>
 {{ range .Report }}
+{{ .Response_Text }}
 {{if eq .Response_Text ""}}
 <form action="/report-delete">
     <h3>{{ .Username }}, {{ .Post_ID }}, {{ .Title}}</h3>
