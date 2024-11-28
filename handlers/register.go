@@ -126,6 +126,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 				data = lib.ErrorMessage(w, data, "RegisterUsername")
 				data["NavRegister"] = "show"
 				lib.RenderTemplate(w, "layout/index", "page/index", data)
+				return
 			}
 
 			// Check if the email is already taken
@@ -134,6 +135,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 				data = lib.ErrorMessage(w, data, "RegisterEmail")
 				data["NavRegister"] = "show"
 				lib.RenderTemplate(w, "layout/index", "page/index", data)
+				return
 			}
 
 			// Insert the new user into the database as a User
