@@ -1,9 +1,11 @@
 {{define "block/deleteduser"}}
-
-Compte supprimé
-
-<form action="/logout">
-    <button>Retour</button>
-  </form>
-
+<div class="container__block">
+  <!-- left menu, categories -->
+  <div class="container__block__main block__categories" role="region" aria-label="Categories">
+    <h2>This account doesn't exists anymore.</h2>
+    <form action="/logout">
+      <button>Back</button>
+    </form>  
+  </div>
+</div>
 {{end}}

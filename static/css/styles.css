@@ -415,7 +415,7 @@ main .container{
   display: flex;
   align-content: center;
   justify-content: center;
-  /* overflow: hidden; */
+  overflow: hidden;
   border: 0.5px solid var(--text-color);
   cursor: pointer;
   transition: transform 0.3s ease;
@@ -516,12 +516,11 @@ main .container{
 
 /* CATEGORIES */
 
-.block__categories>ul:last-child {
-  /* background-color: red; */
+/* .block__categories>ul:last-child {
   border-top: 1px solid var(--text-color);
-margin-top: 1em;
-padding-top: 1em;
-}
+  margin-top: 1em;
+  padding-top: 1em;
+} */
 
 /* 
 ------------------------------------------
@@ -570,14 +569,23 @@ POSTS & FORMS
   border: 1px solid var(--text-color);
   position: relative; /* important for the close button */
   margin-bottom: 1em;
-  border-radius: 0.25em;
 }
 
 .container__block__main{
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
   padding: 1em;
   border: 1px dashed var(--text-color);
   gap: 1em;
+}
+
+.container__block__main.block__categories {
+  flex-grow: 0;
+}
+
+.container__block__main.block__post {
+  width: 80%;
 }
 
 .container__block__main.posts {
@@ -610,7 +618,7 @@ POSTS & FORMS
 }
 
 .container__block__inner{
-  flex-grow: 1;
+  flex-grow: 0;
   padding: 1em;
   border: 1px dotted var(--text-color);
   padding: 0px;
@@ -640,6 +648,14 @@ POSTS & FORMS
 }
 
 /* FORM */
+
+select:focus, textarea:focus {
+  background-color: green;
+  border-width: 1px;
+  border-color: blue;
+  outline: none;
+  box-shadow: none;
+}
 
 .form__socials{
   min-width: 30%;
@@ -723,6 +739,10 @@ padding: 1em;
   color: var(--bkg-color);
 }
 
+.alert__post-guest h2{
+  margin-bottom: 0;
+}
+
 .alert__post-guest>p {
   margin-bottom: 0px;
 }
@@ -767,6 +787,21 @@ button.button__socials>svg {
   margin: 0.5em 1em;
 } */
 
+/* PROFILE */
+
+
+/* ADMIN */
+
+.admin ul {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin li {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 
 /* THEME button ------------------------------------------*/
 
@@ -820,7 +855,6 @@ footer {
   /* padding: 1rem 0; */
   margin-top: auto; /* Pushes the footer to the bottom */
 }
-
 
 /* ANIMATION */
 
@@ -883,4 +917,119 @@ main {
 
 .alert__notification {
   color : orange;
+}
+
+/* help text for screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.filters{
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+}
+
+.block__filters form select {
+  width: 100%;
+  /* height: 2em; */
+  padding: 10px;
+  border: 1px solid var(--text-color);
+  border-radius: 5px;
+  font-size: 16px;
+  font-family: var(--font-family-main);
+  /* appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%);
+  background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px), calc(100% - 2.5em) 0.5em;
+  background-size: 5px 5px, 5px 5px, 1px 1.5em;
+  background-repeat: no-repeat;
+  -webkit-appearance: none;
+  -moz-appearance: none; */
+}
+
+.block__filters form select:focus {
+  border-color: var(--text-color);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.block__filters form button[type="submit"] {
+  width: 100%;
+  height: 40px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-family: var(--font-family-main);
+  background-color: var(--bkg-color);
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.block__filters form button[type="submit"]:hover {
+  background-color: var(--hover-bg);
+}
+
+.block__filters form button[type="submit"]:focus {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.block__filters option:hover{
+  background-color: purple;
+}
+.block__filters:hover select option:not(:checked) {
+  background-color: blue; /* Change this to your desired hover color */
+}
+
+/*  */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* margin-bottom: 20px; */
+}
+
+.form-group label {
+  margin-bottom: 10px;
+}
+
+.post__select, .post__title__input, .post__content__textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.post__select {
+  width: 100%;
+  max-height: 5em;
+  height: auto;
+}
+.post__title__input {
+  width: 100%;
+}
+
+.post__content__textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+.submit-button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background-color: #3e8e41;
 }

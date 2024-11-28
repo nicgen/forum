@@ -46,14 +46,22 @@ if (savedTheme) {
     setTheme('auto');
 }
 
+// previous version
 //fonction for the expandable post
-function togglePost(element) {
-    const fullPost = element.querySelector('.js__toggle__block');
+// function togglePost(element) {
+//     const fullPost = element.querySelector('.js__toggle__block');
+//     fullPost.classList.toggle('active');
+// }
+
+function togglePost(button) {
+    const post = button.closest('.showhide');
+    const fullPost = post.querySelector('.js__toggle__block');
     fullPost.classList.toggle('active');
 }
 
-function closePost(event) {
-    event.stopPropagation();
-    const fullPost = event.target.closest('.js__toggle__block');
-    fullPost.classList.remove('active');
-}
+// no need
+// function closePost(event) {
+//     event.stopPropagation();
+//     const fullPost = event.target.closest('.js__toggle__block');
+//     fullPost.classList.remove('active');
+// }
