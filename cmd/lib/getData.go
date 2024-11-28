@@ -2,6 +2,7 @@ package lib
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -139,5 +140,6 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 		data["NavRegister"] = "hide"
 	}
 
+	fmt.Println(data)
 	return data
 }

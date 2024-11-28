@@ -67,9 +67,12 @@
 
     <footer>
       <!-- action (like/dislike) -->
-      {{ template "block/form/like" .}}
+      
+      <p>Role: {{ .Role }}</p>
       <!-- add comment -->
+      {{ template "block/form/like" .}}
       <div>{{template "block/content/comment_add" .}}</div>
+
       <!-- show comments -->
       {{ if .Comments }}
       <h3>Comments</h3>

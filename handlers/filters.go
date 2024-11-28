@@ -102,13 +102,15 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 		var post models.Post
 		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID, &post.ImagePath); err != nil {
 		}
-
-		category_array := strings.Split(post.Category_ID, " - ")
+		
 		is_contained := false
+		if len(categories) != 0 {
+			category_array := strings.Split(post.Category_ID, " - ")
 		for i := 0; i < len(category_array); i++ {
 			if category_array[i] == categories {
 				is_contained = true
 			}
+		}
 		}
 
 		if is_contained {
