@@ -761,9 +761,12 @@ button.button__socials>svg {
 }
 
 .liked {
-  color: red;
-  background-color: red;
+
 }
+/* button.report {
+  margin: 0.5em 1em;
+} */
+
 
 /* THEME button ------------------------------------------*/
 
