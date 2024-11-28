@@ -27,13 +27,14 @@ type Post struct {
 }
 
 type Notification struct {
-	ID         int
-	ReactionID *int
-	PostID     *int
-	CommentID  *int
-	CreatedAt  time.Time
-	IsRead     bool
-	TotalCount *int
+	ID          int
+	ReactionID  *int
+	PostID      *int
+	CommentID   *int
+	IsOnComment bool // Indique si la réaction est sur un commentaire
+	CreatedAt   time.Time
+	IsRead      bool
+	TotalCount  *int // Total des notifications
 }
 
 type User struct {
