@@ -1,7 +1,7 @@
 {{define "block/form/post_modify"}}
 <div class="showhide" tabindex="0">
   <div>
-    <button class="button-icon button__author" onclick="togglePost(this)" title="Edit my comment">{{ template "ico_edit"}}</button>
+    <button class="button-icon button__author" onclick="togglePost(this)" title="Edit my post">{{ template "ico_edit"}}</button>
   </div>
 
   <div class="popup-container js__toggle__block">
@@ -10,8 +10,8 @@
         <input type="hidden" name="delete" value="post">
         <input type="hidden" name="id" value="{{ .ID }}">
         <div class="pop__header">
-          <label for="content" class="form__label">Modify your post</label>
-          <button class="button-icon" onclick="closePost(event)">{{ template "ico_close" }}</button>
+          <h3 for="content" class="form__label">Modify your post</h3>
+          <button class="button-icon" onclick="closePost(event)" title="Close">{{ template "ico_close" }}</button>
         </div>
         <textarea class="modify-area" placeholder="Modify your comment (Title)"  type="hidden" name="content"></textarea>
         <button class="button-icon" type="submit" title="Edit my post">Validate</button>

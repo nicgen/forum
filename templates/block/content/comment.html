@@ -1,5 +1,6 @@
 {{define "block/content/comment"}}
-  <p class="comment__date"><span>{{ .Creation_Date }}/{{ .Creation_Hour }}</span></p>
+  <!-- <p class="comment__date"><span>{{/* .Creation_Date */}}/{{/* .Creation_Hour */}}</span></p> -->
+  <p class="comment__date"><span></span>{{ .CreatedAt.Format "January 2, 2006, 15:04" }}</p>
   <p>{{ .Text }}</p>
   <!-- comment edit -->
   <div class="comment__action">

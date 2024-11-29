@@ -11,7 +11,7 @@
         <input type="hidden" name="id" value="{{ .ID }}">
         <div class="pop__header">
           <label for="content" class="form__label">Modify your comment</label>
-          <button class="button-icon" onclick="closePost(event)">{{ template "ico_close" }}</button>
+          <button class="button-icon" onclick="closePost(event)" title="Close">{{ template "ico_close" }}</button>
         </div>
         <textarea class="modify-area" placeholder="Modify your comment" name="content"></textarea>
         <button class="button-icon" type="submit" title="Edit my post">Validate</button>

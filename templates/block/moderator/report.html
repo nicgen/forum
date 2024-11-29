@@ -1,7 +1,7 @@
 {{define "block/moderator/report"}}
 <form action="/report" method="GET">
-<input type="hidden" name="Report_post" value="{{ .ID }}">
-<input type="hidden" name="Report_title" value="{{ .Title }}">
-<button href="/" class="report" title="Report">{{ template "ico_alert"}}</button>
+    <input type="hidden" name="Report_post" value="{{ .ID }}">
+    <input type="hidden" name="Report_title" value="{{ .Title }}">
+    <button href="/" class="report" title="Report">{{ template "ico_alert"}}</button>
 </form>
 {{end}}

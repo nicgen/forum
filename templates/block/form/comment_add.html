@@ -1,9 +1,23 @@
-{{define "block/content/comment_add"}}
-<!-- todo -->
-<div class="comments">
-  <form action="/comment">
-    <textarea class="comment-area" placeholder="Add a comment" name="comment_text" required {{ if eq .Data.Role "Guest" }}disabled{{end}}></textarea>
-    <button name="post_id" value="{{ .ID }}"{{ if eq .Data.Role "Guest" }}disabled{{end}}>Ajouter</button>
-  </form>
+{{define "block/form/comment_add"}}
+<div class="showhide" tabindex="0">
+  <div>
+    <button class="button-icon button__big" onclick="togglePost(this)" title="Add a comment">{{ template "ico_comment"}} Add a comment.</button>
+  </div>
+
+  <div class="popup-container js__toggle__block">
+    <div class="popup">
+      <div class="pop__header">
+        <h3 for="content" class="form__label">Add a comment</h3>
+        <button class="button-icon" onclick="closePost(event)" title="Close">{{ template "ico_close" }}</button>
+      </div>
+
+      <form action="/comment">
+        <textarea class="comment-area" placeholder="Add a comment" name="comment_text" required {{ if eq .Data.Role "Guest" }}disabled{{end}}></textarea>
+        <button name="post_id" value="{{ .ID }}"{{ if eq .Data.Role "Guest" }}disabled{{end}}>Add</button>
+      </form>
+
+    </div>
+  </div>
 </div>
+
 {{end}}
