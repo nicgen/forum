@@ -1,7 +1,23 @@
 {{define "block/popup/comment_edit"}}
-{{ if and (ne .Role "Admin") (ne .Role "Moderator") }}
-    <div class="delete">
+<div class="showhide" tabindex="0">
+  <div>
+    <button class="button-icon" onclick="togglePost(this)" title="Edit my comment">{{ template "ico_edit"
+      }}</button>
+  </div>
 
+  <div class="popup-container js__toggle__block">
+    <div class="popup">
+      <form method="GET" action="/modify">
+        <input type="hidden" name="delete" value="comment">
+        <input type="hidden" name="id" value="{{ .ID }}">
+        <div class="pop__header">
+          <label for="content" class="form__label">Modify your comment</label>
+          <button class="button-icon" onclick="closePost(event)">{{ template "ico_close" }}</button>
+        </div>
+        <textarea class="modify-area" placeholder="Modify your comment" name="content"></textarea>
+        <button class="button-icon" type="submit" title="Edit my post">Validate</button>
+      </form>
     </div>
-    {{end}}
+  </div>
+</div>
 {{end}}

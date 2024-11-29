@@ -252,24 +252,44 @@ p {
   margin-bottom: 1em;
 }
 
-
 /*
 ------------------------------------------
 DEBUG
-! for testing purpose
+! for testing purpose only
 ------------------------------------------
 */
 
-.wrapper{
-  /* border: 2px dashed red; */
+/* VISUALIZE blocks */
+/* .wrapper{
+  border: 2px dashed red;
 }
 .container{
-  /* border: 2px dashed green; */
+  border: 2px dashed green;
+} */
+
+/* UNSET CSS classless system */
+/* body {
+  width: 100%;
+  grid-template-columns: unset !important;
+  margin: auto 0;
 }
+
+body>* {
+  grid-column: unset !important;
+}
+
+main {
+  padding-top: 0px !important;
+}
+
+.wrapper {
+  width: 100%;
+  grid-column: unset;
+} */
 
 /*
 ------------------------------------------
-STYLES
+STYLES COMMON
 ------------------------------------------
 */
 
@@ -342,7 +362,7 @@ main .container{
 
 .container {
   width: 80%;
-  max-width: 1014px;
+  max-width: 1280px;
   height: auto;
   margin: 0 auto;
   padding: 1rem;
@@ -361,11 +381,11 @@ main .container{
   justify-content: center;
 }
 
-/* NAV BAR
+/*
+------------------------------------------
+NAV
 ------------------------------------------
 */
-
-/*-------------------------------------*/
 
 .wrapper > header {
   background-color: var(--nav-bg-color);
@@ -436,30 +456,28 @@ main .container{
   text-transform: uppercase;
 }
 
+.nav .showhide{
+  position: relative; /* for the dropdown menu */
+}
+
 /* dropdown */
 .profile-dropdown {
-  /* display: none; */
   position: absolute; 
   background-color: var(--bkg-color); 
   border: 1px solid var(--text-color); 
   z-index: 1; 
-  top: 3.3em; 
+  top: 3.5em; 
+  left: -45%;
   padding: 0.25em; 
   animation: fadeIn 0.3s ease-in-out forwards; 
   width: auto;
 }
 
-/* .profil_thumb:focus-within .profile-dropdown {
-  display: flex;
-  flex-direction: column;
-  font-size: 1.5em;
-} */
-
 .js__toggle__block {
   display: none;
-  flex-direction: column;
+  /* flex-direction: column;
   gap: 0.5em;
-  padding: 0.5em;
+  padding: 0.5em; */
 }
 
 .js__toggle__block.active {
@@ -474,9 +492,7 @@ main .container{
   align-content: stretch;
   justify-content: end;
   gap: 10px;
-  /* padding: 10px 10px 10px 0px; */
   min-height: 68px;
-  /* min-width: 273px; */
 }
 
 .nav>.notification{
@@ -514,45 +530,32 @@ main .container{
   padding: 1px 3px 0px 3px;
 }
 
-/* CATEGORIES */
-
-/* .block__categories>ul:last-child {
-  border-top: 1px solid var(--text-color);
-  margin-top: 1em;
-  padding-top: 1em;
-} */
-
 /* 
 ------------------------------------------
 POSTS & FORMS
 ------------------------------------------
 */
-
-/* Create post-Area */
-  /* it maybe still a bit buggy, need some more work */
-
-  /* Style for textareas */
-  /* .post-title-area {
-    height: 40px;
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    resize: none;
-  } */
   
-  .post__select, .post__title__input, .post__content__textarea, .comment-area, .modify-area {
-    padding: 0.5em;
-  }
+.post__select, .post__title__input, .post__content__textarea, .comment-area, .modify-area {
+  padding: 0.5em;
+  outline: none;
+  border: none;
+}
 
-  .post__content__textarea, .comment-area, .modify-area{
-    /* resize: none; */
-    max-width: 100%;
-  }
-  
-/*--------------------------------------------------------*/
+.post__content__textarea, .comment-area, .modify-area{
+  /* resize: none; */
+  max-width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.form-group label {
+  margin-bottom: 10px;
+}
 
 .block__post{
   display: flex;
@@ -632,22 +635,64 @@ POSTS & FORMS
   padding-bottom: 1em;
 }
 
-/* ACTIONS (Like/Dislike) */
+/* FILTERS */
 
-.like__container {
-  display: flex;
-  flex-direction: row;
-  justify-content: end;
-  gap: 0.5em;
-}
 
-.like__content {
+.filters{
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 0.25em;
 }
 
-/* FORM */
+.block__filters form select {
+  width: 100%;
+  /* height: 2em; */
+  padding: 10px;
+  border: 1px solid var(--text-color);
+  border-radius: 5px;
+  font-size: 16px;
+  font-family: var(--font-family-main);
+  /* appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%);
+  background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px), calc(100% - 2.5em) 0.5em;
+  background-size: 5px 5px, 5px 5px, 1px 1.5em;
+  background-repeat: no-repeat;
+  -webkit-appearance: none;
+  -moz-appearance: none; */
+}
+
+.block__filters form select:focus {
+  border-color: var(--text-color);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.block__filters form button[type="submit"] {
+  width: 100%;
+  height: 40px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-family: var(--font-family-main);
+  background-color: var(--bkg-color);
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.block__filters form button[type="submit"]:hover {
+  background-color: var(--hover-bg);
+}
+
+.block__filters form button[type="submit"]:focus {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.block__filters option:hover{
+  background-color: purple;
+}
+.block__filters:hover select option:not(:checked) {
+  background-color: blue; /* hover color */
+}
 
 select:focus, textarea:focus {
   background-color: green;
@@ -679,14 +724,10 @@ select:focus, textarea:focus {
 	padding: 0.5em;
 }
 
-.button__big {
-	padding: 1em;
-}
-
 .form__close {
-	position: absolute;
-	right: 1.5em;
-	top: 1.5em;
+  position: absolute;
+  right: 1.5em;
+  top: 1.5em;
 }
 
 .form__login{
@@ -724,7 +765,51 @@ select:focus, textarea:focus {
 padding: 1em;
 }
 
-/* ICONS */
+/* POPUP */
+
+/* Full-screen overlay */
+.popup-container {
+  /* display: flex; */
+  justify-content: center;      /* Center horizontally */
+  align-items: center;          /* Center vertically */
+  position: fixed;              /* Position fixed to cover the entire viewport */
+  top: 0;                       /* Align to the top */
+  left: 0;                      /* Align to the left */
+  width: 100%;                  /* Full width */
+  height: 100%;                 /* Full height */
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  z-index: 1000;                /* Ensure it appears above other content */
+}
+
+/* Popup styling */
+.popup {
+  background-color: var(--bkg-color);      /* Background color of the popup */
+  padding: 2em;                /* Padding inside the popup */
+  border-radius: 0.5em;           /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Shadow for depth */
+  max-width: 400px;             /* Maximum width of the popup */
+  width: 100%;                  /* Full width up to max-width */
+}
+
+.popup form{
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.pop__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+/*
+------------------------------------------
+ICONS
+------------------------------------------
+*/
 
 .icon {
   width: 1.5em;
@@ -779,6 +864,26 @@ button.button__socials>svg {
 .ico__like{
   background-color: violet;
 }
+
+.button__big {
+	padding: 1em;
+}
+
+/* ACTIONS (Like/Dislike) */
+
+.like__container {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  gap: 0.5em;
+}
+
+.like__content {
+  display: flex;
+  flex-direction: row;
+  gap: 0.25em;
+}
+
 
 .liked {
 
@@ -878,47 +983,24 @@ footer {
   }
 }
 
-/* UNSET CSS classless system */
-
-/* body {
-  width: 100%;
-  grid-template-columns: unset !important;
-  margin: auto 0;
-}
-
-body>* {
-  grid-column: unset !important;
-}
-
-main {
-  padding-top: 0px !important;
-}
-
-.wrapper {
-  width: 100%;
-  grid-column: unset;
-} */
-
 /* MEDIA queries */
 /* Desktop */
 @media only screen and (min-width: 1025px) {
-  .container__block{
+  .container__block {
   }
 }
 
-/* Tablets and smartphone */
+/* Tablets and smartphones */
 @media only screen and (max-width: 1024px) {
-  .container__block{
+  .container__block {
     flex-direction: column;
   }
+  .container__block__main.block__post {
+    width: 100%;
+}
 }
 
-/* TEST */
-
-.alert__notification {
-  color : orange;
-}
-
+/* ACCESSIBILITY */
 /* help text for screen reader only */
 .sr-only {
   position: absolute;
@@ -932,79 +1014,30 @@ main {
   border-width: 0;
 }
 
-.filters{
-  display: flex;
-  flex-direction: column;
-  gap: 0.25em;
-}
 
-.block__filters form select {
-  width: 100%;
-  /* height: 2em; */
-  padding: 10px;
-  border: 1px solid var(--text-color);
-  border-radius: 5px;
-  font-size: 16px;
-  font-family: var(--font-family-main);
-  /* appearance: none;
-  background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%);
-  background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px), calc(100% - 2.5em) 0.5em;
-  background-size: 5px 5px, 5px 5px, 1px 1.5em;
-  background-repeat: no-repeat;
-  -webkit-appearance: none;
-  -moz-appearance: none; */
-}
+/* TEST */
 
-.block__filters form select:focus {
-  border-color: var(--text-color);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+/* .alert__notification {
+  color : orange;
+} */
 
-.block__filters form button[type="submit"] {
-  width: 100%;
-  height: 40px;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  font-family: var(--font-family-main);
-  background-color: var(--bkg-color);
-  color: var(--text-color);
-  cursor: pointer;
-}
-
-.block__filters form button[type="submit"]:hover {
-  background-color: var(--hover-bg);
-}
-
-.block__filters form button[type="submit"]:focus {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.block__filters option:hover{
-  background-color: purple;
-}
-.block__filters:hover select option:not(:checked) {
-  background-color: blue; /* Change this to your desired hover color */
-}
 
 /*  */
-
+/* 
 .form-group {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  /* margin-bottom: 20px; */
 }
 
 .form-group label {
   margin-bottom: 10px;
-}
+} */
 
 .post__select, .post__title__input, .post__content__textarea {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  /* padding: 10px; */
+  /* border: 1px solid #ccc; */
+  /* border-radius: 5px; */
 }
 
 .post__select {
