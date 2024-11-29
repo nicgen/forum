@@ -6,16 +6,6 @@ const root = document.documentElement;
 const themes = ['light', 'dark', 'auto'];
 let currentThemeIndex = 2; // Start with auto
 
-// function setTheme(theme) {
-//     root.classList.remove('light-theme', 'dark-theme');
-//     if (theme === 'auto') {
-//         root.classList.remove('light-theme', 'dark-theme');
-//     } else {
-//         root.classList.add(`${theme}-theme`);
-//     }
-//     localStorage.setItem('theme', theme);
-// }
-
 function setTheme(theme) {
   root.classList.remove('light-theme', 'dark-theme');
   themeToggle.classList.remove('light', 'dark', 'auto');
@@ -46,12 +36,7 @@ if (savedTheme) {
     setTheme('auto');
 }
 
-// previous version
-//fonction for the expandable post
-// function togglePost(element) {
-//     const fullPost = element.querySelector('.js__toggle__block');
-//     fullPost.classList.toggle('active');
-// }
+// POPUP
 
 function togglePost(button) {
     const post = button.closest('.showhide');
@@ -59,8 +44,33 @@ function togglePost(button) {
     fullPost.classList.toggle('active');
 }
 
+// function closePost(event) {
+//     event.stopPropagation(); // Prevent the event from bubbling up
+//     const fullPost = event.target.closest('.js__toggle__block');
+//     fullPost.classList.remove('active');
+// }
+
 function closePost(event) {
     event.stopPropagation(); // Prevent the event from bubbling up
+    event.preventDefault(); // Prevent any default action (like form submission)
+
     const fullPost = event.target.closest('.js__toggle__block');
-    fullPost.classList.remove('active');
+    fullPost.classList.remove('active'); // Close the popup
 }
+
+// function closePost(event) {
+//     event.stopPropagation(); // Prevent the event from bubbling up
+//     const fullPost = event.target.closest('.js__toggle__block');
+//     const form = fullPost.querySelector('form'); // Get the form inside the popup
+
+//     // Check if the form is valid
+//     if (form.checkValidity()) {
+//         fullPost.classList.remove('active'); // Close the popup if the form is valid
+//     } else {
+//         // Optionally, you can focus on the first invalid input
+//         const firstInvalidInput = form.querySelector(':invalid');
+//         if (firstInvalidInput) {
+//             firstInvalidInput.focus(); // Focus on the first invalid input
+//         }
+//     }
+// }

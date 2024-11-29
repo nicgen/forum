@@ -322,6 +322,7 @@ body {
   box-sizing: border-box;
   color: var(--text-color);
   background-color: var(--bkg-color);
+  /* background-image: url(/static/img/pattern_christmas_dark.png); */
 }
 
 /*
@@ -559,6 +560,12 @@ POSTS & FORMS
 ------------------------------------------
 */
 
+article {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
 .post__select,
 .post__title__input,
 .post__content__textarea,
@@ -597,8 +604,8 @@ POSTS & FORMS
   display: flex;
   flex-direction: row;
   gap: 1em;
-  padding: 1em;
-  border: 1px solid var(--text-color);
+  /* padding: 1em; */
+  /* border: 1px solid var(--text-color); */
   position: relative;
   /* important for the close button */
   margin-bottom: 1em;
@@ -609,7 +616,7 @@ POSTS & FORMS
   flex-direction: column;
   flex-grow: 1;
   /* padding: 1em; */
-  border: 1px dashed var(--text-color);
+  /* border: 1px dashed var(--text-color); */
   gap: 1em;
 }
 
@@ -657,10 +664,11 @@ POSTS & FORMS
 }
 
 .container__block__inner {
-  flex-grow: 0;
+  /* flex-grow: 0; */
   padding: 1em;
-  border: 1em solid var(--text-color);
-  padding: 0px;
+  border: 0.5px solid hsl(43deg 59% 81% / 10%);
+  background-color: hsl(43deg 59% 81% / 10%);
+  border-radius: 0.25em;
 }
 
 .post__content article {
@@ -790,7 +798,17 @@ textarea:focus {
   /* border: 1px solid green; */
   display: flex;
   flex-direction: column;
+  align-self: end;
+  /* justify-content: space-between; */
+}
+
+
+.comment__action, .comment__action form {
+  display: flex;
+  flex-direction: row;
   justify-content: space-between;
+  /* gap: 0; */
+  /* align-self: end; */
 }
 
 .comment__action,
@@ -798,7 +816,8 @@ textarea:focus {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: 0.25em;
+  /* gap: 0.25em; */
+  /* align-self: end; */
 }
 
 .comments textarea {
@@ -828,41 +847,38 @@ textarea:focus {
 
 /* Full-screen overlay */
 .popup-container {
-  /* display: flex; */
   justify-content: center;
-  /* Center horizontally */
   align-items: center;
-  /* Center vertically */
   position: fixed;
-  /* Position fixed to cover the entire viewport */
   top: 0;
-  /* Align to the top */
   left: 0;
-  /* Align to the left */
   width: 100%;
-  /* Full width */
   height: 100%;
-  /* Full height */
   background-color: rgba(0, 0, 0, 0.5);
-  /* Semi-transparent background */
   z-index: 1000;
-  /* Ensure it appears above other content */
 }
 
 /* Popup styling */
 .popup {
   background-color: var(--bkg-color);
-  /* Background color of the popup */
   padding: 2em;
-  /* Padding inside the popup */
   border-radius: 0.5em;
-  /* Rounded corners */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-  /* Shadow for depth */
   max-width: 400px;
-  /* Maximum width of the popup */
   width: 100%;
-  /* Full width up to max-width */
+  max-width: 640px;
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+  background-color: var(--bkg-color);
+  padding: 2em;
+  border-radius: 0.5em;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  max-width: 640px;
+  width: 100%;
 }
 
 .popup form {
@@ -948,7 +964,10 @@ button.button__socials>svg {
 }
 
 .button__big {
+  background-color: orange;
+  width: 100%;
   padding: 1em;
+  font-size: large;
 }
 
 /* ACTIONS (Like/Dislike) */
@@ -976,7 +995,7 @@ button.button__socials>svg {
   display: flex;
   flex-direction: row;
   justify-content: end;
-  gap: 0.5em;
+  gap: 0.25em;
 }
 
 .like__content {
@@ -991,9 +1010,9 @@ button.button__socials>svg {
   background-color: red;
 }
 
-/* button.report {
-  margin: 0.5em 1em;
-} */
+button.report {
+  background-color: orange;
+}
 
 /* PROFILE */
 
@@ -1009,6 +1028,12 @@ button.button__socials>svg {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+.block__dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
 }
 
 /* THEME button ------------------------------------------*/

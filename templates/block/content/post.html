@@ -30,33 +30,34 @@
         <p>{{ .Text }}</p>
       </div>
     </div>
-  </section>
-  
-  <footer>
     <!-- date -->
     <p class="post__date" aria-label="Post date" role="definition">{{ .CreatedAt.Format "January 2, 2006, 15:04" }}</p>
-    
+  </section>
+
+  <section class="actions">
     <div class="comment__action">
       <div class="block__action">
         <!-- EDIT -->
         {{ if or (eq .Data.Role "Moderator") (eq .Data.Role "Admin") (eq .IsAuthor "yes")}}
-        {{ template "block/form/post_delete" . }}
-        {{ template "block/form/post_modify" . }}
+          {{ template "block/form/post_delete" . }}
+          {{ template "block/form/post_modify" . }}
         {{end}}
       </div>
       <div class="block__action">
         <!-- REPORT -->
         {{template "block/moderator/report" .}}
-      </div>
-      <div class="block__action">
         <!-- action (like/dislike) -->
         {{ template "block/form/like" .}}
       </div>
     </div>
+
+  </section>
+  
+  <footer>
     <hr>
     <h3>Comments</h3>
     <!-- add comment -->
-    <div>{{template "block/content/comment_add" .}}</div>
+    <div>{{template "block/form/comment_add" .}}</div>
     <!-- show comments -->
     {{ if .Comments }}
     <ul class="comments">
