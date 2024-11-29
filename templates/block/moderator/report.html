@@ -2,7 +2,6 @@
 <form action="/report" method="GET">
 <input type="hidden" name="Report_post" value="{{ .ID }}">
 <input type="hidden" name="Report_title" value="{{ .Title }}">
-<button href="/" class="report">Report</button>
+<button href="/" class="report" title="Report">{{ template "ico_alert"}}</button>
 </form>
-
 {{end}}

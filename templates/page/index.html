@@ -1,7 +1,7 @@
 {{define "page/index"}}
-{{if eq .Role "DeleteUser"}}
-{{template "block/deleteduser" .}}
-{{else}}
+{{/*if eq .Role "DeleteUser"*/}}
+{{/*template "block/deleteduser" .*/}}
+{{/*else*/}}
 
 <div class="container__block">
   <!-- left menu, categories -->
@@ -24,8 +24,7 @@
     <!-- FORM Create a post -->
     {{if eq .Role "Guest"}}
     <div class="container__block__inner alert__post-guest">
-      <p>You're a guest, if you want to post, please <a href="/nav-register" class="link" aria-label="Sign Up">Sign
-          Up</a> or <a href="/nav-login" class="link" aria-label="Login">Login</a>.</p>
+      <p>You're a guest, if you want to post, please <a href="/nav-register" class="link" aria-label="Sign Up">Sign Up</a> or <a href="/nav-login" class="link" aria-label="Login">Login</a>.</p>
     </div>
     {{else}}
     <div class="container__block__inner">
@@ -42,7 +41,7 @@
       <!-- list of posts & comments -->
       <ul role="list" aria-label="Posts List">
         {{ range .Posts }}
-        <li class="post" role="listitem">
+        <li class="post container__block__inner" role="listitem">
           {{ template "block/content/post" . }}
         </li>
         {{ end }}
@@ -54,6 +53,8 @@
     </div>
     {{ end }}
   </div>
+
 </div>
-{{end}}
+{{/*end*/}}
+
 {{end}}
