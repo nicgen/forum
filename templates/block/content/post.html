@@ -1,91 +1,76 @@
 {{define "block/content/post"}}
-<article class="block__article" aria-label="Forum post" role="article">
-  
-    <!-- post edit -->
-    {{ if or (eq .Data.Role "Moderator") (eq .Data.Role "Admin") (eq .IsAuthor "yes")}}
-    {{template "block/moderator/report" .}}
-      <div class="comment__modify">
-        <form method="GET" action="/delete">
-          <input type="hidden" name="delete" value="post">
-          <input type="hidden" name="id" value="{{ .ID }}">
-          <button class="button-icon" type="submit" title="Delete my post">{{ template "ico_delete"}} Delete my post</button>
-        </form>
-        <form method="GET" action="/modify">
-          <input type="hidden" name="delete" value="post">
-          <input type="hidden" name="id" value="{{ .ID }}">
-          <textarea class="modify-area" type="hidden" name="content"></textarea>
-          <button class="button-icon" type="submit" title="Edit my post">{{ template "ico_edit"}} Edit my post</button>
-        </form>
-      </div>
-    {{end}}
-  
-    <header>
-      <!-- date -->
-      <p class="post__date" aria-label="Post date" role="definition">{{ .CreatedAt.Format "January 2, 2006, 15:04" }}</p>
-      <!-- alt. -->
-      <!-- <p class="post__date" aria-label="Post date" role="definition"></p>{{/* .Creation_Date */}}/{{/* .Creation_Hour */}}</p> -->
-
-      <!-- title -->
-      <h2 class="post__title" aria-label="Post title" role="heading" id="post-title-1">{{ .Title }}</h2>
-      <h3></h3><a href="/profile-user?uuid={{ .User_UUID }}">{{ .Username }}</a></h3>
-      <!-- categories -->
-      {{ if .Category_ID }}
-      <div>
-        <p class="tag">{{/* .Category_Name */}}{{.Category_ID}}</p>
-      </div>
-      {{ end }}
-    </header>
-
-    <section>
-      <div>
-        <!-- todo add {{/* image_alt */}} later -->
-        {{if .ImagePath}}
-          <figure aria-label="Post image" role="img">
-            <img src="/static/uploads/{{ .ImagePath }}" alt="{{ .Title }}" onerror="console.error('Image failed to load. Path:', this.src)">
-          </figure>
-        {{ end }}
+<article id="{{.ID}}" class="block__article" aria-label="Forum post" role="article">
+  <header>
+    <!-- alt. -->
+    <!-- <p class="post__date" aria-label="Post date" role="definition"></p>{{/* .Creation_Date */}}/{{/* .Creation_Hour */}}</p> -->
     
-        <!-- post content -->
-        <div aria-label="Post content" role="contentinfo" id="post-content-1">
-            <p>{{ .Text }}</p>
-        </div>
+    <!-- title -->
+    <h2 class="post__title" aria-label="Post title" role="heading" id="post-title-1">{{ .Title }}</h2>
+    <h3></h3><a href="/profile-user?uuid={{ .User_UUID }}">{{ .Username }}</a></h3>
+    <!-- categories -->
+    {{ if .Category_ID }}
+    <div>
+      <p class="tag">{{/* .Category_Name */}}{{.Category_ID}}</p>
+    </div>
+    {{ end }}
+  </header>
+  
+  <section>
+    <div>
+      <!-- todo add {{/* image_alt */}} later -->
+      {{if .ImagePath}}
+      <figure aria-label="Post image" role="img">
+        <img src="/static/uploads/{{ .ImagePath }}" alt="{{ .Title }}"
+        onerror="console.error('Image failed to load. Path:', this.src)">
+      </figure>
+      {{ end }}
+      
+      <!-- post content -->
+      <div aria-label="Post content" role="contentinfo" id="post-content-1">
+        <p>{{ .Text }}</p>
       </div>
-    </section>
-
-      <footer>
+    </div>
+  </section>
+  
+  <footer>
+    <!-- date -->
+    <p class="post__date" aria-label="Post date" role="definition">{{ .CreatedAt.Format "January 2, 2006, 15:04" }}</p>
+    
+    <div class="comment__action">
+      <div class="block__action">
+        <!-- EDIT -->
+        {{ if or (eq .Data.Role "Moderator") (eq .Data.Role "Admin") (eq .IsAuthor "yes")}}
+        {{ template "block/form/post_delete" . }}
+        {{ template "block/form/post_modify" . }}
+        {{end}}
+      </div>
+      <div class="block__action">
+        <!-- REPORT -->
+        {{template "block/moderator/report" .}}
+      </div>
+      <div class="block__action">
         <!-- action (like/dislike) -->
         {{ template "block/form/like" .}}
-        <!-- add comment -->
-        <div>{{template "block/content/comment_add" .}}</div>
-        <!-- show comments -->
-        {{ if .Comments }}
-        <h3>Comments</h3>
-        <ul>
-          {{ range .Comments }}
-            <li>
-              <!-- comment edit -->
-              {{ if eq .IsAuthor "yes"}}
-                <div class="comment__modify">
-                  <form method="GET" action="/delete">
-                    <input type="hidden" name="delete" value="comment">
-                    <input type="hidden" name="id" value="{{ .ID }}">
-                    <button class="button-icon" type="submit" title="Delete my post">{{ template "ico_delete"}} Delete my comment</button>
-                  </form>
-
-                  <!-- POPUP -->
-                  {{ template "block/popup/comment_edit" . }}
-
-                </div>
-              {{end}}
-              <!-- Comment content -->
-              {{ template "block/content/comment" . }}
-            </li>
-          {{ end }}
-        </ul>
-        {{else}}
-          Oh No! There's no comments...
-        {{ end }}
-      </footer>
+      </div>
     </div>
-  </article>
+    <hr>
+    <h3>Comments</h3>
+    <!-- add comment -->
+    <div>{{template "block/content/comment_add" .}}</div>
+    <!-- show comments -->
+    {{ if .Comments }}
+    <ul class="comments">
+      {{ range .Comments }}
+      <li id="{{.ID}}" class="comment">
+        <!-- Comment content -->
+        {{ template "block/content/comment" . }}
+      </li>
+      {{ end }}
+    </ul>
+    {{else}}
+    Oh No! There's no comments...
+    {{ end }}
+  </footer>
+  <!-- </div> -->
+</article>
 {{end}}

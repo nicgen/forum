@@ -1,5 +1,17 @@
 {{define "block/content/comment"}}
-  <p><span>{{ .Creation_Date }}/{{ .Creation_Hour }}</span></p>
+  <p class="comment__date"><span>{{ .Creation_Date }}/{{ .Creation_Hour }}</span></p>
   <p>{{ .Text }}</p>
-  {{ template "block/form/likecomment" .}}
+  <!-- comment edit -->
+  <div class="comment__action">
+    {{ if eq .IsAuthor "yes"}}
+      <div class="block__action">
+      <!-- Comment delete -->
+      {{ template "block/popup/comment_delete" . }}
+      <!-- Comment edit POPUP -->
+      {{ template "block/popup/comment_edit" . }}
+      </div>
+    {{end}}
+    <!-- LIKE -->
+    {{ template "block/form/likecomment" .}}
+  </div>
 {{end}}
