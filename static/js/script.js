@@ -59,9 +59,8 @@ function togglePost(button) {
     fullPost.classList.toggle('active');
 }
 
-// no need
-// function closePost(event) {
-//     event.stopPropagation();
-//     const fullPost = event.target.closest('.js__toggle__block');
-//     fullPost.classList.remove('active');
-// }
+function closePost(event) {
+    event.stopPropagation(); // Prevent the event from bubbling up
+    const fullPost = event.target.closest('.js__toggle__block');
+    fullPost.classList.remove('active');
+}
