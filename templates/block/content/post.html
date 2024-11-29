@@ -45,7 +45,7 @@
       </div>
       <div class="block__action">
         <!-- REPORT -->
-        {{template "block/moderator/report" .}}
+        {{ if ne .Data.Role "Guest"}}{{template "block/moderator/report" .}}{{end}}
         <!-- action (like/dislike) -->
         {{ template "block/form/like" .}}
       </div>
@@ -57,7 +57,9 @@
     <hr>
     <h3>Comments</h3>
     <!-- add comment -->
-    <div>{{template "block/form/comment_add" .}}</div>
+    {{if ne .Data.Role "Guest"}}
+      <div>{{template "block/form/comment_add" .}}</div>
+    {{end}}
     <!-- show comments -->
     {{ if .Comments }}
     <ul class="comments">
