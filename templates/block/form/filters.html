@@ -1,8 +1,8 @@
-{{define "block/content/filters"}}
+{{define "block/form/filters"}}
 <div class="container__block__inner block__filters">
   {{if .Categories }}
   <h3 aria-label="Categories Title">Filters</h3>
-  <form action="/filters" method="GET" role="form" aria-label="Filter form">
+  <form class="form" action="/filters" method="GET" role="form" aria-label="Filter form">
     <div class="category" role="group" aria-label="Select a category">
       <label for="Category" aria-describedby="category-help">Categories</label>
       <select id="Category" name="Category" aria-required="true">

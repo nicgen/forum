@@ -116,12 +116,14 @@ DARK/LIGHT VARIABLES
 @media (prefers-color-scheme: dark) {
   :root {
     --text-color: var(--light1);
+    --bkg-color-soft: var(--dark0_soft);
     --bkg-color: var(--dark0);
+    --bkg-color-hard: var(--dark0_hard);
     --bkg-color-highlight: var(--bkg-color-highlight-dark);
     --alert-color: var(--alert-color-dark);
     --nav-bg-color: var(--nav-bg-color-dark);
     --foot-bg-color: var(--foot-bg-color-dark);
-    --hover-text: var(--bkg-color-dark);
+    --hover-text: var(--bkg-color-hard);
     --hover-bg: var(--text-color-dark);
   }
 
@@ -134,12 +136,14 @@ DARK/LIGHT VARIABLES
 @media (prefers-color-scheme: light) {
   :root {
     --text-color: var(--dark1);
+    --bkg-color-soft: var(--light0_soft);
     --bkg-color: var(--light0);
+    --bkg-color-hard: var(--light0_hard);
     --bkg-color-highlight: var(--bkg-color-highlight-light);
     --alert-color: var(--alert-color-light);
     --nav-bg-color: var(--nav-bg-color-light);
     --foot-bg-color: var(--foot-bg-color-light);
-    --hover-text: var(--bkg-color-light);
+    --hover-text: var(--bkg-color-soft);
     --hover-bg: var(--text-color-light);
   }
 }
@@ -147,23 +151,43 @@ DARK/LIGHT VARIABLES
 /* for manual prefs */
 
 :root.dark-theme {
-  --text-color: var(--text-color-dark);
-  --bkg-color: var(--bkg-color-dark);
+  /* --text-color: var(--text-color-dark);
+  --bkg-color: var(--bkg-color-hard);
   --alert-color: var(--alert-color-dark);
   --nav-bg-color: var(--nav-bg-color-dark);
   --foot-bg-color: var(--foot-bg-color-dark);
   --hover-bg: var(--hover-bg-dark);
-  --hover-text: var(--bkg-color-dark);
+  --hover-text: var(--bkg-color-hard);
+  --hover-bg: var(--text-color-dark); */
+  --text-color: var(--light1);
+    --bkg-color-soft: var(--dark0_soft);
+    --bkg-color: var(--dark0);
+    --bkg-color-hard: var(--dark0_hard);
+  --bkg-color-highlight: var(--bkg-color-highlight-dark);
+  --alert-color: var(--alert-color-dark);
+  --nav-bg-color: var(--nav-bg-color-dark);
+  --foot-bg-color: var(--foot-bg-color-dark);
+  --hover-text: var(--bkg-color-hard);
   --hover-bg: var(--text-color-dark);
 }
 
 :root.light-theme {
-  --text-color: var(--text-color-light);
-  --bkg-color: var(--bkg-color-light);
+  /* --text-color: var(--text-color-light);
+  --bkg-color: var(--bkg-color-soft);
   --alert-color: var(--alert-color-light);
   --nav-bg-color: var(--nav-bg-color-light);
   --foot-bg-color: var(--foot-bg-color-light);
-  --hover-text: var(--bkg-color-light);
+  --hover-text: var(--bkg-color-soft);
+  --hover-bg: var(--text-color-light); */
+  --text-color: var(--dark1);
+  --bkg-color-soft: var(--light0_soft);
+  --bkg-color: var(--light0);
+  --bkg-color-hard: var(--light0_hard);
+  --bkg-color-highlight: var(--bkg-color-highlight-light);
+  --alert-color: var(--alert-color-light);
+  --nav-bg-color: var(--nav-bg-color-light);
+  --foot-bg-color: var(--foot-bg-color-light);
+  --hover-text: var(--bkg-color-soft);
   --hover-bg: var(--text-color-light);
 }
 
@@ -321,7 +345,7 @@ body {
   padding: 0;
   box-sizing: border-box;
   color: var(--text-color);
-  background-color: var(--bkg-color);
+  background-color: var(--bkg-color-hard);
   /* background-image: url(/static/img/pattern_christmas_dark.png); */
 }
 
@@ -336,9 +360,12 @@ a {
   position: relative;
   z-index: 1;
   display: inline-block;
-  /* Ensure the anchor has a defined width and height */
-  padding: 10px;
-  /* Add some padding for better visibility */
+  padding: 0.25em 0.5em;
+  margin: 0 0.25em;
+}
+
+.block__article a, .block__categories a {
+  margin: 0;
 }
 
 a::after {
@@ -646,7 +673,7 @@ article {
 }
 
 .block__post footer {
-  background-color: var(--bkg-color);
+  background-color: var(--bkg-color-soft);
   padding: 1em;
   display: flex;
   flex-direction: column;
@@ -663,11 +690,11 @@ article {
   margin-bottom: 0;
 }
 
-.container__block__inner {
+#registerForm, #loginForm, .container__block__inner {
   /* flex-grow: 0; */
   padding: 1em;
-  border: 0.5px solid hsl(43deg 59% 81% / 10%);
-  background-color: hsl(43deg 59% 81% / 10%);
+  border: 0.5px solid var(--bkg-color-soft);
+  background-color: var(--bkg-color);
   border-radius: 0.25em;
 }
 
@@ -749,9 +776,16 @@ textarea:focus {
   box-shadow: none;
 }
 
+/* .form__socials {
+  min-width: 30%;
+  flex-grow: 0;
+} */
+
 .form__socials {
   min-width: 30%;
   flex-grow: 0;
+  padding-left: 1em;
+  border-left: 1px solid red;
 }
 
 .form__title {
@@ -765,7 +799,8 @@ textarea:focus {
 }
 
 .form>textarea,
-.form>input {
+.form>input, 
+.form select {
   color: var(--bkg-color);
   background-color: var(--text-color);
   margin-bottom: 0.6em;
@@ -784,6 +819,10 @@ textarea:focus {
 
 .form__error {
   color: red;
+}
+
+.register-link>p{
+  margin-bottom: 0;
 }
 
 .comments>form {
@@ -960,7 +999,8 @@ button.button__socials>svg {
 }
 
 .button__author {
-  background-color: red;
+  background-color: var(--faded_red);
+  border: 1px solid var(--neutral_red);
 }
 
 .button__big {
@@ -968,6 +1008,23 @@ button.button__socials>svg {
   width: 100%;
   padding: 1em;
   font-size: large;
+  border-radius: 0.5em;
+}
+
+.button__big.form__new-post {
+  background-color: var(--faded_blue);
+  border: 1px solid var(--neutral_blue);
+}
+
+.button__big.form__new-comment{
+  background-color: var(--bright_green);
+  border: 1px solid var(--neutral_green);
+}
+
+
+button.report {
+  background-color: var(--bright_orange);
+  border: 1px solid var(--neutral_orange);
 }
 
 /* ACTIONS (Like/Dislike) */
@@ -989,6 +1046,8 @@ button.button__socials>svg {
   border-radius: 1em;
   font-size: 0.8em;
   min-width: 2em;
+  text-align: center;
+  user-select: none;
 }
 
 .block__action {
@@ -1010,9 +1069,6 @@ button.button__socials>svg {
   background-color: red;
 }
 
-button.report {
-  background-color: orange;
-}
 
 /* PROFILE */
 
@@ -1127,12 +1183,21 @@ footer {
 
 /* Tablets and smartphones */
 @media only screen and (max-width: 1024px) {
+  .container {
+    width: 100%;
+  }
   .container__block {
     flex-direction: column;
   }
 
   .container__block__main.block__post {
     width: 100%;
+  }
+  .form__socials {
+    padding-left: 0em;
+    border-left: 0px;
+    padding-top: 1em;
+    border-top: 1px solid red;
   }
 }
 
