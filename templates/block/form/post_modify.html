@@ -11,10 +11,10 @@
         <input type="hidden" name="id" value="{{ .ID }}">
         <div class="pop__header">
           <h3 for="content" class="form__label">Modify your post</h3>
-          <button class="button-icon" onclick="closePost(event)" title="Close">{{ template "ico_close" }}</button>
+          <button class="button-icon button__small" onclick="closePost(event)" title="Close">{{ template "ico_close" }}</button>
         </div>
         <textarea class="modify-area" placeholder="Modify your comment (Title)"  type="hidden" name="content"></textarea>
-        <button class="button-icon" type="submit" title="Edit my post">Validate</button>
+        <button class="button-icon button__med" type="submit" title="Edit my post">Validate</button>
       </form>
     </div>
   </div>
