@@ -162,9 +162,9 @@ DARK/LIGHT VARIABLES
   --hover-text: var(--bkg-color-hard);
   --hover-bg: var(--text-color-dark); */
   --text-color: var(--light1);
-    --bkg-color-soft: var(--dark0_soft);
-    --bkg-color: var(--dark0);
-    --bkg-color-hard: var(--dark0_hard);
+  --bkg-color-soft: var(--dark0_soft);
+  --bkg-color: var(--dark0);
+  --bkg-color-hard: var(--dark0_hard);
   --bkg-color-highlight: var(--bkg-color-highlight-dark);
   --alert-color: var(--alert-color-dark);
   --nav-bg-color: var(--nav-bg-color-dark);
@@ -804,7 +804,7 @@ select:focus option:checked {
   min-width: 30%;
   flex-grow: 0;
   padding-left: 1em;
-  border-left: 1px solid red;
+  border-left: 1px solid var(--bkg-color-hard);
 }
 
 .form__title {
@@ -1004,6 +1004,15 @@ button {
   text-wrap: nowrap;
 }
 
+button:disabled {
+	background-color: var(--dark2);
+	border-color: var(--dark4);
+}
+
+button:disabled>svg{
+  stroke: var(--dark4);
+}
+
 .button__socials {
   display: flex;
   align-items: center;
@@ -1018,19 +1027,12 @@ button.button__socials>svg {
   margin-right: 0.5empx;
 }
 
-.ico__like {
-  background-color: var(--neutral_blue);
-  border: 1px solid var(--faded_blue);
-}
 
 .button__icon {
-  background-color: blue;
+  /* background-color: blue; */
 }
 
-.button__author {
-  background-color: var(--faded_red);
-  border: 1px solid var(--neutral_red);
-}
+
 
 .button__big {
   width: 100%;
@@ -1073,10 +1075,36 @@ button.button__socials>svg {
 } */
 
 
+.button__author {
+  background-color: var(--faded_red);
+  border: 1px solid var(--neutral_red);
+}
+
+.button__author:hover {
+  background-color: var(--neutral_red);
+  border: 1px solid var(--faded_red);
+}
+
 button.report {
   background-color: var(--bright_orange);
   border: 1px solid var(--neutral_orange);
 }
+
+button.report:hover {
+  background-color: var(--neutral_orange);
+  border: 1px solid var(--bright_orange);
+}
+
+.button__like {
+  background-color: var(--neutral_blue);
+  border: 1px solid var(--faded_blue);
+}
+
+.button__like:hover {
+  background-color: var(--faded_blue);
+  border: 1px solid var(--neutral_blue);
+}
+
 
 /* ACTIONS (Like/Dislike) */
 
@@ -1249,7 +1277,7 @@ footer {
     padding-left: 0em;
     border-left: 0px;
     padding-top: 1em;
-    border-top: 1px solid red;
+    border-top: 1px solid var(--bkg-color-hard);
   }
 }
 
