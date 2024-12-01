@@ -9,10 +9,10 @@
     </div>
     <h2>Welcome, {{ .Username }}</h2>
     <p>Your Email: {{ .Email }}</p>
-    <p>Your role: {{ .Role }}</p>
+    <p>Your role: {{if eq .Role "User"}}{{template "ico_user"}}{{else if eq .Role "Admin"}}{{template "ico_user_admin"}}{{else if eq .Role "Moderator"}}{{template "ico_user_mod"}}{{end}}{{ .Role }}</p>
     {{ else }}
     <h2>{{ .Username }}'s profile page</h2>
-    <p>User role: {{ .Role }}</p>
+    <p>User role: {{if eq .Role "User"}}{{template "ico_user"}}{{else if eq .Role "Admin"}}{{template "ico_user_admin"}}{{else if eq .Role "Moderator"}}{{template "ico_user_mod"}}{{end}}{{ .Role }}</p>
     {{ end }}
     <p>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</p>
   </div>
@@ -23,12 +23,12 @@
     <!-- Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }} -->
     <form method="POST" action="/admin/delete-user">
       <input type="hidden" name="userUUID" value="{{ .UUID }}">
-      <button type="submit">Delete my account</button>
+      <button class="button button__med" type="submit">{{ template "ico_close"}} Delete my account</button>
     </form>
 
     <form method="POST" action="/update-request">
       <input type="hidden" name="userUUID" value="{{ .UUID }}">
-      <button type="submit">Request Mod</button>
+      <button class="button button__med" type="submit">Request Mod</button>
     </form>
   </div>
   {{end}}
@@ -130,47 +130,43 @@
 {{if eq (len .LikedPosts) 0}}
 <section class="container__block__inner">
   {{range and .LikedPosts}}
-  {{if .Like}}
-  <div class="post">
-    <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-    <p>Post text: {{ .Text }}</p>
-    <p>Creation date: {{ .Creation_Date }}</p>
-    <p>Creation hour: {{ .Creation_Hour }}</p>
-  </div>
-  {{else}}
-  <h2>Mes Posts dislikés</h2>
-  <div class="post">
-    <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-    <p>Post text: {{ .Text }}</p>
-    <p>Creation date: {{ .Creation_Date }}</p>
-    <p>Creation hour: {{ .Creation_Hour }}</p>
-  </div>
+    {{if .Like}}
+    <h3>My Liked Posts</h3>
+    <div class="post">
+      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+      <!-- <p>Post text: {{ .Text }}</p> -->
+      <p>Creation date: {{ .Creation_Date }}{{ .Creation_Hour }}</p>
+    </div>
+    {{else}}
+    <h3>My disliked Posts</h3>
+    <div class="post">
+      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+      <!-- <p>Post text: {{ .Text }}</p> -->
+      <p>Creation date: {{ .Creation_Date }}{{ .Creation_Hour }}</p>
+    </div>
+    {{end}}
   {{end}}
 </section>
-<!-- --------------------------------------------------------------------------->
-
 {{else}}
 <section class="container__block__inner">
   {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
-  {{if gt (len .LikedPosts) 0}}
-  <h3>My Liked Posts</h3>
-  {{ end }}
+    <!-- {{if gt (len .LikedPosts) 0}}
+      <h3>My Liked Posts</h3>
+    {{ end }} -->
   {{ else }}
-  {{if gt (len .LikedPosts) 0}}
-  <h3>Posts that I liked</h3>
-  {{ end }}
+    {{if gt (len .LikedPosts) 0}}<h3>Posts that I liked</h3>{{ end }}
   {{ end }}
 
   <ul>
     {{range .LikedPosts}}
-    <li>
-      <div class="post">
-        <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-        <p>Post text: {{ .Text }}</p>
-        <p>Creation date: {{ .Creation_Date }}</p>
-        <p>Creation hour: {{ .Creation_Hour }}</p>
-      </div>
-    </li>
+      <li>
+        <div class="post">
+          <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+          <p>Post text: {{ .Text }}</p>
+          <p>Creation date: {{ .Creation_Date }}</p>
+          <p>Creation hour: {{ .Creation_Hour }}</p>
+        </div>
+      </li>
     {{end}}
   </ul>
 </section>
@@ -178,13 +174,9 @@
 
 <!-- --------------Affichage des commentaires de l'utilisateur------------------>
 {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
-{{if gt (len .ProfileComments) 0}}
-<h3>Tout ce que j'ai commenté</h3>
-{{ end }}
+  {{if gt (len .ProfileComments) 0}}<h3>Tout ce que j'ai commenté</h3>{{ end }}
 {{ else }}
-{{if gt (len .ProfileComments) 0}}
-<h3>Tout ce que l'utilisateur a commenté</h3>
-{{ end }}
+  {{if gt (len .ProfileComments) 0}}<h3>Tout ce que l'utilisateur a commenté</h3>{{ end }}
 {{ end }}
 
 {{range .ProfileComments }}
@@ -200,11 +192,7 @@
 <h1>Notifications</h1>
 
 <div>Total notifications:
-  {{if .TotalCount}}
-  {{.TotalCount}}
-  {{else}}
-  Aucun notification.
-  {{end}}
+  {{if .TotalCount}}{{.TotalCount}}{{else}}Aucun notification.{{end}}
 </div>
 
 <ul>
@@ -224,5 +212,5 @@
   </li>
   {{end}}
 </ul>
-{{end}}
+
 {{end}}
