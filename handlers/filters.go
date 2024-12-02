@@ -28,7 +28,7 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data_user := map[string]interface{}{
-		"Role":	role,
+		"Role": role,
 	}
 
 	formValues := r.URL.Query()
@@ -124,7 +124,7 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		data_comment := map[string]interface{}{
-			"Role":	role,
+			"Role": role,
 		}
 		// Getting the Username of the person who made the post
 		post.Username = lib.CheckUsername(w, post.User_UUID)
