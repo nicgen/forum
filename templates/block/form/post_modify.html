@@ -1,13 +1,36 @@
 {{define "block/form/post_modify"}}
 <div class="showhide" tabindex="0">
   <div>
-    <button class="button-icon button__author" onclick="togglePost(this)" title="Edit my post">{{ template "ico_edit"}}</button>
+    <button class="button-icon button__author" onclick="togglePost(this)" title="Edit my post title">{{ template "ico_edit"}}</button>
   </div>
 
   <div class="popup-container js__toggle__block">
     <div class="popup">
       <form method="GET" action="/modify">
         <input type="hidden" name="delete" value="post">
+        <input type="hidden" name="type" value="title">
+        <input type="hidden" name="id" value="{{ .ID }}">
+        <div class="pop__header">
+          <h3 for="content" class="form__label">Modify your post</h3>
+          <button class="button-icon button__small" onclick="closePost(event)" title="Close">{{ template "ico_close" }}</button>
+        </div>
+        <textarea class="modify-area" placeholder="Modify your comment (Title)"  type="hidden" name="content"></textarea>
+        <button class="button-icon button__med" type="submit" title="Edit my post">Validate</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="showhide" tabindex="0">
+  <div>
+    <button class="button-icon button__author" onclick="togglePost(this)" title="Edit my post content">{{ template "ico_edit"}}</button>
+  </div>
+
+  <div class="popup-container js__toggle__block">
+    <div class="popup">
+      <form method="GET" action="/modify">
+        <input type="hidden" name="delete" value="post">
+        <input type="hidden" name="type" value="content">
         <input type="hidden" name="id" value="{{ .ID }}">
         <div class="pop__header">
           <h3 for="content" class="form__label">Modify your post</h3>
