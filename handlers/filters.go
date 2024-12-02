@@ -123,9 +123,6 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID, &post.ImagePath); err != nil {
 		}
 
-		data_comment := map[string]interface{}{
-			"Role":	role,
-		}
 		// Getting the Username of the person who made the post
 		post.Username = lib.CheckUsername(w, post.User_UUID)
 
@@ -176,7 +173,10 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 					comment.IsAuthor = "no"
 				}
 			}
-
+			
+			data_comment := map[string]interface{}{
+				"Role":	role,
+			}
 			comment.Data = data_comment
 
 			comments = append(comments, &comment)
