@@ -29,7 +29,6 @@ func UpdateUserToModerator(w http.ResponseWriter, r *http.Request) {
 
 	// Update the user's role to "Moderator"
 	query := `UPDATE User SET Role = 'Moderator' WHERE UUID = ?`
-	fmt.Println("ModRequest")
 	_, err := db.Exec(query, userUUID)
 	if err != nil {
 		// Erreur critique : Échec de la mise à jour du rôle de l'utilisateur
@@ -89,7 +88,6 @@ func AdminDeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	// Retrieve the user's UUID from the form
 	userUUID := r.FormValue("userUUID")
-	fmt.Println("Received userUUID:", userUUID)
 	if userUUID == "" {
 		// Erreur non critique : UUID de l'utilisateur requis
 		lib.ErrorServer(w, "User  UUID is required.")
@@ -100,7 +98,6 @@ func AdminDeleteUser(w http.ResponseWriter, r *http.Request) {
 	newUsername, err := getNextAnonymousUsername(db)
 	if err != nil {
 		lib.ErrorServer(w, "Failed to generate anonymous username.")
-		fmt.Println("Error generating anonymous username:", err)
 		return
 	}
 
@@ -142,7 +139,6 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	// Récupère l'UUID de l'utilisateur depuis le formulaire
 	userUUID := r.FormValue("userUUID")
-	fmt.Println("Received userUUID:", userUUID)
 	if userUUID == "" {
 		// Erreur non critique : UUID de l'utilisateur requis
 		lib.ErrorServer(w, "User  UUID is required.")
@@ -153,7 +149,6 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	newUsername, err := getNextAnonymousUsername(db)
 	if err != nil {
 		lib.ErrorServer(w, "Failed to generate anonymous username.")
-		fmt.Println("Error generating anonymous username:", err)
 		return
 	}
 

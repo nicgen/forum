@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"forum/cmd/lib"
 	"forum/models"
 	"net/http"
@@ -28,8 +27,6 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 	text := r.FormValue("comment_text")
 	post_id := r.URL.Query().Get("post_id")
 
-	fmt.Println("post_id: ", post_id)
-
 	var like_count, dislike_count int = 0, 0
 	// Insert the new comment into the Comments table
 	state_post := `INSERT INTO Comments (User_UUID, Post_ID, Text, Like, Dislike, CreatedAt) VALUES (?, ?, ?, ?, ?, ?)`
@@ -49,7 +46,6 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		//Erreur non critique : échec de la récupération de l'Id du commentaire
 		lib.ErrorServer(w, "Error retrieving comment ID")
-		fmt.Println("Error retrieving comment ID:", err)
 		return
 	}
 
@@ -60,7 +56,6 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// Erreur non critique: Echec de la recherche de l'auteur du post
 		lib.ErrorServer(w, "Error finding post author. Please try again.")
-		fmt.Println("Error finding post author:", err)
 		return
 	}
 
@@ -70,7 +65,6 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 		if errNotif != nil {
 			//Erreur non critique : échec de l'insertion de la notification
 			lib.ErrorServer(w, "Error inserting notification. Please try again.")
-			fmt.Println("Error inserting notification", errNotif)
 			return
 		}
 	}
