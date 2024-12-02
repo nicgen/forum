@@ -35,15 +35,8 @@
 </section>
 
 <!-- ALL USERS - Notifications -->
-{{if eq (len .Notifications) 0}}
-<section class="container__block__inner">
-  <div>
-    {{ template "ico_comment" }}
-    <h3>Notifications</h3>
-  </div>
-  <p>You have 0 notifications</p>
-</section>
-{{else}}
+{{if or (eq .UUID .User_UUID) (eq .Role "Admin")}}
+{{if .Notifications}}
 <section class="container__block__inner">
   <div>
     {{ template "ico_comment" }}
@@ -71,6 +64,15 @@
   </ul>
   {{ end }}
 </section>
+{{else}}
+<section class="container__block__inner">
+  <div>
+    {{ template "ico_comment" }}
+    <h3>Notifications</h3>
+  </div>
+  <p>You have 0 notifications</p>
+</section>
+{{end}}
 {{end}}
 
 <!-- ADMIN -->
