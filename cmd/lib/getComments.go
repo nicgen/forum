@@ -26,10 +26,9 @@ func GetComments(db *sql.DB, uuid string, data map[string]interface{}, w http.Re
 		if err := rows_comment.Scan(&comment.ID, &comment.Text, &comment.Like, &comment.Dislike, &comment.CreatedAt, &comment.User_UUID, &comment.Post_ID); err != nil {
 			ErrorServer(w, "Error scanning posts comments")
 		}
-
 		var post models.Post
-		state_post := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
-		err_comment := db.QueryRow(state_post, uuid).Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID)
+		state_post := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE ID = ? ORDER BY CreatedAt DESC`
+		err_comment := db.QueryRow(state_post, comment.Post_ID).Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID)
 		if err_comment != nil {
 			fmt.Println(err_comment)
 			ErrorServer(w, "Error getting post infos")
