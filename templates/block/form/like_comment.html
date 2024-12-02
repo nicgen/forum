@@ -1,12 +1,12 @@
 {{define "block/form/likecomment"}}
   <!-- ACTION (like/dislike) -->
-  <div class="like__container">
+  <div class="block__action">
     <!-- BUTTON_like -->
     <div class="like__content">
       <p class="like__number">{{if .Like }}{{ .Like }}{{ else }}0{{end}}</p>
       <form action="/like" method="POST">
         <input type="hidden" name="id" value="{{ .ID }}">
-        <button name="like_comment" value="like_comment" class="ico__like {{ if eq .Status "liked" }}liked{{end}}">{{ template "ico_thumb-up"}}</button>
+        <button name="like_comment" value="like_comment" class="button button__like {{ if eq .Status "liked" }}liked{{end}}" {{ if eq .Data.Role "Guest" }}disabled{{end}}>{{ template "ico_thumb-up"}}</button>
       </form>
     </div>
     <!-- BUTTON_dislike -->
@@ -14,9 +14,8 @@
       <p class="like__number">{{if .Dislike }}{{ .Dislike }}{{ else }}0{{end}}</p>
       <form action="/like" method="POST">
         <input type="hidden" name="id" value="{{ .ID }}">
-        <button name="dislike_comment" value="dislike_comment" class="ico__like {{ if eq .Status "disliked" }}liked{{end}}">{{ template "ico_thumb-down"}}</button>
+        <button name="dislike_comment" value="dislike_comment" class="button button__like {{ if eq .Status "disliked" }}liked{{end}}" {{ if eq .Data.Role "Guest" }}disabled{{end}}>{{ template "ico_thumb-down"}}</button>
       </form>
     </div>
   </div>
-
 {{end}}

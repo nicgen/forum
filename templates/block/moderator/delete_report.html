@@ -1,7 +1,7 @@
 {{define "block/moderator/delete_report"}}
 <h2>REPORTS</h2>
 {{ range .Report }}
-{{if ne .Response_Text ""}}
+{{if gt (len .Response_Text) 0}}
 <form action="/report-delete">
     <h3>{{ .Username }}, {{ .Post_ID }}, {{ .Title}}</h3>
     <h3>{{ .Response_Text}}</h3>

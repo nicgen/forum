@@ -1,0 +1,16 @@
+{{define "block/form/categories"}}
+    <div class="container__block__inner block__categories">
+    <h2 aria-label="Categories Title">Categories</h2>
+    {{if .Categories }}
+        <ul role="list" aria-label="Categories List">
+        {{range .Categories}}
+        <li role="listitem">
+            <a href="filters_category?Category={{.Name}}" aria-label="{{.Name}}">{{.Name}}</a>
+        </li>
+        {{end}}
+        </ul>
+    {{else}}
+        <p aria-label="No categories message">There's no categories</p>
+    {{end}}
+    </div>
+{{end}}
