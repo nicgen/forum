@@ -2,12 +2,10 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"forum/cmd/lib"
 	"forum/models"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -21,17 +19,15 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 	numberdislike := formValues.Get("Dislike")
 	period := formValues.Get("Period")
 
-	fmt.Println(period)
-	fmt.Println(numberdislike)
-	fmt.Println(numberlike)
-
 	var posts []*models.Post
 	var err_post error
-	// sqlite
+
 	state_filters :=
 		`SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID, ImagePath
 	FROM Posts
 	WHERE 
+	(Category_ID = ? OR ? = '')  
+	AND
    (
     CASE 
       WHEN ? = 'tous les likes' THEN Like >= 0
@@ -107,21 +103,8 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 		var post models.Post
 		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID, &post.ImagePath); err != nil {
 		}
-		
-		is_contained := false
-		fmt.Println("len: ", len(categories))
-		if len(categories) != 0 {
-			category_array := strings.Split(post.Category_ID, " - ")
-			for i := 0; i < len(category_array); i++ {
-				if category_array[i] == categories {
-					is_contained = true
-				}
-			}
-		}
 
-		if is_contained || len(categories) == 0 {
-			posts = append(posts, &post)
-		}
+		posts = append(posts, &post)
 	}
 
 	if err := rows.Err(); err != nil {
