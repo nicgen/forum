@@ -109,16 +109,17 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		
 		is_contained := false
+		fmt.Println("len: ", len(categories))
 		if len(categories) != 0 {
 			category_array := strings.Split(post.Category_ID, " - ")
-		for i := 0; i < len(category_array); i++ {
-			if category_array[i] == categories {
-				is_contained = true
+			for i := 0; i < len(category_array); i++ {
+				if category_array[i] == categories {
+					is_contained = true
+				}
 			}
 		}
-		}
 
-		if is_contained {
+		if is_contained || len(categories) == 0 {
 			posts = append(posts, &post)
 		}
 	}

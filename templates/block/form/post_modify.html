@@ -1,10 +1,31 @@
 {{define "block/form/post_modify"}}
-<form class="form" action="/modify" role="form" aria-label="Modify post">
-  <input type="hidden" name="id" value="{{ .ID }}">
-  <label for="post-title" aria-label="Post title">Title</label>
-  <input class="post-title-area" id="post-title" name="post_title" required aria-required="true" aria-label="Enter the post title"></input>
-  <label for="post-content" aria-label="Post content">Content</label>
-  <textarea class="post-content-area" id="post-content" name="post_text" required aria-required="true" aria-label="Enter the post content"></textarea>
-  <button aria-label="Submit the post" aria-describedby="post-category post-title post-content">Post!</button>
-</form>
+<div class="showhide" tabindex="0">
+  <div>
+    <button class="button-icon button__author" onclick="togglePost(this)" title="Edit my post">{{ template "ico_edit"}}</button>
+  </div>
+
+  <div class="popup-container js__toggle__block">
+    <div class="popup">
+      <form method="GET" action="/modify">
+        <input type="hidden" name="delete" value="post">
+        <input type="hidden" name="id" value="{{ .ID }}">
+        <div class="pop__header">
+          <h3 for="content" class="form__label">Modify your post</h3>
+          <button class="button-icon button__small" onclick="closePost(event)" title="Close">{{ template "ico_close" }}</button>
+        </div>
+        <textarea class="modify-area" placeholder="Modify your comment (Title)"  type="hidden" name="content"></textarea>
+        <button class="button-icon button__med" type="submit" title="Edit my post">Validate</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="comment__modify">
+  <form method="GET" action="/modify">
+    <input type="hidden" name="delete" value="post">
+    <input type="hidden" name="id" value="{{ .ID }}">
+    <textarea class="modify-area" type="hidden" name="content"></textarea>
+    <button class="button-icon" type="submit" title="Edit my post">{{ template "ico_edit"}} Edit my post</button>
+  </form>
+</div> -->
 {{end}}

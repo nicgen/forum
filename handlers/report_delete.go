@@ -21,12 +21,11 @@ func Report_Delete(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(report_ID)
 	fmt.Println(report_postID)
 	fmt.Println(respons_text)
-	fmt.Println(name1)
-	fmt.Println(name2)
+	fmt.Println("name1: ", name1)
+	fmt.Println("name2: ", name2)
 
 	if len(name1) != 0 {
-		var state_reaction string
-		state_reaction = `SELECT ID From Report WHERE ID = ? AND Post_Id = ?`
+		state_reaction := `SELECT ID From Report WHERE ID = ? AND Post_Id = ?`
 		err_reaction := db.QueryRow(state_reaction, report_ID, report_postID).Scan(&state_reaction)
 
 		if err_reaction == sql.ErrNoRows {
@@ -40,9 +39,14 @@ func Report_Delete(w http.ResponseWriter, r *http.Request) {
 		if err_db != nil {
 			lib.ErrorServer(w, "Error delete_report")
 		}
+
+		state_report := `UPDATE Report SET Respons_Text = ? WHERE ID = ?`
+		_, err_db = db.Exec(state_report, respons_text, report_ID)
+		if err_db != nil {
+			lib.ErrorServer(w, "Error updating respons_text")
+		}
 	} else {
-		var state_report string
-		state_report = `UPDATE Report SET Respons_Text = ? WHERE ID = ?`
+		state_report := `UPDATE Report SET Respons_Text = ? WHERE ID = ?`
 		_, err_db := db.Exec(state_report, respons_text, report_ID)
 		if err_db != nil {
 			lib.ErrorServer(w, "Error updating respons_text")

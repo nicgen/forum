@@ -1,152 +1,216 @@
-<!-- ----------------------Informations de l'utilisateur------------------------>
-
 {{define "page/profile"}}
-  {{if eq .UUID .User_UUID}}
+
+<!-- ALL USERS - Infos -->
+<section class="container__block__inner block__dashboard">
+  <div>
+    {{if eq .UUID .User_UUID}}
+    <div class="profil_thumb ">
+      <span>{{ .Username }}</span>
+    </div>
     <h2>Welcome, {{ .Username }}</h2>
-    <h3>Your Email: {{ .Email }}</h3>
-    <h3>Your role: {{ .Role }}</h3>
-  {{ else }}
-    <h2>Username: {{ .Username }}</h2>
-    <h3>User role: {{ .Role }}</h3>  
-  {{ end }}  
-  <h3>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</h3>
+    <p>Your Email: {{ .Email }}</p>
+    <p>Your role: {{if eq .Role "User"}}{{template "ico_user"}}{{else if eq .Role "Admin"}}{{template "ico_user_admin"}}{{else if eq .Role "Moderator"}}{{template "ico_user_mod"}}{{end}}{{ .Role }}</p>
+    {{ else }}
+    <h2>{{ .Username }}'s profile page</h2>
+    <p>User role: {{if eq .Role "User"}}{{template "ico_user"}}{{else if eq .Role "Admin"}}{{template "ico_user_admin"}}{{else if eq .Role "Moderator"}}{{template "ico_user_mod"}}{{end}}{{ .Role }}</p>
+    {{ end }}
+    <p>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</p>
+  </div>
 
-<!-- -------------------------------------------------------------------------->
-  
-<!--- Affichage de la liste des Utilisateurs et de la création de Categories -->
+  <!-- Affichage des boutons de supression de compte de de demande de modo -->
+  {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
+  <div class="container__block__inner">
+    <!-- Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }} -->
+    <form method="POST" action="/admin/delete-user">
+      <input type="hidden" name="userUUID" value="{{ .UUID }}">
+      <button class="button button__med" type="submit">{{ template "ico_close"}} Delete my account</button>
+    </form>
 
-  {{if and (eq .UUID .User_UUID) (eq .Role "Admin")}}
-    {{template "block/admin/users" .}}
-    {{template "block/admin/report" .}}
-    {{template "block/admin/categories" .}}
+    <form method="POST" action="/update-request">
+      <input type="hidden" name="userUUID" value="{{ .UUID }}">
+      <button class="button button__med" type="submit">Request Mod</button>
+    </form>
+  </div>
   {{end}}
+</section>
 
-  {{if and (eq .UUID .User_UUID) (eq .Role "Moderator")}}
-  {{template "block/moderator/delete_report" .}}
-  {{end}}
-
-<!-- ------------------------------------------------------------------------ -->
-
-<!-- --Affichage des boutons de supréssion de compte de de demande de modo -- -->
+<!-- ALL USERS - Notifications -->
+{{if eq (len .Notifications) 0}}
+<section class="container__block__inner">
+  <div>
+    {{ template "ico_comment" }}
+    <h3>Notifications</h3>
+  </div>
+  <p>You have 0 notifications</p>
+</section>
+{{else}}
+<section class="container__block__inner">
+  <div>
+    {{ template "ico_comment" }}
+    <h3>Notifications</h3>
+  </div>
+  <p>You have <strong>{{if .TotalCount}}{{.TotalCount}}</strong> notification(s){{else}}0</strong> notification{{end}}
+  </p>
   {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
   <ul>
+    {{range .Notifications}}
     <li>
-      Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
-      <form method="POST" action="/admin/delete-user">
-        <input type="hidden" name="userUUID" value="{{ .UUID }}">
-        <button type="submit">Delete my account</button>
-      </form>
+      Notification ID: {{.ID}} - {{.CreatedAt}} -
+      <!-- react (like/dislike) on comment -->
+      {{if and (.IsOnComment) (.ReactionID)}}
+      Reaction on Comment: {{.CommentID}} (Reaction ID: {{.ReactionID}})
+      <!-- comment on post -->
+      {{else if .IsOnComment}}
+      Comment on Post: (Comment ID :{{.CommentID}})
+      <!-- react (like/dislike) on post -->
+      {{else}}
+      Reaction on Post: {{.PostID}} (Reaction ID: {{.ReactionID}})
+      {{end}}
     </li>
+    {{end}}
   </ul>
-
-  <form method="POST" action="/update-request">
-    <input type="hidden" name="userUUID" value="{{ .UUID }}">
-    <button type="submit">Request Mod</button>
-  </form>
-  {{end}}
-<!-- --------------------------------------------------------------------------->
-
-<!------------------ Affichage des posts de l'utilisateur-------------------- -->
-  {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
-    {{if gt (len .Posts) 0}}
-      <h2>Mes Posts</h2>
-    {{ end }}
-  {{ else }}
-    {{if gt (len .Posts) 0}}
-      <h2>Posts de l'utilisateur</h2>
-    {{ end }}
   {{ end }}
+</section>
+{{end}}
 
-  {{ range .Posts }}
-    <div class="post">
-      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-      <p>Post text: {{ .Text }}</p>
-      <p>Creation date: {{ .Creation_Date }}</p>
-      <p>Creation hour: {{ .Creation_Hour }}</p>
-    </div>
-  {{end}}
-<!-- --------------------------------------------------------------------------->  
+<!-- ADMIN -->
+{{if and (eq .UUID .User_UUID) (eq .Role "Admin")}}
+<section class="container__block__inner block__dashboard">
+  <div>
+    {{ template "ico_comment" }}
+    <h3>Admin</h3>
+  </div>
+  <!--- Affichage de la liste des Utilisateurs et de la création de Categories -->
+  {{template "block/admin/users" .}}
+  {{template "block/admin/report" .}}
+  {{template "block/admin/categories" .}}
+</section>
+{{ end }}
+
+<!-- MODERATOR -->
+{{if and (eq .UUID .User_UUID) (eq .Role "Moderator")}}
+<section class="container__block__inner block__dashboard">
+  <div>
+    {{ template "ico_comment" }}
+    <h3>Moderation</h3>
+  </div>
+  {{template "block/moderator/delete_report" .}}
+</section>
+{{end}}
+
+<!-- USERS -->
+
+<!-- Affichage des posts de l'utilisateur -->
+{{if eq (len .Posts) 0}}
+{{else}}
+<section class="container__block__inner">
+  <div>
+    {{ template "ico_comment" }}
+    {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
+    {{if gt (len .Posts) 0}}<h3>Your Posts</h3>{{else}}{{ end }}
+    {{ else }}
+    {{if gt (len .Posts) 0}}<h3>{{ .Username }}'s Posts</h3>{{else}}{{ end }}
+    {{ end }}
+  </div>
+  <ul>
+    {{ range .Posts }}
+    <li>
+      <div class="post">
+        <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+        <p>Post text: {{ .Text }}</p>
+        <p>Creation date: {{ .Creation_Date }}{{/* .Creation_Hour */}}</p>
+      </div>
+    </li>
+    {{end}}
+  </ul>
+</section>
+{{end}}
 
 <!-- -----------Affichage des posts likés par l'utilisateur--------------------->
-  {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
-    {{if gt (len .LikedPosts) 0}}
-      <h2>Mes Posts likés</h2>
-    {{ end }}
-  {{ else }}
-    {{if gt (len .LikedPosts) 0}}
-      <h2>Posts likés par l'utilisateur</h2>
-    {{ end }}
-  {{ end }}
-
+{{if eq (len .LikedPosts) 0}}
+<section class="container__block__inner">
   {{range and .LikedPosts}}
-  {{if .Like}}
+    {{if .Like}}
+    <h3>My Liked Posts</h3>
     <div class="post">
       <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-      <p>Post text: {{ .Text }}</p>
-      <p>Creation date: {{ .Creation_Date }}</p>
-      <p>Creation hour: {{ .Creation_Hour }}</p>
+      <!-- <p>Post text: {{ .Text }}</p> -->
+      <p>Creation date: {{ .Creation_Date }}{{ .Creation_Hour }}</p>
     </div>
     {{else}}
-    <h2>Mes Posts dislikés</h2>
+    <h3>My disliked Posts</h3>
     <div class="post">
       <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-      <p>Post text: {{ .Text }}</p>
-      <p>Creation date: {{ .Creation_Date }}</p>
-      <p>Creation hour: {{ .Creation_Hour }}</p>
+      <!-- <p>Post text: {{ .Text }}</p> -->
+      <p>Creation date: {{ .Creation_Date }}{{ .Creation_Hour }}</p>
     </div>
     {{end}}
   {{end}}
-<!-- --------------------------------------------------------------------------->  
-
-<!-- --------------Affichage des commentaires de l'utilisateur------------------>
+</section>
+{{else}}
+<section class="container__block__inner">
   {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
-    {{if gt (len .ProfileComments) 0}}
-      <h2>Tout ce que j'ai commenté</h2>
-    {{ end }}
+    <!-- {{if gt (len .LikedPosts) 0}}
+      <h3>My Liked Posts</h3>
+    {{ end }} -->
   {{ else }}
-    {{if gt (len .ProfileComments) 0}}
-      <h2>Tout ce que l'utilisateur a commenté</h2>
-    {{ end }}
+    {{if gt (len .LikedPosts) 0}}<h3>Posts that I liked</h3>{{ end }}
   {{ end }}
 
-  {{range .ProfileComments }}
-  <div class="post">
-    <h3>Post commented: Title: {{ .Data.PostInfo.Title }} Text: {{ .Data.PostInfo.Text }}</p>
+  <ul>
+    {{range .LikedPosts}}
+      <li>
+        <div class="post">
+          <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+          <p>Post text: {{ .Text }}</p>
+          <p>Creation date: {{ .Creation_Date }}</p>
+          <p>Creation hour: {{ .Creation_Hour }}</p>
+        </div>
+      </li>
+    {{end}}
+  </ul>
+</section>
+{{end}}
+
+<!-- --------------Affichage des commentaires de l'utilisateur------------------>
+{{if and (eq .UUID .User_UUID) (eq .Role "User")}}
+  {{if gt (len .ProfileComments) 0}}<h3>Tout ce que j'ai commenté</h3>{{ end }}
+{{ else }}
+  {{if gt (len .ProfileComments) 0}}<h3>Tout ce que l'utilisateur a commenté</h3>{{ end }}
+{{ end }}
+
+{{range .ProfileComments }}
+<div class="post">
+  <h3>Post commented: Title: {{ .Data.PostInfo.Title }} Text: {{ .Data.PostInfo.Text }}</p>
     <p>Comment text: {{ .Text }}</p>
     <p>Comment like: {{ .Like }}</p>
     <p>Comment dislike: {{ .Dislike }}</p>
-  </div>
-  {{end}}
-<!-- --------------------------------------------------------------------------->  
+</div>
+{{end}}
+<!-- --------------------------------------------------------------------------->
 
 <h1>Notifications</h1>
 
-<div>Total notifications: 
-    {{if .TotalCount}}
-        {{.TotalCount}}
-    {{else}}
-        Aucun notification.
-    {{end}}
+<div>Total notifications:
+  {{if .TotalCount}}{{.TotalCount}}{{else}}Aucun notification.{{end}}
 </div>
 
 <ul>
-    {{range .Notifications}}
-        <li>
-            Notification ID: {{.ID}} - {{.CreatedAt}} -
-            {{if and (.IsOnComment) (.ReactionID)}}
-                Reaction on Comment: {{.CommentID}} (Reaction ID: {{.ReactionID}})
-            {{else if .IsOnComment}}
-                Comment on Post: (Comment ID :{{.CommentID}})
-            {{else}}
-                Reaction on Post: {{.PostID}} (Reaction ID: {{.ReactionID}})
-            {{end}}
-        </li>
+  {{range .Notifications}}
+  <li>
+    Notification ID: {{.ID}} - {{.CreatedAt}} -
+    <!-- react (like/dislike) on comment -->
+    {{if and (.IsOnComment) (.ReactionID)}}
+    Reaction on Comment: {{.CommentID}} (Reaction ID: {{.ReactionID}})
+    <!-- comment on post -->
+    {{else if .IsOnComment}}
+    Comment on Post: (Comment ID :{{.CommentID}})
+    <!-- react (like/dislike) on post -->
+    {{else}}
+    Reaction on Post: {{.PostID}} (Reaction ID: {{.ReactionID}})
     {{end}}
+  </li>
+  {{end}}
 </ul>
-
-
-  
-
-
 
 {{end}}

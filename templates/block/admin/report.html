@@ -1,15 +1,18 @@
 {{define "block/admin/report"}}
-<h2>REPORTS</h2>
-{{ range .Report }}
-{{if eq .Response_Text ""}}
-<form action="/report-delete">
-    <h3>{{ .Username }}, {{ .Post_ID }}, {{ .Title}}</h3>
-    <textarea name="respons_text" required></textarea>
-    <button type="submit" name="1" value="1">Delete Post</button>
-    <input type="hidden" name="report_ID" value="{{ .ID }}">
-    <input type="hidden" name="report_postID" value="{{ .Post_ID }}">
-    <button type="submit" name="2" value="2">Delete Report</button>
-</form>
-{{end}}
-{{end}}
+<section class="container__block__inner block__dashboard">
+  <h3>REPORTS</h3>
+  {{ range .Report }}
+    {{ .Response_Text }}
+    {{if eq .Response_Text ""}}
+    <form action="/report-delete">
+      <h3>{{ .Username }}, {{ .Post_ID }}, {{ .Title}}</h3>
+      <textarea name="respons_text" required></textarea>
+      <button type="submit" name="1" value="1">Delete Post</button>
+      <input type="hidden" name="report_ID" value="{{ .ID }}">
+      <input type="hidden" name="report_postID" value="{{ .Post_ID }}">
+      <button type="submit" name="2" value="2">Delete Report</button>
+    </form>
+    {{end}}
+  {{end}}
+  </section>
 {{end}}

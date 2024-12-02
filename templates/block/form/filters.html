@@ -1,0 +1,55 @@
+{{define "block/form/filters"}}
+<div class="container__block__inner block__filters">
+  {{if .Categories }}
+  <h3 aria-label="Categories Title">Filters</h3>
+  <form class="form" action="/filters" method="GET" role="form" aria-label="Filter form">
+    <div class="category" role="group" aria-label="Select a category">
+      <label for="Category" aria-describedby="category-help">Categories</label>
+      <select id="Category" name="Category" aria-required="true">
+        <option value="">Select a Category</option>
+        {{range .Categories}}
+        <option value="{{.Name}}">{{.Name}}</option>
+        {{end}}
+      </select>
+      <span id="category-help" class="sr-only">Select a category to filter results.</span>
+    </div>
+    <div class="date-publication" role="group" aria-label="Select a publication period">
+      <label for="Period" aria-describedby="period-help">Publication Date:</label>
+      <select id="Period" name="Period" aria-required="true">
+        <option value="">All Periods</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+        <option value="year">This Year</option>
+      </select>
+      <span id="period-help" class="sr-only">Select a publication period to filter results.</span>
+    </div>
+    <div class="nombre-like" role="group" aria-label="Select a like range">
+      <label for="Like" aria-describedby="like-help">Number of Likes:</label>
+      <select id="Like" name="Like" aria-required="true">
+        <option value="">All Likes</option>
+        <option value="1-10">1-10 Like(s)</option>
+        <option value="11-50">11-50 Likes</option>
+        <option value="51-100">51-100 Likes</option>
+        <option value="plus-de-100">More than 100 Likes</option>
+      </select>
+      <span id="like-help" class="sr-only">Select a Like range to filter results.</span>
+    </div>
+    <div class="nombre-dislike" role="group" aria-label="Select a dislike range">
+      <label for="Dislike" aria-describedby="dislike-help">Number of Dislikes:</label>
+      <select id="Dislike" name="Dislike" aria-required="true">
+        <option value="">All Dislikes</option>
+        <option value="1-10">1-10 Dislike(s)</option>
+        <option value="11-50">11-50 Dislikes</option>
+        <option value="51-100">51-100 Dislikes</option>
+        <option value="plus-de-100">More than 100 Dislikes</option>
+      </select>
+      <span id="dislike-help" class="sr-only">Select a Dislike range to filter results.</span>
+    </div>
+    <button class="button__med" type="submit" aria-label="Apply filters">Apply</button>
+  </form>
+  {{ else }}
+  <h2 aria-label="Categories Title">Filters</h2>
+  <p>No categories, no filters!</p>
+  {{ end }}
+</div>
+{{end}}

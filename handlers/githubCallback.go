@@ -281,11 +281,7 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	// Attribute a session to an User
 	lib.CookieSession(user_uuid, username, creation_date, creation_hour, email, role, w, r)
 
-	data := lib.GetData(db, user_uuid, "logged", "index", w, r)
-
-	// Redirect the user to a success page or your main application
-	lib.RenderTemplate(w, "layout/index", "page/index", data)
-
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // Helper function to fetch GitHub email if it's not public
