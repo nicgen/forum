@@ -33,7 +33,6 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	if data == nil {
 		//Err non crit : Impossible de recup les commentaires
 		lib.ErrorServer(w, "Unable to retrieve comments, please try again later.")
-
 	}
 	data = lib.GetNotifications(w, cookie.Value, data)
 	data = lib.GetReport(w, data, r)
