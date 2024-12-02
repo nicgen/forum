@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"fmt"
 	"forum/models"
 	"net/http"
 )
@@ -35,6 +34,5 @@ func GetReport(w http.ResponseWriter, data map[string]interface{}, r *http.Reque
 	}
 
 	data["Report"] = reports
-	fmt.Println(data)
 	return data
 }

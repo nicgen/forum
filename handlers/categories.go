@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"forum/cmd/lib"
 	"forum/models"
 	"net/http"
@@ -38,7 +37,6 @@ func CategoriesHandler(w http.ResponseWriter, r *http.Request) {
 			} else {
 				// Erreur non critique : Echec de la création de la catégorie
 				lib.ErrorServer(w, "Échec de la création de la catégorie, veuillez réessayer plus tard.")
-				fmt.Println("Database error:", err)
 			}
 			return
 		}

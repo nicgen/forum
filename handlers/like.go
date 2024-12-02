@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"forum/cmd/lib"
 	"forum/models"
 	"net/http"
@@ -32,12 +31,6 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 	dislike_post := r.FormValue("dislike_post")
 	like_comment := r.FormValue("like_comment")
 	dislike_comment := r.FormValue("dislike_comment")
-
-	fmt.Println("id: ", id)
-	fmt.Println("like_post: ", like_post)
-	fmt.Println("dislike_post: ", dislike_post)
-	fmt.Println("like_comment: ", like_comment)
-	fmt.Println("dislike_comment: ", dislike_comment)
 
 	if like_post != "" || dislike_post != "" {
 		var reaction_status string
@@ -79,7 +72,6 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 				}
 				if id == "" {
 					lib.ErrorServer(w, "Post ID is missing")
-					fmt.Println("erreur missing")
 					return
 				}
 
@@ -125,7 +117,6 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 				}
 				if id == "" {
 					lib.ErrorServer(w, "Post ID is missing")
-					fmt.Println("erreur missing")
 					return
 				}
 
@@ -277,7 +268,6 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 				}
 				if id == "" {
 					lib.ErrorServer(w, "Comment ID is missing")
-					fmt.Println("erreur missing")
 					return
 				}
 
@@ -320,7 +310,6 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 				}
 				if id == "" {
 					lib.ErrorServer(w, "Comment ID is missing")
-					fmt.Println("erreur missing")
 					return
 				}
 
