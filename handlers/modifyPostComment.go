@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"forum/cmd/lib"
 	"forum/models"
 	"net/http"
@@ -14,14 +15,15 @@ func ModifyPostComment(w http.ResponseWriter, r *http.Request) {
 	status := r.URL.Query().Get("delete")
 	id := r.URL.Query().Get("id")
 	content := r.URL.Query().Get("content")
+	fmt.Println(content)
 
 	if status == "post" {
-		state_modify = `UPDATE Posts SET Title = ? WHERE ID = ?`
+		state_modify = `UPDATE Posts SET Text = ? WHERE ID = ?`
 	} else {
 		state_modify = `UPDATE Comments SET Text = ? WHERE ID = ?`
 	}
 	_, err_delete := db.Exec(state_modify, content, id)
-	if err_delete != nil && status == "post" {
+	if err_delete != nil && status == "post" && len(content) != 0 {
 
 		//Erreur critique : échec de la modification du commentaire
 		err := &models.CustomError{
@@ -29,7 +31,7 @@ func ModifyPostComment(w http.ResponseWriter, r *http.Request) {
 			Message:    "Error modifying User's comment. Please try again later.",
 		}
 		HandleError(w, err.StatusCode, err.Message)
-	} else if err_delete != nil && status == "comment" {
+	} else if err_delete != nil && status == "comment" && len(content) != 0 {
 
 		//Erreur critique : echec de la modification du commentaire
 		err := &models.CustomError{
@@ -37,6 +39,11 @@ func ModifyPostComment(w http.ResponseWriter, r *http.Request) {
 			Message:    "Error modifying user's comment. Please try again later.",
 		}
 		HandleError(w, err.StatusCode, err.Message)
+	} else {
+		data := lib.DataTest(w, r)
+		data = lib.ErrorMessage(w, data, "ContentEmpty")
+
+		lib.RenderTemplate(w, "layout/index", "page/index", data)
 	}
 
 	// Redirect User to the home page
