@@ -77,7 +77,7 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 		WHEN ? = 'last-7-days' THEN date(CreatedAt) BETWEEN date('now', '-365 days') AND date('now')
 		ELSE True 
 		END
-)
+) ORDER BY CreatedAt DESC
 	 `
 	var likeTous, like1_10, like11_50, like51_100, likePlus100 string
 	switch numberlike {
@@ -123,9 +123,12 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID, &post.ImagePath); err != nil {
 		}
 
+<<<<<<< HEAD
 		data_comment := map[string]interface{}{
 			"Role": role,
 		}
+=======
+>>>>>>> 8071e7e3f023b331eb06ee78d61a79bd757be257
 		// Getting the Username of the person who made the post
 		post.Username = lib.CheckUsername(w, post.User_UUID)
 
@@ -176,7 +179,10 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 					comment.IsAuthor = "no"
 				}
 			}
-
+			
+			data_comment := map[string]interface{}{
+				"Role":	role,
+			}
 			comment.Data = data_comment
 
 			comments = append(comments, &comment)

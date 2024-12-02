@@ -2,7 +2,6 @@ package lib
 
 import (
 	"database/sql"
-	"fmt"
 	"forum/models"
 	"net/http"
 	"strings"
@@ -17,7 +16,6 @@ func GetPosts(w http.ResponseWriter, uuid, state string, rows *sql.Rows, data, d
 	for rows.Next() {
 		var post models.Post
 		if err := rows.Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID, &post.ImagePath); err != nil {
-			fmt.Println("test: ", err)
 			ErrorServer(w, "Error scanning posts")
 		}
 

@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"fmt"
 	"forum/models"
 	"net/http"
 	"strings"
@@ -12,7 +11,6 @@ func GetLikedComments(w http.ResponseWriter, uuid string, data map[string]interf
 	// Making query for the posts liked by the User
 	state_liked := `SELECT ID, Comment_ID FROM Reaction WHERE User_UUID = ? AND Comment_ID IS NOT NULL`
 	query, err_liked := db.Query(state_liked, uuid)
-	fmt.Println("Error: ", err_liked)
 	if err_liked != nil {
 		ErrorServer(w, "Error accessing user's Reactions")
 	}
@@ -24,7 +22,6 @@ func GetLikedComments(w http.ResponseWriter, uuid string, data map[string]interf
 
 	for query.Next() {
 		if err := query.Scan(&id, &status); err != nil {
-			fmt.Println("Error2: ", err)
 			ErrorServer(w, "Error scanning user's Reactions")
 		}
 
@@ -45,7 +42,6 @@ func GetLikedComments(w http.ResponseWriter, uuid string, data map[string]interf
 			var comment_liked models.Comment
 			
 			if err := row_post.Scan(&comment_liked.ID, &comment_liked.Text, &comment_liked.Like, &comment_liked.Dislike, &comment_liked.CreatedAt, &comment_liked.User_UUID); err != nil {
-				fmt.Println(err)
 				ErrorServer(w, "Error scanning comments data")
 			}
 

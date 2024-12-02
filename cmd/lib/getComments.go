@@ -30,7 +30,7 @@ func GetComments(db *sql.DB, uuid string, data map[string]interface{}, w http.Re
 		state_post := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE ID = ? ORDER BY CreatedAt DESC`
 		err_comment := db.QueryRow(state_post, comment.Post_ID).Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID)
 		if err_comment != nil {
-			fmt.Println(err_comment)
+			fmt.Println("error: ", err_comment)
 			ErrorServer(w, "Error getting post infos")
 		}
 
