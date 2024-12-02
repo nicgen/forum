@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"forum/cmd/lib"
 	"forum/models"
 	"net/http"
@@ -16,7 +15,6 @@ func ModifyPostComment(w http.ResponseWriter, r *http.Request) {
 	modify_type := r.URL.Query().Get("type")
 	id := r.URL.Query().Get("id")
 	content := r.URL.Query().Get("content")
-	fmt.Println(content)
 
 	if status == "post" && modify_type == "title" {
 		state_modify = `UPDATE Posts SET Title = ? WHERE ID = ?`

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"forum/cmd/lib"
 	"net/http"
 )
@@ -17,12 +16,7 @@ func Report_Delete(w http.ResponseWriter, r *http.Request) {
 	respons_text := formValues.Get("respons_text")
 	name1 := formValues.Get("1")
 	name2 := formValues.Get("2")
-
-	fmt.Println(report_ID)
-	fmt.Println(report_postID)
-	fmt.Println(respons_text)
-	fmt.Println("name1: ", name1)
-	fmt.Println("name2: ", name2)
+	name2 = name2
 
 	if len(name1) != 0 {
 		state_reaction := `SELECT ID From Report WHERE ID = ? AND Post_Id = ?`
@@ -34,7 +28,6 @@ func Report_Delete(w http.ResponseWriter, r *http.Request) {
 		}
 		var state_delete string
 		state_delete = `DELETE FROM Posts WHERE ID = ?`
-		fmt.Println(state_delete)
 		_, err_db := db.Exec(state_delete, report_postID)
 		if err_db != nil {
 			lib.ErrorServer(w, "Error delete_report")

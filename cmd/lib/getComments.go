@@ -2,7 +2,6 @@ package lib
 
 import (
 	"database/sql"
-	"fmt"
 	"forum/models"
 	"net/http"
 	"strings"
@@ -31,7 +30,6 @@ func GetComments(db *sql.DB, uuid string, data map[string]interface{}, w http.Re
 		state_post := `SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID FROM Posts WHERE User_UUID = ? ORDER BY CreatedAt DESC`
 		err_comment := db.QueryRow(state_post, uuid).Scan(&post.ID, &post.Category_ID, &post.Title, &post.Text, &post.Like, &post.Dislike, &post.CreatedAt, &post.User_UUID)
 		if err_comment != nil {
-			fmt.Println(err_comment)
 			ErrorServer(w, "Error getting post infos")
 		}
 
