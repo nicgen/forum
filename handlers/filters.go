@@ -116,6 +116,8 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 	data["Posts"] = posts
 	data = lib.ErrorMessage(w, data, "none")
 
+
+	fmt.Println("data filters: ", data)
 	lib.RenderTemplate(w, "layout/index", "page/index", data)
 
 }
