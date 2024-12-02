@@ -129,50 +129,23 @@
 {{end}}
 
 <!-- -----------Affichage des posts likés par l'utilisateur--------------------->
-{{if eq (len .LikedPosts) 0}}
 <section class="container__block__inner">
-  {{range and .LikedPosts}}
-    {{if .Like}}
-    <h3>My Liked Posts</h3>
-    <div class="post">
-      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-      <!-- <p>Post text: {{ .Text }}</p> -->
-      <p>Creation date: {{ .Creation_Date }}{{ .Creation_Hour }}</p>
-    </div>
-    {{else}}
-    <h3>My disliked Posts</h3>
-    <div class="post">
-      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-      <!-- <p>Post text: {{ .Text }}</p> -->
-      <p>Creation date: {{ .Creation_Date }}{{ .Creation_Hour }}</p>
-    </div>
-    {{end}}
-  {{end}}
-</section>
+{{if and (eq .UUID .User_UUID) (eq .Role "User")}}
+  {{if gt (len .LikedPosts) 0}}<h3>Mes posts likés</h3>{{ end }}
 {{else}}
-<section class="container__block__inner">
-  {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
-    <!-- {{if gt (len .LikedPosts) 0}}
-      <h3>My Liked Posts</h3>
-    {{ end }} -->
-  {{ else }}
-    {{if gt (len .LikedPosts) 0}}<h3>Posts that I liked</h3>{{ end }}
-  {{ end }}
-
-  <ul>
-    {{range .LikedPosts}}
-      <li>
-        <div class="post">
-          <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-          <p>Post text: {{ .Text }}</p>
-          <p>Creation date: {{ .Creation_Date }}</p>
-          <p>Creation hour: {{ .Creation_Hour }}</p>
-        </div>
-      </li>
-    {{end}}
-  </ul>
-</section>
+  {{if gt (len .LikedPosts) 0}}<h3>Tout ce que l'utilisateur a liké</h3>{{ end }}
 {{end}}
+
+{{range .LikedPosts}}
+    <div class="post">
+      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+      <p>Post text: {{ .Text }}</p>
+      <p>Creation date: {{ .Creation_Date }}{{ .Creation_Hour }}</p>
+    </div>
+{{end}}
+</section>
+
+<!-- --------------------------------------------------------------------------->
 
 <!-- --------------Affichage des commentaires de l'utilisateur------------------>
 {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
