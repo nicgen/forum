@@ -13,11 +13,14 @@ func ModifyPostComment(w http.ResponseWriter, r *http.Request) {
 
 	var state_modify string
 	status := r.URL.Query().Get("delete")
+	modify_type := r.URL.Query().Get("type")
 	id := r.URL.Query().Get("id")
 	content := r.URL.Query().Get("content")
 	fmt.Println(content)
 
-	if status == "post" {
+	if status == "post" && modify_type == "title" {
+		state_modify = `UPDATE Posts SET Title = ? WHERE ID = ?`
+	} else if status == "post" && modify_type == "content" {
 		state_modify = `UPDATE Posts SET Text = ? WHERE ID = ?`
 	} else {
 		state_modify = `UPDATE Comments SET Text = ? WHERE ID = ?`
