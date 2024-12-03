@@ -67,7 +67,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 				queryPostAuthor := `SELECT User_UUID FROM Posts WHERE ID = ?`
 				err = db.QueryRow(queryPostAuthor, id).Scan(&postAuthorUUID)
 				if err != nil {
-					lib.ErrorServer(w, "Error finding post author")
+					lib.ErrorServer(w, "Error finding post author 1")
 					return
 				}
 				if id == "" {
@@ -112,7 +112,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 				queryPostAuthor := `SELECT User_UUID FROM Posts WHERE ID = ?`
 				err = db.QueryRow(queryPostAuthor, id).Scan(&postAuthorUUID)
 				if err != nil {
-					lib.ErrorServer(w, "Error finding post author")
+					lib.ErrorServer(w, "Error finding post author 2")
 					return
 				}
 				if id == "" {
