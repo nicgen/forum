@@ -80,9 +80,11 @@ function checkImageSize(event) {
     const form = document.getElementById('imageForm');
 
     if (file) {
-        const sizeInMB = file.size / (1024 * 20); // Convert bytes to MB
-        alert("Image size: > 20Mo");
-        form.reset(); // Reset the form
+        const sizeInMB = file.size;
+        if (sizeInMB > 20971520){
+            alert("Image size: > 20Mo");
+            form.reset(); // Reset the form
+        }
         // return false; // Prevent form submission
     }
 }
