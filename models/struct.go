@@ -30,7 +30,9 @@ type Notification struct {
 	ID          int
 	ReactionID  *int
 	PostID      *int
+	PostTitle string
 	CommentID   *int
+	CommentContent string
 	IsOnComment bool // Indique si la réaction est sur un commentaire
 	CreatedAt   time.Time
 	Creation_Date string
