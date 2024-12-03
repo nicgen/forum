@@ -25,7 +25,6 @@
   <div>
     <button class="button-icon button__author" onclick="togglePost(this)" title="Edit my post content">{{ template "ico_edit"}}</button>
   </div>
-
   <div class="popup-container js__toggle__block">
     <div class="popup">
       <form method="GET" action="/modify">
@@ -42,13 +41,4 @@
     </div>
   </div>
 </div>
-
-<!-- <div class="comment__modify">
-  <form method="GET" action="/modify">
-    <input type="hidden" name="delete" value="post">
-    <input type="hidden" name="id" value="{{ .ID }}">
-    <textarea class="modify-area" type="hidden" name="content"></textarea>
-    <button class="button-icon" type="submit" title="Edit my post">{{ template "ico_edit"}} Edit my post</button>
-  </form>
-</div> -->
 {{end}}

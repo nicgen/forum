@@ -63,7 +63,24 @@ func GetData(db *sql.DB, uuid string, status string, page string, w http.Respons
 			}
 
 			// Checking the cookie values
-			data["User_UUID"] = "user_profile"
+			cookie_uuid, err_user_uuid := r.Cookie("session_id")
+			cookie_user_role, err_user_role := r.Cookie("role")
+			cookie_user_username, err_user_username := r.Cookie("username")
+			if err_user_uuid == http.ErrNoCookie {
+				data["User_UUID"] = "user_profile"
+			} else {
+				data["User_UUID"] = cookie_uuid.Value
+			}
+			if err_user_role == http.ErrNoCookie {
+				data["User_Role"] = "Guest"
+			} else {
+				data["User_Role"] = cookie_user_role.Value
+			}
+			if err_user_username == http.ErrNoCookie {
+				data["User_Username"] = "Test"
+			} else {
+				data["User_Username"] = cookie_user_username.Value
+			}
 
 			// Storing date informations into the map
 			time_comment := strings.Split(createdAt.Format("2006-01-02 15:04:05"), " ")
