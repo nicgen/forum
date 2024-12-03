@@ -173,9 +173,9 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 					comment.IsAuthor = "no"
 				}
 			}
-			
+
 			data_comment := map[string]interface{}{
-				"Role":	role,
+				"Role": role,
 			}
 			comment.Data = data_comment
 
