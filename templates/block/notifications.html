@@ -1,0 +1,39 @@
+{{ define "block/dashboard/notifications"}}
+    {{if .Notifications}}
+    <section class="container__block__inner">
+    <div>
+        {{ template "ico_comment" }}
+        <h3>Notifications</h3>
+    </div>
+    <p>You have <strong>{{if .TotalCount}}{{.TotalCount}}</strong> notification(s){{else}}0</strong> notification{{end}}
+    </p>
+    {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
+    <ul>
+        {{range .Notifications}}
+        <li>
+        Notification ID: {{.ID}} - {{.CreatedAt}} -
+        <!-- react (like/dislike) on comment -->
+        {{if and (.IsOnComment) (.ReactionID)}}
+        Reaction on Comment: {{.CommentID}} (Reaction ID: {{.ReactionID}})
+        <!-- comment on post -->
+        {{else if .IsOnComment}}
+        Comment on Post: (Comment ID :{{.CommentID}})
+        <!-- react (like/dislike) on post -->
+        {{else}}
+        Reaction on Post: {{.PostID}} (Reaction ID: {{.ReactionID}})
+        {{end}}
+        </li>
+        {{end}}
+    </ul>
+    {{ end }}
+    </section>
+    {{else}}
+    <section class="container__block__inner">
+    <div>
+        {{ template "ico_comment" }}
+        <h3>Notifications</h3>
+    </div>
+    <p>You have 0 notifications</p>
+    </section>
+    {{end}}
+{{ end }}

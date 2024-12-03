@@ -1,0 +1,16 @@
+{{define "block/dashboard/infos"}}
+<div>
+    {{if eq .UUID .User_UUID}}
+    <div class="profil_thumb ">
+      <span>{{ .Username }}</span>
+    </div>
+    <h2>Welcome, {{ .Username }}</h2>
+    <p>Your Email: {{ .Email }}</p>
+    <p>Your role: {{if eq .Role "User"}}{{template "ico_user"}}{{else if eq .Role "Admin"}}{{template "ico_user_admin"}}{{else if eq .Role "Moderator"}}{{template "ico_user_mod"}}{{end}}{{ .Role }}</p>
+    {{ else }}
+    <h2>{{ .Username }}'s profile page</h2>
+    <p>User role: {{if eq .Role "User"}}{{template "ico_user"}}{{else if eq .Role "Admin"}}{{template "ico_user_admin"}}{{else if eq .Role "Moderator"}}{{template "ico_user_mod"}}{{end}}{{ .Role }}</p>
+    {{ end }}
+    <p>Account created the: {{ .CreationDate }} at: {{ .CreationHour }}</p>
+</div>
+{{end}}
