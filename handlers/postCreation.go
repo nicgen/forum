@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"forum/cmd/lib"
@@ -30,13 +31,26 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse le formulaire multipart
 	err := r.ParseMultipartForm(maxUploadSize)
 	if err != nil {
-		http.Error(w, "Fichier trop volumineux", http.StatusBadRequest)
+		if strings.Contains(err.Error(), "request body too large") {
+			data := lib.DataTest(w, r)
+			data = lib.ErrorMessage(w, data, "ImageContent")
+
+			// Redirigez vers la page d'index au lieu de la page de création de post
+			lib.RenderTemplate(w, "layout/index", "page/index", data)
+		}
+		//Erreur critique : erreur lors du téléchargemement
+		err := &models.CustomError{
+			StatusCode: http.StatusBadRequest,
+			Message:    "Erreur lors du téléchargement",
+		}
+		HandleError(w, err.StatusCode, err.Message)
 		return
 	}
 
 	// Récupération du cookie de session
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
+		//Erreur critique: session non trouvée
 		err := &models.CustomError{
 			StatusCode: http.StatusUnauthorized,
 			Message:    "Session not found, please log in again.",
@@ -48,7 +62,12 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	// Vérifie si le champ "image" est présent
 	file, handler, err := r.FormFile("image")
 	if err != nil && err != http.ErrMissingFile {
-		http.Error(w, "Erreur lors du téléchargement", http.StatusBadRequest)
+		//Erreur critique: Erreur lors du téléchargement
+		err := &models.CustomError{
+			StatusCode: http.StatusBadRequest,
+			Message:    "Erreur lors du téléchargement",
+		}
+		HandleError(w, err.StatusCode, err.Message)
 		return
 	}
 	defer func() {
@@ -66,12 +85,19 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		buff := make([]byte, 512)
 		_, err = file.Read(buff)
 		if err != nil {
-			http.Error(w, "Erreur de lecture", http.StatusInternalServerError)
+			//Erreur critique : erreur de lecture
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Erreur de lecture",
+			}
+			HandleError(w, err.StatusCode, err.Message)
 			return
 		}
+
 		filetype := http.DetectContentType(buff)
 
 		if !allowedImageTypes[filetype] {
+			//Erreur non critique : type de fichier non autorisé
 			http.Error(w, "Type de fichier non autorisé", http.StatusBadRequest)
 			return
 		}
@@ -79,8 +105,23 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		// Réinitialise le curseur du fichier
 		_, err = file.Seek(0, 0)
 		if err != nil {
-			http.Error(w, "Erreur de lecture", http.StatusInternalServerError)
+			// Erreur critique : erreur de lecture
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Erreur de lecture",
+			}
+			HandleError(w, err.StatusCode, err.Message)
 			return
+		}
+
+		// Vérifie la taille du fichier
+		if handler.Size > maxUploadSize {
+			//Erreur non critique : image trop volumineuse
+			data := lib.DataTest(w, r)
+			data = lib.ErrorMessage(w, data, "ImageContent")
+
+			// Rendre la page d'index avec le message d'erreur
+			lib.RenderTemplate(w, "layout/index", "page/index", data)
 		}
 
 		// Génère un nom de fichier unique
@@ -91,7 +132,12 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		uploadDir := "./static/uploads/"
 		errMkdir := os.MkdirAll(uploadDir, 0755)
 		if errMkdir != nil {
-			http.Error(w, "Impossible de créer le dossier d'upload", http.StatusInternalServerError)
+			// Erreur critique : impossible de créer le dossier d'upload
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Impossible de créer le dossier d'upload",
+			}
+			HandleError(w, err.StatusCode, err.Message)
 			return
 		}
 
@@ -101,7 +147,12 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		// Crée le fichier avec des permissions spécifiques
 		out, errFile := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0666)
 		if errFile != nil {
-			http.Error(w, "Impossible de créer le fichier", http.StatusInternalServerError)
+			// Erreur critique : impossible de créer le fichier
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Impossible de créer le fichier",
+			}
+			HandleError(w, err.StatusCode, err.Message)
 			return
 		}
 		defer out.Close()
@@ -109,8 +160,12 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		// Copie le fichier
 		_, err = io.Copy(out, file)
 		if err != nil {
-			http.Error(w, "Erreur de copie", http.StatusInternalServerError)
-			return
+			//Erreur critique: erreur de copie
+			err := &models.CustomError{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Erreur de copie de fichier",
+			}
+			HandleError(w, err.StatusCode, err.Message)
 		}
 	}
 
