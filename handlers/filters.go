@@ -28,7 +28,7 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data_user := map[string]interface{}{
-		"Role":	role,
+		"Role": role,
 	}
 
 	formValues := r.URL.Query()

@@ -129,50 +129,7 @@
 {{end}}
 
 <!-- -----------Affichage des posts likés par l'utilisateur--------------------->
-{{if eq (len .LikedPosts) 0}}
-<section class="container__block__inner">
-  {{range and .LikedPosts}}
-    {{if .Like}}
-    <h3>My Liked Posts</h3>
-    <div class="post">
-      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-      <!-- <p>Post text: {{ .Text }}</p> -->
-      <p>Creation date: {{ .Creation_Date }}{{ .Creation_Hour }}</p>
-    </div>
-    {{else}}
-    <h3>My disliked Posts</h3>
-    <div class="post">
-      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-      <!-- <p>Post text: {{ .Text }}</p> -->
-      <p>Creation date: {{ .Creation_Date }}{{ .Creation_Hour }}</p>
-    </div>
-    {{end}}
-  {{end}}
-</section>
-{{else}}
-<section class="container__block__inner">
-  {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
-    <!-- {{if gt (len .LikedPosts) 0}}
-      <h3>My Liked Posts</h3>
-    {{ end }} -->
-  {{ else }}
-    {{if gt (len .LikedPosts) 0}}<h3>Posts that I liked</h3>{{ end }}
-  {{ end }}
-
-  <ul>
-    {{range .LikedPosts}}
-      <li>
-        <div class="post">
-          <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-          <p>Post text: {{ .Text }}</p>
-          <p>Creation date: {{ .Creation_Date }}</p>
-          <p>Creation hour: {{ .Creation_Hour }}</p>
-        </div>
-      </li>
-    {{end}}
-  </ul>
-</section>
-{{end}}
+{{template "block/content/like" .}}
 
 <!-- --------------Affichage des commentaires de l'utilisateur------------------>
 {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
@@ -200,8 +157,6 @@
 <ul>
   {{range .Notifications}}
   <li>
-    Notification ID: {{.ID}} - {{.CreatedAt}} -
-    <!-- react (like/dislike) on comment -->
     {{if and (.IsOnComment) (.ReactionID)}}
     Reaction on Comment: {{.CommentID}} (Reaction ID: {{.ReactionID}})
     <!-- comment on post -->
