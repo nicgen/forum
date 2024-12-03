@@ -48,7 +48,7 @@
   <ul>
     {{range .Notifications}}
     <li>
-      Notification ID: {{.ID}} - {{.CreatedAt}} -
+      Notification ID: {{.ID}} - {{.Creation_Date}} at {{.Creation_Hour}} -
       <!-- react (like/dislike) on comment -->
       {{if and (.IsOnComment) (.ReactionID)}}
       Reaction on Comment: {{.CommentID}} (Reaction ID: {{.ReactionID}})
