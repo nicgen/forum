@@ -68,7 +68,7 @@ func GetPosts(w http.ResponseWriter, uuid, state string, rows *sql.Rows, data, d
 				post.Status = CheckStatus(w, uuid, post.ID, "comment")
 
 				// Check if the post is from the User making the request
-				if post.User_UUID == uuid {
+				if comment.User_UUID == uuid {
 					comment.IsAuthor = "yes"
 				} else {
 					comment.IsAuthor = "no"
