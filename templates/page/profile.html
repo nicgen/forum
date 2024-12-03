@@ -40,7 +40,7 @@
 <section class="container__block__inner">
   <div>
     {{ template "ico_comment" }}
-    <h3>Notifications</h3>
+    <h2><u>Notifications</u></h2>
   </div>
   <p>You have <strong>{{if .TotalCount}}{{.TotalCount}}</strong> notification(s){{else}}0</strong> notification{{end}}
   </p>
@@ -68,7 +68,7 @@
 <section class="container__block__inner">
   <div>
     {{ template "ico_comment" }}
-    <h3>Notifications</h3>
+    <h2><u>Notifications</u></h2>
   </div>
   <p>You have 0 notifications</p>
 </section>
@@ -135,9 +135,9 @@
 <!-- --------------Affichage des commentaires de l'utilisateur------------------>
 <section class="container__block__inner">
 {{if eq .UUID .User_UUID}}
-  {{if gt (len .ProfileComments) 0}}<h2><u>Tout ce que j'ai commenté</u></h2>{{ end }}
+  {{if gt (len .ProfileComments) 0}}<h2><u>Everything i commented</u></h2>{{ end }}
 {{ else }}
-  {{if gt (len .ProfileComments) 0}}<h2><u>Tout ce que l'utilisateur a commenté</u></h2>{{ end }}
+  {{if gt (len .ProfileComments) 0}}<h2><u>Everything {{.Username}} commented</u></h2>{{ end }}
 {{ end }}
 
 {{range .ProfileComments }}
@@ -150,9 +150,10 @@
 <br>
 {{end}}
 </section>
+{{end}}
 <!-- --------------------------------------------------------------------------->
-<section class="container__block__inner">
-<h1>Notifications</h1>
+<!-- <section class="container__block__inner">
+<h2><u>Notifications</u></h2>
 
 <div>Total notifications:
   {{if .TotalCount}}{{.TotalCount}}{{else}}Aucun notification.{{end}}
@@ -163,10 +164,8 @@
   <li>
     {{if and (.IsOnComment) (.ReactionID)}}
     Reaction on Comment: {{.CommentID}} (Reaction ID: {{.ReactionID}})
-    <!-- comment on post -->
     {{else if .IsOnComment}}
     Comment on Post: (Comment ID :{{.CommentID}})
-    <!-- react (like/dislike) on post -->
     {{else}}
     Reaction on Post: {{.PostID}} (Reaction ID: {{.ReactionID}})
     {{end}}
@@ -174,5 +173,4 @@
   {{end}}
 </ul>
 
-{{end}}
-</section>
+</section> -->
