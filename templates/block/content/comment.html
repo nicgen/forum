@@ -3,7 +3,7 @@
   <p class="comment__date"><span></span>{{ .CreatedAt.Format "January 2, 2006, 15:04" }}</p>
   <p>{{ .Text }}</p>
   <!-- comment edit -->
-  <div class="comment__action">
+  <div class="block__action">
     {{ if eq .IsAuthor "yes"}}
       <div class="block__action block__author">
       <!-- Comment delete -->
