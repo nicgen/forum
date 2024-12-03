@@ -103,8 +103,6 @@
 <!-- USERS -->
 
 <!-- Affichage des posts de l'utilisateur -->
-{{if eq (len .Posts) 0}}
-{{else}}
 <section class="container__block__inner">
   <div>
     {{ template "ico_comment" }}
@@ -124,7 +122,6 @@
       </div>
     </li>
     <br>
-    {{end}}
   </ul>
 </section>
 {{end}}
