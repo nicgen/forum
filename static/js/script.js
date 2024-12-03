@@ -74,3 +74,17 @@ function closePost(event) {
 //         }
 //     }
 // }
+
+function checkImageSize(event) {
+    const file = event.target.files[0];
+    const form = document.getElementById('imageForm');
+
+    if (file) {
+        const sizeInMB = file.size;
+        if (sizeInMB > 20971520){
+            alert("Image size: > 20Mo");
+            form.reset(); // Reset the form
+        }
+        // return false; // Prevent form submission
+    }
+}

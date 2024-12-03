@@ -20,7 +20,8 @@ func ErrorMessage(w http.ResponseWriter, data map[string]interface{}, errtype st
 		"CommentAlreadyLiked":    "null",
 		"CommentAlreadyDisliked": "null",
 		"ReportExist":            "null",
-		"ContentEmpty": "null",
+		"ContentEmpty":           "null",
+		"ImageContent":           "",
 	}
 
 	// Changing the error depending on the errtype variable given
@@ -50,7 +51,10 @@ func ErrorMessage(w http.ResponseWriter, data map[string]interface{}, errtype st
 	case "ReportExist":
 		errorMap["ReportExist"] = "Report already completed"
 	case "ContentEmpty":
-		errorMap["ContentEmpty"] = "Modify must be at least 1 character long"	
+		errorMap["ContentEmpty"] = "Modify must be at least 1 character long"
+	case "ImageContent":
+		errorMap["ImageContent"] = "Image size: > 20Mo"
+		// log.Printf("ImageContent")
 	}
 
 	// Adding the errorMap to the data map
