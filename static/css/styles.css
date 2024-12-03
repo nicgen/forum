@@ -897,6 +897,10 @@ select:focus option:checked {
   justify-content: space-between;
   align-self: end;
 }
+
+.comment__auth {
+  justify-content: end;
+}
 /* 
 .comment__action .block__author {
   align-self: auto;
