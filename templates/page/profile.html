@@ -44,7 +44,7 @@
   </div>
   <p>You have <strong>{{if .TotalCount}}{{.TotalCount}}</strong> notification(s){{else}}0</strong> notification{{end}}
   </p>
-  {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
+  {{if eq .UUID .User_UUID}}
   <ul>
     {{range .Notifications}}
     <li>
@@ -108,7 +108,7 @@
 <section class="container__block__inner">
   <div>
     {{ template "ico_comment" }}
-    {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
+    {{if eq .UUID .User_UUID}}
     {{if gt (len .Posts) 0}}<h2><u>Your Posts</u></h2>{{else}}{{ end }}
     {{ else }}
     {{if gt (len .Posts) 0}}<h2><u>{{ .Username }}'s Posts</u></h2>{{else}}{{ end }}
@@ -134,7 +134,7 @@
 
 <!-- --------------Affichage des commentaires de l'utilisateur------------------>
 <section class="container__block__inner">
-{{if and (eq .UUID .User_UUID) (eq .Role "User")}}
+{{if eq .UUID .User_UUID}}
   {{if gt (len .ProfileComments) 0}}<h2><u>Tout ce que j'ai commenté</u></h2>{{ end }}
 {{ else }}
   {{if gt (len .ProfileComments) 0}}<h2><u>Tout ce que l'utilisateur a commenté</u></h2>{{ end }}
