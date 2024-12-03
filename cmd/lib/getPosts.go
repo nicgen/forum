@@ -61,7 +61,8 @@ func GetPosts(w http.ResponseWriter, uuid, state string, rows *sql.Rows, data, d
 
 			// Getting the Username of the person who made the comment
 			comment.Username = CheckUsername(w, comment.User_UUID)
-
+			
+			data_comment := map[string]interface{}{}
 			if data_user["Role"] != "Guest" {
 				// Check the post status with user's uuid and post id
 				post.Status = CheckStatus(w, uuid, post.ID, "comment")
@@ -72,11 +73,10 @@ func GetPosts(w http.ResponseWriter, uuid, state string, rows *sql.Rows, data, d
 				} else {
 					comment.IsAuthor = "no"
 				}
+			} else {
+				data_comment["Role"] = data_user["Role"]
 			}
 
-			data_comment := map[string]interface{}{
-				"Role": "Guest",
-			}
 			comment.Data = data_comment
 
 			comments = append(comments, &comment)

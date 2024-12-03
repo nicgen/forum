@@ -109,9 +109,9 @@
   <div>
     {{ template "ico_comment" }}
     {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
-    {{if gt (len .Posts) 0}}<h3>Your Posts</h3>{{else}}{{ end }}
+    {{if gt (len .Posts) 0}}<h2><u>Your Posts</u></h2>{{else}}{{ end }}
     {{ else }}
-    {{if gt (len .Posts) 0}}<h3>{{ .Username }}'s Posts</h3>{{else}}{{ end }}
+    {{if gt (len .Posts) 0}}<h2><u>{{ .Username }}'s Posts</u></h2>{{else}}{{ end }}
     {{ end }}
   </div>
   <ul>
@@ -123,65 +123,35 @@
         <p>Creation date: {{ .Creation_Date }}{{/* .Creation_Hour */}}</p>
       </div>
     </li>
+    <br>
     {{end}}
   </ul>
 </section>
 {{end}}
 
 <!-- -----------Affichage des posts likés par l'utilisateur--------------------->
-<section class="container__block__inner">
-{{if and (eq .UUID .User_UUID) (eq .Role "User")}}
-  {{if gt (len .LikedPosts) 0}}<h3>Mes posts likés</h3>{{ end }}
-{{else}}
-  {{if gt (len .LikedPosts) 0}}<h3>Tout ce que l'utilisateur a liké</h3>{{ end }}
-{{end}}
-
-{{range .LikedPosts}}
-  {{if eq .Status "liked"}}
-    <div class="post">
-      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-      <p>Post text: {{ .Text }}</p>
-      <p>Creation date: {{ .Creation_Date }}{{ .Creation_Hour }}</p>
-    </div>
-  {{end}}  
-{{end}}
-
-{{if and (eq .UUID .User_UUID) (eq .Role "User")}}
-  {{if gt (len .LikedPosts) 0}}<h3>Mes posts dislikés</h3>{{ end }}
-{{else}}
-  {{if gt (len .LikedPosts) 0}}<h3>Tout ce que l'utilisateur a disliké</h3>{{ end }}
-{{end}}
-
-{{range .LikedPosts}}
-  {{if eq .Status "disliked"}}
-    <div class="post">
-      <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
-      <p>Post text: {{ .Text }}</p>
-      <p>Creation date: {{ .Creation_Date }}{{ .Creation_Hour }}</p>
-    </div>
-  {{end}}  
-{{end}}
-</section>
-
-<!-- --------------------------------------------------------------------------->
+{{template "block/content/like" .}}
 
 <!-- --------------Affichage des commentaires de l'utilisateur------------------>
+<section class="container__block__inner">
 {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
-  {{if gt (len .ProfileComments) 0}}<h3>Tout ce que j'ai commenté</h3>{{ end }}
+  {{if gt (len .ProfileComments) 0}}<h2><u>Tout ce que j'ai commenté</u></h2>{{ end }}
 {{ else }}
-  {{if gt (len .ProfileComments) 0}}<h3>Tout ce que l'utilisateur a commenté</h3>{{ end }}
+  {{if gt (len .ProfileComments) 0}}<h2><u>Tout ce que l'utilisateur a commenté</u></h2>{{ end }}
 {{ end }}
 
 {{range .ProfileComments }}
 <div class="post">
-  <h3>Post commented: Title: {{ .Data.PostInfo.Title }} Text: {{ .Data.PostInfo.Text }}</p>
+  <h3>Post commented: Title: {{ .Data.PostInfo.Title }} Text: {{ .Data.PostInfo.Text }}</h3>
     <p>Comment text: {{ .Text }}</p>
     <p>Comment like: {{ .Like }}</p>
     <p>Comment dislike: {{ .Dislike }}</p>
 </div>
+<br>
 {{end}}
+</section>
 <!-- --------------------------------------------------------------------------->
-
+<section class="container__block__inner">
 <h1>Notifications</h1>
 
 <div>Total notifications:
@@ -191,8 +161,6 @@
 <ul>
   {{range .Notifications}}
   <li>
-    Notification ID: {{.ID}} - {{.CreatedAt}} -
-    <!-- react (like/dislike) on comment -->
     {{if and (.IsOnComment) (.ReactionID)}}
     Reaction on Comment: {{.CommentID}} (Reaction ID: {{.ReactionID}})
     <!-- comment on post -->
@@ -207,3 +175,4 @@
 </ul>
 
 {{end}}
+</section>
