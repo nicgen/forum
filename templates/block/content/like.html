@@ -1,7 +1,7 @@
 {{define "block/content/like"}}
 
 <section class="container__block__inner">
-    {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
+    {{if eq .UUID .User_UUID}}
       {{if gt (len .LikedPosts) 0}}<h2><u>My liked posts</u></h2>{{ end }}
     {{else}}
       {{if gt (len .LikedPosts) 0}}<h2><u>{{.Username}} liked posts</u></h2>{{ end }}
@@ -17,7 +17,7 @@
       {{end}}  
     {{end}}
     
-    {{if and (eq .UUID .User_UUID) (eq .Role "User")}}
+    {{if eq .UUID .User_UUID}}
       {{if gt (len .LikedPosts) 0}}<h2><u>My disliked posts</u></h2>{{ end }}
     {{else}}
       {{if gt (len .LikedPosts) 0}}<h2><u>{{.Username}} disliked posts</u></h2>{{ end }}
