@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"forum/models" // Assurez-vous d'importer le package "models"
 	"net/http"
+	"strings"
 )
 
 func GetNotifications(w http.ResponseWriter, userUUID string, data map[string]interface{}) map[string]interface{} {
@@ -61,6 +62,10 @@ func GetNotifications(w http.ResponseWriter, userUUID string, data map[string]in
 			id := int(tempCommentID.Int64)
 			notification.CommentID = &id
 		}
+
+		time_comment := strings.Split(notification.CreatedAt.Format("2006-01-02 15:04:05"), " ")
+		notification.Creation_Date = time_comment[0]
+		notification.Creation_Hour = time_comment[1]
 
 		// Affecter IsOnComment
 		notification.IsOnComment = isOnComment

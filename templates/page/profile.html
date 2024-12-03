@@ -48,7 +48,7 @@
   <ul>
     {{range .Notifications}}
     <li>
-      Notification ID: {{.ID}} - {{.CreatedAt}} -
+      Notification ID: {{.ID}} - {{.Creation_Date}} at {{.Creation_Hour}} -
       <!-- react (like/dislike) on comment -->
       {{if and (.IsOnComment) (.ReactionID)}}
       Reaction on Comment: {{.CommentID}} (Reaction ID: {{.ReactionID}})
@@ -123,8 +123,8 @@
     </li>
     <br>
   </ul>
+  {{end}}
 </section>
-{{end}}
 
 <!-- -----------Affichage des posts likés par l'utilisateur--------------------->
 {{template "block/content/like" .}}
