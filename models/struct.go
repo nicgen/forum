@@ -33,6 +33,8 @@ type Notification struct {
 	CommentID   *int
 	IsOnComment bool // Indique si la réaction est sur un commentaire
 	CreatedAt   time.Time
+	Creation_Date string
+	Creation_Hour string
 	IsRead      bool
 	TotalCount  *int // Total des notifications
 }
