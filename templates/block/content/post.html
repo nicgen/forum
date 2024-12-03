@@ -35,8 +35,8 @@
   </section>
 
   <section class="actions">
-    <div class="comment__action">
-      <div class="block__action">
+    <div class="block__action">
+      <div class="block__action block__author">
         <!-- EDIT -->
         {{ if or (eq .Data.Role "Moderator") (eq .Data.Role "Admin") (eq .IsAuthor "yes")}}
           {{ template "block/form/post_delete" . }}
