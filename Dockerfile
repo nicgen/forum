@@ -4,13 +4,6 @@ FROM golang:1.23.2-alpine AS builder
 # update and install dependencies
 RUN apk add --no-cache gcc musl-dev openssl
 
-# Install gcc and build-essential (which includes gcc)
-# RUN apt-get update && apt-get install -y \
-#     gcc \
-#     build-essential \
-#     && rm -rf /var/lib/apt/lists/*
-
-
 # Set the Current Working Directory inside the container
 WORKDIR /app
 
@@ -34,13 +27,6 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 # RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o forum cmd/app/main.go
 RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o forum cmd/app/main.go
 
-# Update
-# RUN apk update
-# RUN apt-get update && apt-get install -y \
-#     gcc \
-#     sqlite3 libsqlite3-dev \
-#     && rm -rf /var/lib/apt/lists/*
-
 # Start a new stage from scratch
 FROM alpine:latest
 # FROM debian:latest
@@ -48,16 +34,8 @@ FROM alpine:latest
 # update and install dependencies
 RUN apk update && apk add --no-cache sqlite openssl
 
-# RUN apt-get update && apt-get install -y \
-#     openssl \
-#     && rm -rf /var/lib/apt/lists/*
-
 # Set the Current Working Directory inside the container
 WORKDIR /app
-
-RUN echo ">>>>debug"
-# debug
-RUN ls -lah
 
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/forum .
@@ -74,14 +52,6 @@ RUN chmod +x /app/forum
 # COPY --from=builder /app/openssl.conf .
 
 COPY --from=builder /app/ .
-
-# Copy the SSL certificate from the root of the project
-# COPY server.crt /app/server.crt
-# COPY . /app/
-
-# Copy the .env file
-# COPY .env /app/.env
-
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
