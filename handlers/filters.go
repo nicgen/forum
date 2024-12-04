@@ -192,7 +192,6 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 			"Role": role,
 		}
 		post.Data = data_post
-
 		posts = append(posts, &post)
 	}
 
