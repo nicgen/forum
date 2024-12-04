@@ -2,13 +2,22 @@
 FROM golang:1.23.2-alpine AS builder
 
 # update and install dependencies
-RUN apk add --no-cache gcc musl-dev openssl
+RUN apk add --no-cache gcc musl-dev openssl sqlite
 
 # Set the Current Working Directory inside the container
 WORKDIR /app
 
+# Create an empty forum.db
+# RUN touch /app/forum.db
+
 # Copy the source code into the container
 COPY . .
+
+# Copy the schema.sql file into the container
+#    COPY schema.sql .
+
+# Create a database file (if using SQLite)
+RUN sqlite3 /app/forum.db < forum.sql
 
 # Copy the go.mod and go.sum files
 COPY go.mod go.sum ./
@@ -32,7 +41,7 @@ FROM alpine:latest
 # FROM debian:latest
 
 # update and install dependencies
-RUN apk update && apk add --no-cache sqlite openssl
+# RUN apk update && apk add --no-cache sqlite openssl
 
 # Set the Current Working Directory inside the container
 WORKDIR /app
@@ -41,7 +50,7 @@ WORKDIR /app
 COPY --from=builder /app/forum .
 
 # Set executable permissions
-RUN chmod +x /app/forum
+# RUN chmod +x /app/forum
 
 # COPY --from=builder /app/forum .
 # COPY --from=builder /app/.env .
