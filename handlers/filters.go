@@ -45,8 +45,6 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 		`SELECT ID, Category_ID, Title, Text, Like, Dislike, CreatedAt, User_UUID, ImagePath
 	FROM Posts
 	WHERE 
-	(Category_ID = ? OR ? = '')  
-	AND
    (
     CASE 
       WHEN ? = 'tous les likes' THEN Like >= 0
@@ -107,7 +105,7 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 		dislikePlus100 = numberdislike
 	}
 
-	rows, err_post := db.Query(state_filters, categories, categories, likeTous, like1_10, like11_50, like51_100, likePlus100, dislikeTous, dislike1_10, dislike11_50, dislike51_100, dislikePlus100, period, period, period, period)
+	rows, err_post := db.Query(state_filters, likeTous, like1_10, like11_50, like51_100, likePlus100, dislikeTous, dislike1_10, dislike11_50, dislike51_100, dislikePlus100, period, period, period, period)
 
 	if err_post != nil {
 		lib.ErrorMessage(w, nil, err_post.Error())
@@ -192,7 +190,20 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 			"Role": role,
 		}
 		post.Data = data_post
-		posts = append(posts, &post)
+
+		// Filtering by categories
+		iscontained := false
+		tab := strings.Split(post.Category_ID, " - ")
+		for _, cat := range tab {
+			if cat == categories {
+				iscontained = true
+			}
+		}
+
+		if iscontained || len(categories) == 0 {
+			posts = append(posts, &post)
+		}
+		iscontained = false
 	}
 
 	if err := rows.Err(); err != nil {
