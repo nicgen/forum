@@ -9,4 +9,3 @@ services:
       - ./forum.db:/app/forum.db  # Mount your SQLite database if needed
     env_file:
       - .env  # Load environment variables from the .env file
-    # network:
