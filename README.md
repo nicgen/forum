@@ -246,16 +246,6 @@ The database is structured using SQLite and the following tables are created to 
 
 ---
 
-## Testing
-
-- Unit tests are written using Go's built-in testing package.
-- To run tests, use the following command:
-  ```bash
-  go test ./...
-  ```
-
----
-
 ## Contributing
 
 Contributions are welcome! If you have suggestions or want to contribute to the project, please fork the repository, create a new branch, and submit a pull request.
