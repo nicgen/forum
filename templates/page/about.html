@@ -1,10 +1,34 @@
 {{define "page/about"}}
-<!-- unused for now but needed -->
-
-<!-- todo: broken at layout level, no Title -->
-
-<div class="home-content">
-    {{if .Content.Msg_raw}}{{.Content.Msg_styled}}{{else}}<p style="color: red;">no content</p>{{end}}
-    <!-- Add more content specific to the home page -->
-</div>
-{{end}}
+<section class="container__block__inner block__dashboard">
+    <div>
+        <h2>About Us</h2>
+        <p>Welcome to our Forum!</p>
+        <p>We are students from Zone01 Normandie who created this forum to share our knowledge and experiences with the community. Our aim is to create an open and respectful discussion space where users can share their ideas and opinions.</p>
+    </div>
+</section>
+<section class="container__block__inner">
+    <div>
+      <h2>Meet the Team</h2>
+      <p>We're a team who love programming and tech. We're all from ZONE01 Normandy and we created this forum to share our knowledge and experiences with you.</p>
+      <ul>
+        <li>Nicolas</li>
+        <li>Justine</li>
+        <li>Christophe</li>
+        <li>Damien</li>
+        <li>Nicolas</li>
+        <li>Valentyn</li>
+        <li>Valeryan</li>
+        <li>Rachid</li>
+      </ul>
+    </div>
+  </section>
+  <section class="container__block__inner">
+    <div>
+      <h2>Contact Us</h2>
+      <p>If you have any questions or concerns, please don't hesitate to contact us. We are always here to help.</p>
+      <ul>
+        <li>Zone01 Normandie in Rouen</li>
+      </ul>
+    </div>
+  </section>
+  {{end}}
