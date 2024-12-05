@@ -15,8 +15,6 @@ func Report_Delete(w http.ResponseWriter, r *http.Request) {
 	report_ID := formValues.Get("report_ID")
 	respons_text := formValues.Get("respons_text")
 	name1 := formValues.Get("1")
-	name2 := formValues.Get("2")
-	name2 = name2
 
 	if len(name1) != 0 {
 		state_reaction := `SELECT ID From Report WHERE ID = ? AND Post_Id = ?`
