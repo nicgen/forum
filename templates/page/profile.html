@@ -54,7 +54,7 @@
       Reaction on Comment: {{.CommentContent}} (Reaction ID: {{.ReactionID}})
       <!-- comment on post -->
       {{else if .IsOnComment}}
-      Comment on Post: (Comment ID :{{.CommentContent}})
+      Comment on Post: {{ .PostTitle }} (Comment content: :{{.CommentContent}})
       <!-- react (like/dislike) on post -->
       {{else}}
       Reaction on Post: {{.PostTitle}} (Reaction ID: {{.ReactionID}})
