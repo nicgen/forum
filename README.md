@@ -92,12 +92,6 @@ The forum supports multiple user roles with varying access permissions:
 
 ## Database Schema
 
-Sure! Here's an updated version of the **Database Schema** section, reflecting the provided code structure:
-
----
-
-## Database Schema
-
 The database is structured using SQLite and the following tables are created to manage users, posts, comments, reactions, and more. The schema supports the key features of the forum, including roles, reactions (likes/dislikes), notifications, post categories, and OAuth authentication.
 
 ### Tables
@@ -189,11 +183,6 @@ The database is structured using SQLite and the following tables are created to 
     - `state` (TEXT): The state value for OAuth flow.
     - `created_at` (DATETIME): When the state was created.
 
----
-
-These tables collectively support the key features and functionalities of the forum, including user management, post categories, comments, reactions, notifications, image uploads, and the moderation system. 
-
----
 
 ---
 
