@@ -1,6 +1,15 @@
 # Forum Project - README
 
 ## Table of Contents
+- [How to Use](#how-to-use)
+- [Prerequisites](#prerequisites)
+- [Building and Running the Application](#building-and-running-the-application)
+   - [Clone the Repository](#clone-the-repository)
+   - [Build the Docker Image and Run the Application](#build-the-docker-image-and-run-the-application)
+   - [Stopping the Application](#stopping-the-application)
+   - [Cleaning Up Resources](#cleaning-up-resources)
+- [Additional Commands](#additional-commands)
+- [Troubleshooting](#troubleshooting)
 - [Project Overview](#project-overview)
 - [Technologies Used](#technologies-used)
 - [Features](#features)
@@ -13,10 +22,62 @@
   - [User Roles](#user-roles)
   - [Forum Security](#forum-security)
 - [Database Schema](#database-schema)
-- [Setup and Installation](#setup-and-installation)
-- [Docker Setup](#docker-setup)
 - [Testing](#testing)
 - [Contributing](#contributing)
+
+---
+
+## How to Use
+
+This project is a Go application that can be built and run using Docker. The provided Makefile simplifies the process of managing the application. Follow the steps below to get started.
+
+### Prerequisites
+
+- Ensure you have [Docker](https://www.docker.com/get-started) installed on your machine.
+- Make sure you have [Make](https://www.gnu.org/software/make/) installed.
+
+### Building and Running the Application
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/nicgen/forum.git
+   cd forum
+   ```
+2. Build the Docker Image and Run the Application Use the following command to build the Docker image and run the application:
+   ```bash
+   make
+   ```
+   This command will:
+   - Build the Docker image.
+   - Create and start the Docker container.
+3. Stopping the Application To stop the running application, use the following command:
+   ```bash
+   make stop
+   ```
+4. Cleaning Up Resources If you want to stop the application and remove the container and image, use the following command:
+   ```bash
+   make clean
+   ```
+   This command will:
+   - Stop the running container (if any).
+   - Remove the container.
+   - Remove the Docker image.
+
+### Additional Commands
+
+- View Logs: To view the logs of the running container, you can use:
+   ```bash
+   docker logs forum
+   ```
+- Access the Container: If you need to access the container's shell, you can use:
+   ```bash
+   docker exec -it forum /bin/sh
+   ```
+
+### Troubleshooting
+
+If you encounter issues with Docker permissions, you may need to run commands with sudo or add your user to the Docker group.
+Ensure that the forum.db file is created in the project directory before running the application.
 
 ---
 
@@ -183,42 +244,6 @@ The database is structured using SQLite and the following tables are created to 
     - `state` (TEXT): The state value for OAuth flow.
     - `created_at` (DATETIME): When the state was created.
 
-
----
-
-## Setup and Installation
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/nicgen/forum.git
-   cd forum
-   ```
-
-2. **Install dependencies:**
-   Go modules should handle dependency management.
-   ```bash
-   go mod tidy
-   ```
-
-3. **Run the server:**
-   ```bash
-   go run cmd/app/main.go
-   ```
-
----
-
-## Docker Setup
-
-1. **Build the Docker image:**
-   ```bash
-   docker build -t forum .
-   ```
-
-2. **Run the Docker container:**
-   ```bash
-   docker run -p 8080:8080 forum
-   ```
-
 ---
 
 ## Testing
@@ -234,6 +259,10 @@ The database is structured using SQLite and the following tables are created to 
 ## Contributing
 
 Contributions are welcome! If you have suggestions or want to contribute to the project, please fork the repository, create a new branch, and submit a pull request.
+
+If you find any bugs or have feature requests, please open an issue in the repository. Provide as much detail as possible to help us understand the problem or suggestion.
+
+Thank you for your contributions!
 
 ---
 
