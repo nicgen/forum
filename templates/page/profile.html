@@ -51,13 +51,13 @@
       Notification ID: {{.ID}} - {{.Creation_Date}} at {{.Creation_Hour}} -
       <!-- react (like/dislike) on comment -->
       {{if and (.IsOnComment) (.ReactionID)}}
-      Reaction on Comment: {{.CommentID}} (Reaction ID: {{.ReactionID}})
+      Reaction on Comment: {{.CommentContent}} (Reaction ID: {{.ReactionID}})
       <!-- comment on post -->
       {{else if .IsOnComment}}
-      Comment on Post: (Comment ID :{{.CommentID}})
+      Comment on Post: (Comment ID :{{.CommentContent}})
       <!-- react (like/dislike) on post -->
       {{else}}
-      Reaction on Post: {{.PostID}} (Reaction ID: {{.ReactionID}})
+      Reaction on Post: {{.PostTitle}} (Reaction ID: {{.ReactionID}})
       {{end}}
     </li>
     {{end}}

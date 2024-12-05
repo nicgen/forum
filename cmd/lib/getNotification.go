@@ -67,6 +67,18 @@ func GetNotifications(w http.ResponseWriter, userUUID string, data map[string]in
 		notification.Creation_Date = time_comment[0]
 		notification.Creation_Hour = time_comment[1]
 
+		state_title := `SELECT Title FROM Posts WHERE ID = ?`
+		err_title := db.QueryRow(state_title, notification.PostID).Scan(&notification.PostTitle)
+		if err_title != nil && err_title != sql.ErrNoRows {
+			ErrorServer(w, "Error getting title from post (Notifications)")
+		}
+
+		state_content := `SELECT Text FROM Comments WHERE ID = ?`
+		err_comment := db.QueryRow(state_content, notification.CommentID).Scan(&notification.CommentContent)
+		if err_comment != nil && err_comment != sql.ErrNoRows {
+			ErrorServer(w, "Error getting title from post (Notifications)")
+		}
+
 		// Affecter IsOnComment
 		notification.IsOnComment = isOnComment
 
