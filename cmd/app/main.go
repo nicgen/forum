@@ -7,19 +7,23 @@ import (
 	"forum/handlers"
 	"log"
 	"net/http"
-	"os"
 	"time"
 )
 
 func main() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic:", r)
+		}
+	}()
 	// Chargement des variables d'environnement
 	lib.LoadEnv(".env") // variable env
 
 	// Demande de mot de passe
-	if !askForPassword() {
-		log.Println("MDP incorrect")
-		return
-	}
+	//if !askForPassword() {
+	//	log.Println("MDP incorrect")
+	//	return
+	//}
 
 	// Initialisation de la base de données
 	if err := lib.Init(); err != nil {
@@ -50,15 +54,15 @@ func main() {
 }
 
 // Demande de mot de passe via bool
-func askForPassword() bool {
-	var password string
-	fmt.Print("Entrez le MDP: ")
-	fmt.Scanln(&password)
+//func askForPassword() bool {
+//	var password string
+//	fmt.Print("Entrez le MDP: ")
+//	fmt.Scanln(&password)
 
-	storedPassword := os.Getenv("DB_PASSWORD")
+//	storedPassword := os.Getenv("DB_PASSWORD")
 
-	return password == storedPassword
-}
+//	return password == storedPassword
+//}
 
 // Configuration du routeur
 func setupMux() *http.ServeMux {
@@ -120,7 +124,7 @@ func setupMux() *http.ServeMux {
 // Configuration du serveur
 func setupServer(handler http.Handler) *http.Server {
 	return &http.Server{
-		Addr:              "localhost:8080", // Écoute sur le port HTTPS
+		Addr:              ":8080", // Écoute sur le port HTTPS
 		Handler:           handlers.WithErrorHandling(handler),
 		ReadHeaderTimeout: 10 * time.Second,
 		WriteTimeout:      10 * time.Second,

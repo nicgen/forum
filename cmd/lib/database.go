@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -24,16 +23,16 @@ func Init() error {
 	}
 
 	// Set database password
-	dbPassword := os.Getenv("DB_PASSWORD")
-	if dbPassword == "" {
-		return fmt.Errorf("DB_PASSWORD is not set")
-	}
+	//dbPassword := os.Getenv("DB_PASSWORD")
+	//if dbPassword == "" {
+	//return fmt.Errorf("DB_PASSWORD is not set")
+	//}
 
 	// Define the database password
-	_, err = db.Exec(fmt.Sprintf("PRAGMA key = '%s'", dbPassword))
-	if err != nil {
-		return fmt.Errorf("failed to set database password: %w", err)
-	}
+	//_, err = db.Exec(fmt.Sprintf("PRAGMA key = '%s'", dbPassword))
+	//if err != nil {
+	//return fmt.Errorf("failed to set database password: %w", err)
+	//}
 	return nil
 }
 
