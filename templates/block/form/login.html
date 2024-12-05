@@ -1,0 +1,51 @@
+{{define "block/form/login"}}
+
+<!-- Login container with role and aria-labelledby -->
+<div id="loginForm" class="container__block" role="form" aria-labelledby="form-container">
+
+  <div class="container__block__main">
+
+    <!-- Form title -->
+    <h2 class="form__title" id="form__title">Login</h2>
+
+    <!-- Form login -->
+    <form class="form form-login__mail" action="/login" aria-label="Login form">
+      <label for="username">Email</label>
+      <input type="text" name="EmailForm" placeholder="Email" required aria-required="true" />
+      {{ if ne .UserContent.Error.LoginMail "null" }}
+      <span style="color: red;">{{ .UserContent.Error.LoginMail }}</span>
+      {{ end }}
+      <label for="password">Password</label>
+      <input type="password" name="PasswordForm" placeholder="Password" required aria-required="true" />
+      {{ if ne .UserContent.Error.LoginPassword "null" }}
+      <span style="color: red;">{{ .UserContent.Error.LoginPassword }}</span>
+      {{ end }}
+      <button class="button button__med" type="submit" aria-label="Login button">Login</button>
+    </form>
+
+    <!-- Register link -->
+    <div class="container__block__main register-link">
+      <p>Don't have an account?<a href="/nav-register" class="link" role="button"
+          aria-controls="registerForm">Register</a></p>
+    </div>
+
+  </div>
+
+  <!-- Social login section with roles and aria-labels -->
+  <div class="container__block__main form__socials" role="complementary" aria-label="Social login options">
+    <h3 class="form__title">Sign in with :</h3>
+    <div class="form">
+      <button class="button button__med button__socials" onclick="window.location.href='https://localhost:8080/google';"
+        aria-label="Sign in with Google">{{template "ico_google"}}Sign in with Google</button>
+      <button class="button button__med button__socials" onclick="window.location.href='https://localhost:8080/github';"
+        aria-label="Login with Github">{{template "ico_github"}}Login with Github</button>
+      <button class="button button__med button__socials" onclick="window.location.href='https://localhost:8080/discord';"
+        aria-label="Login with Discord">{{template "ico_discord"}}Login with Discord</button>
+    </div>
+  </div>
+
+  <button class="form__close button__small" onclick="window.location.href='/';" aria-label="Close the login form">{{template
+    "ico_close"}}</button>
+
+</div>
+{{end}}

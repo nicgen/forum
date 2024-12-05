@@ -1,0 +1,36 @@
+.git
+.gitignore
+
+.dockerignore
+docker-compose.yml
+
+/doc
+
+# forum.db
+git_clean.sh
+
+# copies
+*.BAK
+
+# test files (not handled yet)
+*_test.go
+
+# no more wsl crap
+Zone.Identifier
+*:Zone.Identifier
+
+# Fichiers temporaires et de cache
+*.log
+*.tmp
+*.bak
+*.DS_Store
+
+# Build et tests
+build/
+dist/
+bin/
+tests/
+*_test.go
+
+# air
+.air.toml

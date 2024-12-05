@@ -1,0 +1,48 @@
+{{define "block/form/post_create"}}
+<div class="showhide" tabindex="0">
+  <div>
+    <button class="button-icon button__big form__new-post" onclick="togglePost(this)" title="Create a new post">{{ template "ico_edit"}} Create a new post</button>
+  </div>
+
+  <div class="popup-container js__toggle__block">
+    <div class="popup">
+      
+      <form id="imageForm" action="/create-post" method="POST" enctype="multipart/form-data">
+        
+        <div class="pop__header">
+          <h3 for="content" class="form__label">Create a new post</h3>
+          <button class="button-icon button__small" onclick="closePost(event)" title="Close">{{ template "ico_close" }}</button>
+        </div>
+
+        <div class="form-group">
+          <label for="post-category" class="post__label">Categories</label>
+          <select class="post__select" name="categories" multiple required aria-label="Select categories for your post"
+            aria-required="true">
+            {{range .Categories}}
+            <option value="{{.Name}}">{{.Name}}</option>
+            {{end}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="post-title" class="form__label">Title</label>
+          <input class="post__title__input" id="post-title" name="post_title" required
+            aria-label="Enter the title of your post" aria-required="true" />
+        </div>
+        <div class="form-group">
+          <label for="post-content" class="form__label">Content</label>
+          <textarea rows="6" class="post__content__textarea" id="post-content" name="post_text" required
+            aria-label="Enter the content of your post" aria-required="true"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="post-image" class="form__label">Image (max 20 Mo)</label>
+          <input type="file" id="post-image" name="image" accept="image/jpeg,image/png,image/gif"
+            aria-label="Select an image for your post" onchange="checkImageSize(event)"/>
+        </div>
+        <button type="submit" class="submit-button button__med" aria-label="Submit your post">Post!</button>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+{{end}}

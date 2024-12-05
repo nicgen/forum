@@ -1,0 +1,5 @@
+{{define "requests-list"}}
+    {{ if or (eq .Role "Admin") (eq .Role "Moderator") }}
+    {{template "/block/admin/requests" .}}
+{{end}}
+{{end}}

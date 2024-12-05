@@ -1,0 +1,13 @@
+{{define "block/popup/account_create"}}
+{{ if and (ne .Role "Admin") (ne .Role "Moderator") }}
+<!-- todo, create a -->
+<div role="dialog" aria-modal="true" aria-labelledby="popup-title" aria-describedby="popup-description">
+    <h2 id="popup-title">Congratulation!</h2>
+    <p id="popup-description">You have successfully created your account.</p>
+    <!-- <div role="group" aria-label="Actions">
+        <button role="button" aria-label="{{/* action1Label */}}" onclick="{{/* action1 */}}">{{/* action1Text */}}</button>
+        <button role="button" aria-label="{{/* action2Label */}}" onclick="{{/* action2 */}}">{{/* action2Text */}}</button>
+    </div> -->
+</div>  
+{{end}}
+{{end}}

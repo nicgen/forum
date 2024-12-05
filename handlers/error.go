@@ -2,12 +2,13 @@ package handlers
 
 import (
 	"fmt"
+	"forum/cmd/lib"
+	"forum/models"
+	"html/template"
 	"log"
 	"net"
 	"net/http"
 	"runtime/debug"
-	"web-starter/cmd/lib"
-	"web-starter/models"
 )
 
 // HandleError handles error requests and send an error response with the given status code and message
@@ -17,14 +18,13 @@ func HandleError(w http.ResponseWriter, statusCode int, message string) {
 		Title:  "Error",
 		Header: fmt.Sprintf("Error %d", statusCode),
 		// Content:   message,
-		Content: map[string]interface{}{
-			"Message":   message,
-			"Paragraph": "This is a new paragraph",
+		Content: map[string]template.HTML{
+			"Msg_raw": template.HTML("<h1>" + message + "</>"),
 		},
 		IsError:   true,
 		ErrorCode: statusCode,
 	}
-	renderTemplate(w, "error", data)
+	lib.RenderTemplate(w, "layout/error", "page/error", data)
 }
 
 // WithErrorHandling middleware that handles all errors and panics
@@ -57,10 +57,22 @@ func WithErrorHandling(next http.Handler) http.Handler {
 					case "not found":
 						statusCode = http.StatusNotFound
 						message = "Not Found"
+					case "too many request":
+						statusCode = http.StatusTooManyRequests
+						message = "Too Many Request"
+					case "see other":
+						statusCode = http.StatusSeeOther
+						message = "See Other"
+					case "Unauthorized":
+						statusCode = http.StatusUnauthorized
+						message = "Status Unauthorized"
+					case "StatusConflict":
+						statusCode = http.StatusConflict
+						message = "Status Conflict"
 					default:
 						// fmt.Println(">>>>>>>>>>STRING:Internal<<<<<<<<<<")
 						statusCode = http.StatusInternalServerError
-						message = "Internal Server Error"
+						message = "Internal Server Error 💀"
 					}
 				default: // handle other types of panics
 					// fmt.Println(">>>>>>>>>>PANIC<<<<<<<<<<")
@@ -68,9 +80,10 @@ func WithErrorHandling(next http.Handler) http.Handler {
 					message = "Internal Server Error"
 				}
 
-				// Post an alert on NTFY
-				ntfy_msg := "[FORUM server] " + message
-				lib.PostItOnNfty(ntfy_msg)
+				// ? Optional: Post an alert on [NTFY](https://ntfy.sh/)
+				ntfy_title := "[FORUM server]"
+				ntfy_msg := message
+				lib.PostItOnNfty(ntfy_title, ntfy_msg)
 				// render the error page
 				HandleError(w, statusCode, message)
 			}
@@ -80,30 +93,30 @@ func WithErrorHandling(next http.Handler) http.Handler {
 }
 
 // ! Force500Handler forces a 500 error (for testing purposes)
-func Force500Handler(w http.ResponseWriter, r *http.Request) {
+//func Force500Handler(w http.ResponseWriter, r *http.Request) {
 
-	// panic("This is a forced panic to test 500 error handling")
+// panic("This is a forced panic to test 500 error handling")
 
-	// panic(&models.CustomError{ // custom error
-	// 	StatusCode: http.StatusInternalServerError,
-	// 	Message:    "Oh, snap! Internal Server Error",
-	// })
+// panic(&models.CustomError{ // custom error
+// 	StatusCode: http.StatusInternalServerError,
+// 	Message:    "Oh, snap! Internal Server Error",
+// })
 
-	OutOfRange() // Panic: runtime error: index out of range
-}
+//OutOfRange() // Panic: runtime error: index out of range
+//}
 
-// Oh snap!
-func OutOfRange() {
-	t := []int{1, 2, 3}
-	for i := 0; i < 4; i++ {
-		fmt.Println(t[i])
-	}
-}
+// Oh SNAP!
+//func OutOfRange() {
+//t := []int{1, 2, 3}
+//for i := 0; i < 4; i++ {
+//fmt.Println(t[i])
+//}
+//}
 
 // ! ForceDirectError forces a direct string error (for testing purposes)
-func ForceDirectError(w http.ResponseWriter, r *http.Request) {
-	// panic("This is a forced panic to test the direct string error") // string(default)
-	panic("bad request")
-	// panic("not found")
-	// panic("Internal Server Error")
-}
+//func ForceDirectError(w http.ResponseWriter, r *http.Request) {
+// panic("This is a forced panic to test the direct string error") // string(default)
+//panic("bad request")
+// panic("not found")
+// panic("Internal Server Error")
+//}

@@ -1,61 +1,48 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
-type TemplateSetting struct {
-	IsLogged bool
-	Username string
+type Post struct {
+	ID            string
+	Category_Name string
+	User_UUID     string
+	Category_ID   string
+	Title         string
+	Text          string
+	ImagePath     string
+	Like          int
+	Dislike       int
+	CreatedAt     time.Time
+	Username      string
+	Comments      []*Comment
+	Status        string
+	IsAuthor      string
+	Data          map[string]interface{}
+	Role          string
+	ImageSize     int64
+	Creation_Date string
+	Creation_Hour string
 }
 
-type TemplateEdit struct {
-	IsLogged   bool
-	User       User
-	Post       Post
-	Categories []Category
-}
-
-type TemplateCreatedPost struct {
-	IsLogged   bool
-	User       User
-	Categories []Category
-}
-
-type TemplateProfile struct {
-	IsLogged bool
-	User     User
-	UserInfo UserInfo
-}
-
-type TemplatePost struct {
-	IsLogged   bool
-	User       User
-	Category   string
-	Posts      []Post
-	Categories []Category
-}
-
-type TemplateComment struct {
-	IsLogged bool
-	User     User
-	Post     Post
-	Comments []Comment
-}
-
-type TemplateAdmin struct {
-	IsLogged   bool
-	User       User
-	ReportInfo ReportInfo
-	RequestMod []Request
-}
-
-type Request struct {
-	User_id  int
-	Username string
-	Reason   string
+type Notification struct {
+	ID          int
+	ReactionID  *int
+	PostID      *int
+	PostTitle string
+	CommentID   *int
+	CommentContent string
+	IsOnComment bool // Indique si la réaction est sur un commentaire
+	CreatedAt   time.Time
+	Creation_Date string
+	Creation_Hour string
+	IsRead      bool
+	TotalCount  *int // Total des notifications
 }
 
 type User struct {
-	Id           int
+	Id           string
 	UUID         string
 	Username     string
 	Email        string
@@ -63,57 +50,36 @@ type User struct {
 	CreatedAt    time.Time
 	StrCreatedAt string
 	Role         string
-	IsMod        bool
-	IsAdmin      bool
-}
-
-type UserInfo struct {
-	User          User
-	PostedPost    []Post
-	PostedComment []Comment
-	LikedPost     []Post
-	NbrLike       int
-	NbrDislike    int
-}
-
-type Post struct {
-	Id           int
-	User_id      int
-	Title        string
-	Text         string
-	NbrComments  int
-	CreatedAt    time.Time
-	StrCreatedAt string
-	UpdatedAt    time.Time
-	StrUpdatedAt string
-	Likecount    int
-	Dislikecount int
-	IsLiked      bool
-	IsDisliked   bool
-	Username     string
-	Categories   []Category
+	IsRequest    bool
 }
 
 type Comment struct {
-	Id           int
-	Post_Id      int
-	User_Id      int
-	Text         string
-	CreatedAt    time.Time
-	StrCreatedAt string
-	Likecount    int
-	Dislikecount int
-	IsLiked      bool
-	IsDisliked   bool
-	Username     string
+	ID            string
+	Post_ID       string
+	User_UUID     string
+	Username      string
+	Text          string
+	CreatedAt     time.Time
+	Creation_Date string
+	Creation_Hour string
+	Data          map[string]interface{}
+	Like          int
+	Dislike       int
+	Status        string
+	IsAuthor      string
 }
 
 type Category struct {
-	Id   int
+	ID   int
 	Name string
 }
 
-type ReportInfo struct {
-	ReportPosts    []Post
-	ReportComments []Comment
+type Reports struct {
+	ID              string
+	User_UUID       string
+	Username        string
+	Post_ID         string
+	Title           string
+	Reported_Reason string
+	Response_Text   string
 }

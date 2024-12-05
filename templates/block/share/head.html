@@ -1,0 +1,12 @@
+{{define "block/share/head"}}
+<head>
+    <!-- todo, add Title -->
+    <title>{{if .Data.IsError}}Error {{.Data.ErrorCode}} - {{end}}{{if .Data.Title}}{{ .Data.Title }}{{end}}</title>
+    
+    <!-- meta data -->
+    {{ template "block/share/meta" . }}
+    
+    <!-- meta data for social network sharing -->
+    {{ if .Data.Title }}{{ template "block/share/meta_social" . }}{{ end }}
+</head>
+{{ end }}

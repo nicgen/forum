@@ -1,0 +1,12 @@
+{{define "block/popup/default"}}
+<!-- create a pop-up system with only two or three pop-up templates (alert, true-false, multiple) -->
+<!-- todo, add correct variables -->
+<div role="dialog" aria-modal="true" aria-labelledby="popup-title" aria-describedby="popup-description">
+    <h2 id="popup-title">{{/* title */}}</h2>
+    <p id="popup-description">{{/* text */}}</p>
+    <div role="group" aria-label="Actions">
+      <button role="button" aria-label="{{/* action1Label */}}" onclick="{{/* action1 */}}">{{/* action1Text */}}</button>
+      <button role="button" aria-label="{{/* action2Label */}}" onclick="{{/* action2 */}}">{{/* action2Text */}}</button>
+    </div>
+</div>  
+{{end}}
