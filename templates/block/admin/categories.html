@@ -1,0 +1,10 @@
+{{define "block/admin/categories"}}
+  <section class="container__block__inner block__dashboard">
+    <h3>Create a new Category</h3>
+    <form method="POST" action="/create-category">
+      <label for="categoryName">Category Name:</label>
+      <input type="text" id="categoryName" name="categoryName" required>
+      <button type="submit">Create</button>
+    </form>
+  </section>
+{{end}}

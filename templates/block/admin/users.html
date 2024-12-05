@@ -1,0 +1,29 @@
+{{define "block/admin/users"}}
+<section class="container__block__inner block__dashboard">
+  <h3>List of Users:</h3>
+    <ul>
+      {{ range .AllUsers }}
+      <li>
+          Username: {{ .Username }}, Email: {{ .Email }}, Role: {{ .Role }}
+          {{ if and (ne .Role "Admin") (ne .Role "Moderator") (ne .Role "DeleteUser")}}
+          {{ if  .IsRequest }}<span style="color: green;">Request Mod</span>{{ else }}<span style="color: red;">No Request</span>{{ end }}
+          <form method="POST" action="/admin/update-role">
+            <input type="hidden" name="userUUID" value="{{ .UUID }}">
+            <button type="submit">Promote to Moderator</button>
+          </form>
+          <form method="POST" action="/admin/admindelete-user">
+            <input type="hidden" name="userUUID" value="{{ .UUID }}">
+            <button type="submit">Delete User</button>
+          </form>
+          {{ end }}
+          {{ if and (ne .Role "Admin") (ne .Role "User") (ne .Role "DeleteUser") }}
+          <form method="POST" action="/admin/remove-role">
+            <input type="hidden" name="userUUID" value="{{ .UUID }}">
+            <button type="submit">Remove Moderator</button>
+          </form>
+          {{ end }}
+      </li>
+      {{ end }}
+    </ul>
+  </section>
+{{end}}

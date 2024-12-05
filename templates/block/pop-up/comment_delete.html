@@ -1,0 +1,7 @@
+{{define "block/popup/comment_delete"}}
+<form method="GET" action="/delete">
+  <input type="hidden" name="delete" value="comment">
+  <input type="hidden" name="id" value="{{ .ID }}">
+  <button class="button-icon button__author" type="submit" title="Delete my post">{{ template "ico_delete"}}</button>
+</form>
+{{end}}

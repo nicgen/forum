@@ -1,0 +1,44 @@
+<!-- /!\ default layout -->
+{{define "layout/index"}}
+
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <!-- META -->
+    {{ template "block/share/head" }}
+
+    <body>
+        <div class="wrapper" role="document">
+
+            <!-- dev banner (force error), not for production -->
+            {{/* template "block/dev/force-error" . */}}
+
+            <!-- main nav -->
+            {{ template "block/nav/main" . }}
+
+            <main role="main" aria-label="Main content">
+                <div class="container" role="region" aria-label="Page content container">
+                {{if .Data.IsError}}
+                    <!-- error block -->
+                    <h1 role="heading" aria-level="1">Error {{.Data.ErrorCode}}</h1>
+                    {{ .Content }}
+                {{else}}
+                    <!-- login/register for guests -->
+                    {{ if eq .UserContent.Role "Guest" }}
+                        {{if eq .UserContent.NavLogin "show"}}{{ template "block/form/login" .}}{{else}}{{end}}
+                        {{if eq .UserContent.NavRegister "show"}}{{ template "block/form/register" .}}{{else}}{{end}}            
+                    {{ end }}
+                <!-- page content -->
+                {{ if .Content }}{{ .Content }}{{ else }}<p role="definition">no content</p>{{ end }}
+                {{end}}
+                </div>
+            </main>
+
+            {{/* template "block/nav/footer" . */}} <!-- not for production (no use) -->
+
+            <script src="/static/js/script.js"></script> <!-- import for the js (theme) -->
+        </div>
+    </body>
+
+    </html>
+{{end}}

@@ -1,0 +1,36 @@
+{{define "block/content/like"}}
+
+<section class="container__block__inner">
+    {{if eq .UUID .User_UUID}}
+      {{if gt (len .LikedPosts) 0}}<h2><u>My liked posts</u></h2>{{ end }}
+    {{else}}
+      {{if gt (len .LikedPosts) 0}}<h2><u>{{.Username}} liked posts</u></h2>{{ end }}
+    {{end}}
+    
+    {{range .LikedPosts}}
+      {{if eq .Status "liked"}}
+        <div class="post">
+          <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+          <p>Post text: {{ .Text }}</p>
+          <p>Creation date: {{ .Creation_Date }}{{ .Creation_Hour }}</p>
+        </div><br>
+      {{end}}  
+    {{end}}
+    
+    {{if eq .UUID .User_UUID}}
+      {{if gt (len .LikedPosts) 0}}<h2><u>My disliked posts</u></h2>{{ end }}
+    {{else}}
+      {{if gt (len .LikedPosts) 0}}<h2><u>{{.Username}} disliked posts</u></h2>{{ end }}
+    {{end}}
+    
+    {{range .LikedPosts}}
+      {{if eq .Status "disliked"}}
+        <div class="post">
+          <h3>Post Title: {{ .Title }}, Category: {{ .Category_ID }}</h3>
+          <p>Post text: {{ .Text }}</p>
+          <p>Creation date: {{ .Creation_Date }}{{ .Creation_Hour }}</p>
+        </div><br>
+      {{end}}  
+    {{end}}
+    </section>
+    {{end}}

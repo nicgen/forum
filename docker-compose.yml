@@ -1,0 +1,11 @@
+services:
+  forum:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./forum.db:/app/forum.db  # Mount your SQLite database if needed
+    env_file:
+      - .env  # Load environment variables from the .env file

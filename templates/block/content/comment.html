@@ -1,0 +1,20 @@
+{{define "block/content/comment"}}
+  <!-- <p class="comment__date"><span>{{/* .Creation_Date */}}/{{/* .Creation_Hour */}}</span></p> -->
+  <p class="comment__date"><span></span>{{ .CreatedAt.Format "January 2, 2006, 15:04" }}</p>
+  <p>{{ .Text }}</p>
+  <!-- comment edit -->
+  <div class="comment-container">
+    {{ if eq .IsAuthor "yes"}}
+      <div class="block__author">
+      <!-- Comment delete -->
+      {{ template "block/popup/comment_delete" . }}
+      <!-- Comment edit POPUP -->
+      {{ template "block/popup/comment_edit" . }}
+      </div>
+    {{end}}
+    <div class="block__action">
+    <!-- LIKE -->
+    {{ template "block/form/likecomment" .}}
+  </div>
+</div>
+{{end}}
