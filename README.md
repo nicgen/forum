@@ -1,6 +1,19 @@
 # Forum Project - README
 
 ## Table of Contents
+- [How to Use](#how-to-use)
+- [Prerequisites](#prerequisites)
+- [Environment Variables Configuration](#environment-variables-configuration)
+  - [Creating the `.env` File](#creating-the-env-file)
+  - [Environment Variables Description](#environment-variables-description)
+  - [Important Notes](#important-notes)
+- [Building and Running the Application](#building-and-running-the-application)
+   - [Clone the Repository](#clone-the-repository)
+   - [Build the Docker Image and Run the Application](#build-the-docker-image-and-run-the-application)
+   - [Stopping the Application](#stopping-the-application)
+   - [Cleaning Up Resources](#cleaning-up-resources)
+- [Additional Commands](#additional-commands)
+- [Troubleshooting](#troubleshooting)
 - [Project Overview](#project-overview)
 - [Technologies Used](#technologies-used)
 - [Features](#features)
@@ -13,10 +26,147 @@
   - [User Roles](#user-roles)
   - [Forum Security](#forum-security)
 - [Database Schema](#database-schema)
-- [Setup and Installation](#setup-and-installation)
-- [Docker Setup](#docker-setup)
 - [Testing](#testing)
 - [Contributing](#contributing)
+
+---
+
+## How to Use
+
+This project is a Go application that can be built and run using Docker. The provided Makefile simplifies the process of managing the application. Follow the steps below to get started.
+
+### Prerequisites
+
+- Ensure you have [Docker](https://www.docker.com/get-started) installed on your machine.
+- Make sure you have [Make](https://www.gnu.org/software/make/) installed.
+
+### Environment Variables Configuration
+
+To run the application correctly, you need to create a `.env` file in the root directory of the project. This file will contain all the necessary environment variables required for the application to function properly.
+
+#### Creating the `.env` File
+
+1. **Copy the Example File**: Start by copying the `env_example` file to create your `.env` file:
+
+   ```bash
+   cp env_example .env
+   ```
+
+2. **Edit the `.env` File**: Open the `.env` file in your preferred text editor and fill in the required values for each environment variable. Below is a description of each variable:
+
+   ```plaintext
+   # go to https://ntfy.sh/ for generating a token and receive notifications
+   NFTY_TOKEN=<token from NTFY>
+
+   # Password for the database
+   DB_PASSWORD=<database password>
+
+   # Admin Information
+   USER_UUID=<UUID admin>
+   EMAIL=<admin email>
+   USERNAME=<admin username>
+   ADMIN_PASSWORD=<admin user password>
+
+   # Google App Credentials
+   GOOGLE_APP_EMAIL=<google email>
+   GOOGLE_APP_PASSWORD=<google password>
+
+   # Google Auth Credentials
+   GOOGLE_CLIENT_ID=<google client ID>
+   GOOGLE_CLIENT_SECRET=<google client secret>
+
+   # GitHub Auth Credentials
+   GITHUB_CLIENT_ID=<github client ID>
+   GITHUB_CLIENT_SECRET=<github client secret>
+
+   # Discord Auth Credentials
+   DISCORD_CLIENT_ID=<discord client ID>
+   DISCORD_CLIENT_SECRET=<discord client secret>
+   ```
+
+#### Environment Variables Description
+
+- **NFTY_TOKEN**: Obtain a token from [NTFY](https://ntfy.sh/) to receive notifications.
+  
+- **DB_PASSWORD**: Set the password for your database. Ensure this is secure.
+
+- **Admin Information**:
+  - **USER_UUID**: The UUID for the admin user.
+  - **EMAIL**: The email address for the admin user.
+  - **USERNAME**: The username for the admin user.
+  - **ADMIN_PASSWORD**: The password for the admin user.
+
+- **Google App Credentials**:
+  - **GOOGLE_APP_EMAIL**: The email associated with your Google app.
+  - **GOOGLE_APP_PASSWORD**: The password for your Google app.
+
+- **Google Auth Credentials**:
+  - **GOOGLE_CLIENT_ID**: The client ID for Google authentication.
+  - **GOOGLE_CLIENT_SECRET**: The client secret for Google authentication.
+
+- **GitHub Auth Credentials**:
+  - **GITHUB_CLIENT_ID**: The client ID for GitHub authentication.
+  - **GITHUB_CLIENT_SECRET**: The client secret for GitHub authentication.
+
+- **Discord Auth Credentials**:
+  - **DISCORD_CLIENT_ID**: The client ID for Discord authentication.
+  - **DISCORD_CLIENT_SECRET**: The client secret for Discord authentication.
+
+#### Important Notes
+
+- Ensure that you do not share your `.env` file publicly, as it contains sensitive information.
+- After filling in the required values, save the `.env` file and restart your application for the changes to take effect.
+
+#### Instructions
+
+- This README section provides clear instructions on how to create and configure the `.env` file.
+- Adjust any specific details or instructions to fit the context of your project.
+- You can include additional sections as needed, such as "Troubleshooting" or "Further Reading," depending on your project's requirements.
+
+---
+
+### Building and Running the Application
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/nicgen/forum.git
+   cd forum
+   ```
+2. Build the Docker Image and Run the Application Use the following command to build the Docker image and run the application:
+   ```bash
+   make
+   ```
+   This command will:
+   - Build the Docker image.
+   - Create and start the Docker container.
+3. Stopping the Application To stop the running application, use the following command:
+   ```bash
+   make stop
+   ```
+4. Cleaning Up Resources If you want to stop the application and remove the container and image, use the following command:
+   ```bash
+   make clean
+   ```
+   This command will:
+   - Stop the running container (if any).
+   - Remove the container.
+   - Remove the Docker image.
+
+### Additional Commands
+
+- View Logs: To view the logs of the running container, you can use:
+   ```bash
+   docker logs forum
+   ```
+- Access the Container: If you need to access the container's shell, you can use:
+   ```bash
+   docker exec -it forum /bin/sh
+   ```
+
+### Troubleshooting
+
+If you encounter issues with Docker permissions, you may need to run commands with sudo or add your user to the Docker group.
+Ensure that the forum.db file is created in the project directory before running the application.
 
 ---
 
@@ -183,57 +333,15 @@ The database is structured using SQLite and the following tables are created to 
     - `state` (TEXT): The state value for OAuth flow.
     - `created_at` (DATETIME): When the state was created.
 
-
----
-
-## Setup and Installation
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/nicgen/forum.git
-   cd forum
-   ```
-
-2. **Install dependencies:**
-   Go modules should handle dependency management.
-   ```bash
-   go mod tidy
-   ```
-
-3. **Run the server:**
-   ```bash
-   go run cmd/app/main.go
-   ```
-
----
-
-## Docker Setup
-
-1. **Build the Docker image:**
-   ```bash
-   docker build -t forum .
-   ```
-
-2. **Run the Docker container:**
-   ```bash
-   docker run -p 8080:8080 forum
-   ```
-
----
-
-## Testing
-
-- Unit tests are written using Go's built-in testing package.
-- To run tests, use the following command:
-  ```bash
-  go test ./...
-  ```
-
 ---
 
 ## Contributing
 
 Contributions are welcome! If you have suggestions or want to contribute to the project, please fork the repository, create a new branch, and submit a pull request.
+
+If you find any bugs or have feature requests, please open an issue in the repository. Provide as much detail as possible to help us understand the problem or suggestion.
+
+Thank you for your contributions!
 
 ---
 
