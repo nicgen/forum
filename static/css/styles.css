@@ -1435,7 +1435,7 @@ footer {
     .post__title {
       font-size: 2.5rem;
       font-weight: 700;
-      color: var(--light1);
+      color: var(--light-text-color);
       margin-bottom: 1rem;
       padding-bottom: 0.5rem;
       transition: color 0.3s ease;
