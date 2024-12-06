@@ -1,6 +1,6 @@
 {{define "block/content/like"}}
 
-<section class="container__block__inner">
+<section class="container__block__inner like">
     {{if eq .UUID .User_UUID}}
       {{if gt (len .LikedPosts) 0}}<h2><u>My liked posts</u></h2>{{ end }}
     {{else}}
