@@ -1472,15 +1472,6 @@ footer {
       margin-bottom: 8px;
   }
   
-  .button:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
-  }
-  
-  .button__med {
-      font-size: 14px;
-  }
-  
   ul {
       list-style-type: none;
   }
