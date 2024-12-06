@@ -1496,9 +1496,10 @@ footer {
   }
   
   section.container__block__inner.notification_count {
-      display: inline-grid;
+      display: flex;
       float: right;
-      padding-bottom: 180px;
+      flex-grow: 1;
+      padding-bottom: 363px;
   }
   
   section.container__block__inner.your_post {
