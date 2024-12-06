@@ -259,6 +259,6 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	lib.CookieSession(user_uuid, username, creation_date, creation_hour, email, role, w, r)
 
 	// Redirect the user to a success page or your main application
-
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	data := lib.AuthData(user_uuid, username, email, role, creation_date, creation_hour, w)
+	lib.RenderTemplate(w, "layout/index", "page/index", data)
 }
