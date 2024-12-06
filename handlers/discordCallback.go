@@ -231,6 +231,8 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		HandleError(w, err.StatusCode, err.Message)
 		return
 	}
+	tab := strings.Split(email, "@")
+	username = tab[0]
 
 	// Attribute a session to an User
 	lib.CookieSession(user_uuid, username, creation_date, creation_hour, email, role, w, r)
