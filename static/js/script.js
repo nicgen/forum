@@ -6,6 +6,25 @@ const root = document.documentElement;
 const themes = ['light', 'dark', 'auto'];
 let currentThemeIndex = 2; // Start with auto
 
+// Function to save the scroll position
+function saveScrollPosition() {
+    localStorage.setItem('scrollPosition', window.scrollY);
+}
+
+// Function to restore the scroll position
+function restoreScrollPosition() {
+    const scrollPosition = localStorage.getItem('scrollPosition');
+    if (scrollPosition) {
+        window.scrollTo(0, parseInt(scrollPosition, 10));
+    }
+}
+
+// Event listener to save the scroll position before the page unloads
+window.addEventListener('beforeunload', saveScrollPosition);
+
+// Event listener to restore the scroll position when the page loads
+window.addEventListener('load', restoreScrollPosition);
+
 function setTheme(theme) {
   root.classList.remove('light-theme', 'dark-theme');
   themeToggle.classList.remove('light', 'dark', 'auto');
