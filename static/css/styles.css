@@ -1440,3 +1440,94 @@ footer {
       padding-bottom: 0.5rem;
       transition: color 0.3s ease;
     }
+/* part for the Style of the profile page */
+  .container__block__inner {
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+  }
+  
+  .container__block__inner:hover {
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+      transform: translateY(-3px);
+  }
+  
+  .profile_container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 20px;
+  }
+  
+  h2 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+  }
+  
+  p {
+      color: var(--light-text-color);
+      margin-bottom: 8px;
+  }
+  
+  .button:hover {
+      background-color: var(--secondary-color);
+      transform: scale(1.05);
+  }
+  
+  .button__med {
+      font-size: 14px;
+  }
+  
+  ul {
+      list-style-type: none;
+  }
+  
+  section ul li {
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-left: 4px solid var(--primary-color);
+      transition: all 0.3s ease;
+  }
+  
+  section ul li:hover {
+      transform: translateX(10px);
+  }
+  
+  section.container__block__inner.like {
+      display: flow-root;
+  }
+  
+  section.container__block__inner.block__dashboard {
+      display: flow-root;
+  }
+  
+  section.container__block__inner.notification_count {
+      display: inline-grid;
+      float: right;
+      padding-bottom: 180px;
+  }
+  
+  section.container__block__inner.your_post {
+      display: flow-root;
+  }
+  
+  section.container__block__inner.your_comment {
+      display: flow-root;
+      float: right;
+      text-align: end;
+  }
+  
+  .post {
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+  }
+  
+  .post h3 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+  }
