@@ -1451,7 +1451,6 @@ footer {
   
   .container__block__inner:hover {
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-      transform: translateY(-3px);
   }
   
   .profile_container {
@@ -1511,6 +1510,9 @@ footer {
       float: right;
       text-align: end;
   }
+  section.container__block__inner.admin_option {
+    display: flex;
+}
   
   .post {
       border-radius: 8px;
