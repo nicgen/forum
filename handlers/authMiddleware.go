@@ -29,9 +29,9 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// Verify if user is logged in the database
-		var userUUID, role string
-		state := "SELECT IsLogged FROM User WHERE UUID = ?"
-		err_db := db.QueryRow(state, cookie.Value).Scan(&userUUID)
+		var userUUID, islogged string
+		state := "SELECT IsLogged, UUID FROM User WHERE UUID = ?"
+		err_db := db.QueryRow(state, cookie.Value).Scan(&islogged, &userUUID)
 		if err_db != nil {
 			//Erreur critique: Session not found
 			err := &models.CustomError{
@@ -45,6 +45,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 
 		// Checking if the cookie "role" exist
 		if err_cookie_role == http.ErrNoCookie {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
 		} else if err_cookie_role != nil {
 			err := &models.CustomError{
 				StatusCode: http.StatusSeeOther,
@@ -55,6 +56,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			return
 		} else {
 
+			var role string
 			// Checking if the User have the correct role
 			state_role := `SELECT Role FROM User WHERE UUID = ?`
 			err_db_role := db.QueryRow(state_role, userUUID).Scan(&role)
