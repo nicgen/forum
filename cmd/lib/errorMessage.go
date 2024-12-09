@@ -22,6 +22,7 @@ func ErrorMessage(w http.ResponseWriter, data map[string]interface{}, errtype st
 		"ReportExist":            "null",
 		"ContentEmpty":           "null",
 		"ImageContent":           "",
+		"LogSession": "null",
 	}
 
 	// Changing the error depending on the errtype variable given
@@ -54,6 +55,8 @@ func ErrorMessage(w http.ResponseWriter, data map[string]interface{}, errtype st
 		errorMap["ContentEmpty"] = "Modify must be at least 1 character long"
 	case "ImageContent":
 		errorMap["ImageContent"] = "Image size: > 20Mo"
+	case "LogSession":
+		errorMap["LogSession"] = "Session already active"	
 		// log.Printf("ImageContent")
 	}
 

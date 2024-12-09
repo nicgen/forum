@@ -7,7 +7,9 @@
 
     <!-- Form title -->
     <h2 class="form__title" id="form__title">Login</h2>
-
+    {{ if ne .UserContent.Error.LogSession "null" }}
+    <span style="color: red;">{{ .UserContent.Error.LogSession }}</span>
+    {{ end }}
     <!-- Form login -->
     <form class="form form-login__mail" action="/login" aria-label="Login form">
       <label for="username">Email</label>

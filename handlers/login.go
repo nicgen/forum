@@ -89,8 +89,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Println("log: ", islogged)
 		if islogged {
-			lib.ErrorServer(w, "Session already active")
-			return
+			data := lib.GetData(db, "null", "notlogged", "index", w, r)
+			data = lib.ErrorMessage(w, data, "LogSession")
+			data["NavLogin"] = "show"
+			lib.RenderTemplate(w, "layout/index", "page/index", data)
 		}
 
 		// Attribute a session to an User
