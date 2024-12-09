@@ -1,7 +1,7 @@
 {{define "page/index"}}
-{{/*if eq .Role "DeleteUser"*/}}
-{{/*template "block/deleteduser" .*/}}
-{{/*else*/}}
+{{if eq .Role "DeleteUser"}}
+{{template "block/deleteduser" .}}
+{{else}}
 
 <div class="container__block">
   <!-- left menu, categories -->
@@ -55,6 +55,6 @@
   </div>
 
 </div>
-{{/*end*/}}
+{{end}}
 
 {{end}}
