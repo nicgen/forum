@@ -45,7 +45,7 @@
       </div>
       <div class="block__action">
         <!-- REPORT -->
-        {{ if ne .Data.Role "Guest"}}{{template "block/moderator/report" .}}{{end}}
+        {{ if and (ne .Data.Role "Guest") (ne .Data.Role "User")}}{{template "block/moderator/report" .}}{{end}}
         <!-- action (like/dislike) -->
         {{ template "block/form/like" .}}
       </div>
