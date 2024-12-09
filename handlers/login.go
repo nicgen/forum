@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"forum/cmd/lib"
 	"forum/models"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Storing database into a variable
 	db := lib.GetDB()
+	var uuid, username, creation_date, creation_hour, role string
 
 	// Checking if the User is already logged or not
 	_, err_cookie := r.Cookie("session_id")
@@ -63,7 +65,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			lib.RenderTemplate(w, "layout/index", "page/index", data)
 		}
 
-		var uuid, username, creation_date, creation_hour, role string
 		createdAt := time.Now()
 
 		// Making the query for infos that will be stored into the cookie
@@ -80,6 +81,18 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		creation_date = createdAt.Format("2006-01-02") // YYYY-MM-DD
 		creation_hour = createdAt.Format("15:04:05")   // HH:MM:SS
 
+		var islogged bool
+		state_log := `SELECT IsLogged FROM User WHERE UUID = ?`
+		err_log := db.QueryRow(state_log, uuid).Scan(&islogged)
+		if err_log != nil {
+			lib.ErrorServer(w, "Error getting log infos")
+		}
+		fmt.Println("log: ", islogged)
+		if islogged {
+			lib.ErrorServer(w, "Session already active")
+			return
+		}
+
 		// Attribute a session to an User
 		lib.CookieSession(uuid, username, creation_date, creation_hour, email, role, w, r)
 
@@ -88,6 +101,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		lib.ErrorServer(w, "You must log-out before loggin in again")
 		return
 	}
+
 
 	// Redirecting to the home page after successful login
 	http.Redirect(w, r, "/", http.StatusSeeOther)
