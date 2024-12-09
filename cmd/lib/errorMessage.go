@@ -23,6 +23,7 @@ func ErrorMessage(w http.ResponseWriter, data map[string]interface{}, errtype st
 		"ContentEmpty":           "null",
 		"ImageContent":           "",
 		"LogSession": "null",
+		"DuplicateAuth": "null",
 	}
 
 	// Changing the error depending on the errtype variable given
@@ -57,6 +58,8 @@ func ErrorMessage(w http.ResponseWriter, data map[string]interface{}, errtype st
 		errorMap["ImageContent"] = "Image size: > 20Mo"
 	case "LogSession":
 		errorMap["LogSession"] = "Session already active"	
+	case "DuplicateAuth":
+		errorMap["DuplicateAuth"] = "Email adress already used"	
 		// log.Printf("ImageContent")
 	}
 

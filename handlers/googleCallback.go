@@ -227,11 +227,18 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		HandleError(w, err.StatusCode, err.Message)
 		return
 	} else {
+		var authID string
 		// User exists, update GoogleID if necessary
-		_, err_exist := db.Exec("UPDATE User SET OAuthID = ? WHERE ID = ?", googleID, userID)
+		err_exist := db.QueryRow("SELECT OAuthID FROM User WHERE ID = ?", userID).Scan(&authID)
 		if err_exist != nil {
 			// Erreur non critique : Error updating user
 			lib.ErrorServer(w, "Error updating user, please try again later.")
+		}
+		if authID != googleID {
+			data := lib.GetData(db, "null", "notlogged", "index", w, r)
+			data = lib.ErrorMessage(w, data, "DuplicateAuth")
+			data["NavLogin"] = "show"
+			lib.RenderTemplate(w, "layout/index", "page/index", data)
 		}
 	}
 
