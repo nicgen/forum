@@ -3,7 +3,6 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"forum/cmd/lib"
 	"forum/models"
 	"log"
@@ -261,7 +260,6 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		var authID string
 		// User exists, update GoogleID if necessary
 		err_exist := db.QueryRow("SELECT OAuthID FROM User WHERE ID = ?", userID).Scan(&authID)
-		fmt.Println("error: ", err_exist)
 		if err_exist != nil {
 			// Erreur non critique : Error updating user
 			lib.ErrorServer(w, "Error updating user, please try again later.")
